@@ -5,7 +5,7 @@ export default function Header() {
       {/* Left: Logo + Brand */}
       <div className="flex items-center gap-3">
         <img 
-          src="/logo.svg" 
+          src="/aline-logo.svg" 
           alt="AlineCRM Logo"
           className="w-10 h-10 rounded-full object-cover"
         />
