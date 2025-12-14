@@ -1,10 +1,9 @@
-
 import Mascot from '../assets/aline-mascot.png';
 import Logo from '../assets/aline-logo.svg';
 
 export default function Login() {
     return (
-        <div className="flex min-h-screen items-center justify-center bg-[#F5F5F5]">
+        <div className="flex min-h-screen font-roboto items-center justify-center bg-[#F5F5F5]">
             <div className="flex w-full max-w-[1200px] items-center justify-between rounded-[40px] bg-white p-12 shadow-sm md:flex-row flex-col gap-10">
 
                 {/* Left Side - Mascot */}

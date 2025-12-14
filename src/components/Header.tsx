@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <header className="w-full h-[70px] flex items-center justify-between px-10 sticky top-0 z-50 bg-transparent">
+    <header className="w-full h-[70px] font-roboto flex items-center justify-between px-10 sticky top-0 z-50">
       
       {/* Left: Logo + Brand */}
       <div className="flex items-center gap-3">
@@ -9,13 +9,13 @@ export default function Header() {
           alt="AlineCRM Logo"
           className="w-10 h-10 rounded-full object-cover"
         />
-        <span className="text-white text-xl font-semibold">
+        <span className="text-primary text-xl font-semibold">
           AlineCRM
         </span>
       </div>
 
       {/* Center: Nav Links */}
-      <nav className="flex gap-10 text-white text-base font-normal">
+      <nav className="flex gap-10 text-primary text-base font-normal">
         <a href="#product" className="hover:opacity-80">Product</a>
         <a href="#features" className="hover:opacity-80">Features</a>
         <a href="#pricing" className="hover:opacity-80">Pricing</a>

@@ -9,13 +9,13 @@ import XLogo from './assets/brand-logos/x-logo.png';
 
 export default function Landing() {
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col font-roboto">
       <div
-        className="relative flex min-h-[90vh] w-full flex-col bg-cover bg-center"
+        className="relative flex min-h-[100vh] w-full flex-col bg-cover bg-center"
         style={{ backgroundImage: `url(${Gradient})` }}
       >
         <Header />
-
+        {/* Hero Section */}
         <div className="flex flex-1 flex-col items-center justify-center px-4 text-center">
           <h1 className="max-w-4xl text-5xl font-bold leading-tight text-black md:text-6xl lg:text-[64px] mb-6">
             Aligned Pipelines. Higher Sales. Lower Costs.
