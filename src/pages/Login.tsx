@@ -1,7 +1,39 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Mascot from '../assets/aline-mascot.png';
 import Logo from '../assets/aline-logo.svg';
+import { useToast } from '../context/ToastContext';
 
 export default function Login() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const { showToast } = useToast();
+    const navigate = useNavigate();
+
+    const handleLogin = async () => {
+        if (!email || !password) {
+            showToast('Please enter both email and password', 'error');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await axios.post('http://localhost:3000/auth/login', {
+                email,
+                password
+            });
+            showToast('Login successful!', 'success');
+            navigate('/dashboard');
+        } catch (error: any) {
+            const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
+            showToast(Array.isArray(message) ? message[0] : message, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="flex min-h-screen items-center justify-center bg-[#F5F5F5]">
             <div className="flex w-full max-w-[1200px] items-center justify-between rounded-[40px] bg-white p-12 shadow-sm md:flex-row flex-col gap-10">
@@ -19,16 +51,18 @@ export default function Login() {
                 <div className="flex w-full md:w-[45%] flex-col gap-8 pr-12">
                     {/* Logo */}
                     <div className="flex items-center gap-3">
-                        <img src={Logo} alt="AlineCRM" className="h-10 w-10" />
+                        <img src={Logo} alt="AlineCRM" className="h-10 w-10 rounded-full" />
                         <span className="text-2xl font-bold text-black">AlineCRM</span>
                     </div>
 
                     <div className="flex flex-col gap-6">
                         {/* Email Input */}
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm font-semibold text-gray-600">Enter your email</label>
+                            <label className="text-sm font-semibold text-foreground">Enter your email</label>
                             <input
                                 type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="johndoe@gmail.com"
                                 className="w-full rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-gray-200"
                             />
@@ -36,9 +70,11 @@ export default function Login() {
 
                         {/* Password Input */}
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm font-semibold text-gray-600">Enter your password</label>
+                            <label className="text-sm font-semibold text-foreground">Enter your password</label>
                             <input
                                 type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 placeholder="********"
                                 className="w-full rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-gray-200"
                             />
@@ -55,21 +91,23 @@ export default function Login() {
                         </div>
 
                         {/* Login Button */}
-                        <button className="w-full rounded-lg bg-[#2B2B2B] py-3.5 text-base font-bold text-white transition hover:bg-black">
-                            Login
+                        <button
+                            onClick={handleLogin}
+                            disabled={loading}
+                            className="w-full rounded-lg bg-[#2b2b2b] py-3.5 text-base font-bold text-white transition hover:bg-black disabled:opacity-50"
+                        >
+                            {loading ? 'Logging in...' : 'Login'}
                         </button>
 
                         {/* Divider */}
                         <div className="relative flex items-center justify-center">
-                            <div className="absolute w-full border-t border-gray-300"></div>
-                            <span className="relative bg-white px-2 text-sm text-gray-500">or</span>
+                            <div className="absolute w-full border-t border-border"></div>
+                            <span className="relative bg-white px-2 text-sm text-muted">or</span>
                         </div>
 
                         {/* Mail link option */}
-                        <button className="flex items-center justify-center gap-2 text-sm font-medium text-gray-600 hover:text-black">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                            </svg>
+                        <button className="flex items-center justify-center gap-2 text-sm font-medium text-foreground hover:text-black">
+                            <img src="/icons/mail-icon.svg" alt="" />
                             Mail me a login link
                         </button>
                     </div>

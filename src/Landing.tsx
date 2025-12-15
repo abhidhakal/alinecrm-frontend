@@ -20,15 +20,15 @@ export default function Landing() {
           <h1 className="max-w-4xl text-5xl font-bold leading-tight text-black md:text-6xl lg:text-[64px] mb-6">
             Aligned Pipelines. Higher Sales. Lower Costs.
           </h1>
-          <p className="max-w-2xl text-lg text-gray-800 md:text-xl mb-10">
+          <p className="max-w-2xl text-lg text-foreground md:text-xl mb-10">
             AlineCRM helps you streamline your sales process, track leads effortlessly, and optimize costs - all in one platform.
           </p>
 
           <div className="flex items-center gap-4">
-            <Link to="/login" className="rounded-xl bg-[#1A1A1A] px-8 py-3.5 text-base font-medium text-white transition hover:bg-black">
+            <Link to="/login" className="rounded-xl bg-[#2b2b2b] px-8 py-3.5 text-base font-medium text-white transition hover:bg-black">
               Get Started
             </Link>
-            <button className="flex items-center gap-2 rounded-xl border border-gray-800 bg-transparent px-8 py-3.5 text-base font-medium text-black transition hover:bg-black/5">
+            <button className="flex items-center gap-2 rounded-xl border border-[#2b2b2b] bg-transparent px-8 py-3.5 text-base font-medium text-black transition hover:bg-black/5">
               Book a Demo
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -46,12 +46,12 @@ export default function Landing() {
           <span className="font-bold">your business.</span>
         </h2>
 
-        <div className="flex flex-wrap items-center justify-center pt-32 gap-12">
-          <img src={GoogleLogo} alt="Google Workspace" className="h-10 md:h-10 object-contain" />
-          <img src={BrevoLogo} alt="Brevo" className="h-10 md:h-10 object-contain" />
-          <img src={MetaLogo} alt="Meta" className="h-12 md:h-10 object-contain" />
-          <img src={TikTokLogo} alt="TikTok" className="h-10 md:h-10 object-contain" />
-          <img src={XLogo} alt="X" className="h-10 md:h-8 object-contain" />
+        <div className="flex flex-wrap items-center justify-center pt-32 gap-16">
+          <img src={GoogleLogo} alt="Google Workspace" className="h-8 md:h-8 object-contain" />
+          <img src={BrevoLogo} alt="Brevo" className="h-8 md:h-8 object-contain" />
+          <img src={MetaLogo} alt="Meta" className="h-14 md:h-14 object-contain" />
+          <img src={TikTokLogo} alt="TikTok" className="h-14 md:h-14 object-contain" />
+          <img src={XLogo} alt="X" className="h-10 md:h-10 object-contain" />
         </div>
       </div>
     </div>

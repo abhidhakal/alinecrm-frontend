@@ -8,12 +8,17 @@
   --secondary: #65889F;
   --tertiary: #BFD7EA;
 
+  /* Content Colors */
   --text-primary: #2B2B2B;
+  /* Main text */
   --text-secondary: #434343;
+  /* Muted text */
 
+  /* Layout Colors */
   --border-primary: #E6E6E6;
-  
   --background: #ffffff;
+  --foreground: var(--text-primary);
+  /* Alias for standard usage */
 }
 
 html {
@@ -31,8 +36,20 @@ body {
   padding: 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Roboto', system-ui, sans-serif;
   font-weight: 600;
   line-height: 1.2;
+}
+
+input,
+button,
+textarea,
+select {
+  font-family: 'Roboto', system-ui, sans-serif;
 }
