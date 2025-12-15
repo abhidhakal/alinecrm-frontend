@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <header className="w-full h-[70px] font-roboto flex items-center justify-between px-10 sticky top-0 z-50">
+    <header className="w-full h-[70px] flex items-center justify-between px-10 sticky top-0 z-50">
       
       {/* Left: Logo + Brand */}
       <div className="flex items-center gap-3">

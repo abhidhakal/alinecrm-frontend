@@ -9,7 +9,7 @@ import XLogo from './assets/brand-logos/x-logo.png';
 
 export default function Landing() {
   return (
-    <div className="flex w-full flex-col font-roboto">
+    <div className="flex w-full flex-col">
       <div
         className="relative flex min-h-[100vh] w-full flex-col bg-cover bg-center"
         style={{ backgroundImage: `url(${Gradient})` }}
@@ -46,12 +46,12 @@ export default function Landing() {
           <span className="font-bold">your business.</span>
         </h2>
 
-        <div className="flex flex-wrap items-center justify-center gap-12 grayscale opacity-80">
-          <img src={GoogleLogo} alt="Google Workspace" className="h-8 md:h-10 object-contain" />
-          <img src={BrevoLogo} alt="Brevo" className="h-8 md:h-10 object-contain" />
-          <img src={MetaLogo} alt="Meta" className="h-8 md:h-10 object-contain" />
-          <img src={TikTokLogo} alt="TikTok" className="h-8 md:h-10 object-contain" />
-          <img src={XLogo} alt="X" className="h-6 md:h-8 object-contain" />
+        <div className="flex flex-wrap items-center justify-center pt-32 gap-12">
+          <img src={GoogleLogo} alt="Google Workspace" className="h-10 md:h-10 object-contain" />
+          <img src={BrevoLogo} alt="Brevo" className="h-10 md:h-10 object-contain" />
+          <img src={MetaLogo} alt="Meta" className="h-12 md:h-10 object-contain" />
+          <img src={TikTokLogo} alt="TikTok" className="h-10 md:h-10 object-contain" />
+          <img src={XLogo} alt="X" className="h-10 md:h-8 object-contain" />
         </div>
       </div>
     </div>
