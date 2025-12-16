@@ -9,6 +9,7 @@ import Login from './pages/Login';
 
 import { ToastProvider } from './context/ToastContext';
 import Dashboard from './pages/Dashboard';
+import Contacts from './pages/Contacts';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/contacts" element={<Contacts />} />
         </Routes>
       </BrowserRouter>
     </ToastProvider>

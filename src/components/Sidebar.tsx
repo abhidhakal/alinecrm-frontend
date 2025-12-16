@@ -102,7 +102,7 @@ export default function Sidebar() {
       {/* 4. Footer & Sign Out */}
       <div className="mt-auto flex flex-col gap-4 pt-6">
         {/* Mindfulness Button */}
-        <button className="group flex w-full items-center gap-3 rounded-2xl bg-[#1A1A1A] p-4 text-white shadow-lg shadow-gray-200 transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
+        <button className="group flex w-full items-center gap-3 rounded-2xl bg-[#1A1A1A] p-2 text-white shadow-lg shadow-gray-200 transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
             <img src="/icons/mindfulness-icon.svg" alt="Mindfulness" className="w-5 h-5 invert brightness-0 filter" />
           </div>
