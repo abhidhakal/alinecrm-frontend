@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from '../assets/aline-logo.svg';
+import { useSidebar } from '../context/SidebarContext';
 
 const navItems = [
   {
@@ -42,6 +44,9 @@ const navItems = [
 
 export default function Sidebar() {
   const location = useLocation();
+  const { isExpanded, setIsExpanded } = useSidebar();
+  const [isHovered, setIsHovered] = useState(false);
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const userName = user.name || 'John Doe';
   const userInitials = userName
@@ -51,28 +56,52 @@ export default function Sidebar() {
     .toUpperCase().substring(0, 2);
 
   return (
-    <aside className="fixed left-4 top-4 z-40 h-[calc(100vh-32px)] w-[250px] flex flex-col rounded-[16px] border border-gray-200 bg-white px-4 py-4 shadow-sm transition-transform">
+    <aside
+      className={`fixed left-4 top-4 z-40 h-[calc(100vh-32px)] flex flex-col rounded-[16px] border border-gray-200 bg-white shadow-sm transition-all duration-300 ${isExpanded ? 'w-[250px] px-4' : 'w-[80px] px-3'
+        }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+
+      {/* Floating Expand/Collapse Button - Shows on hover */}
+      {isHovered && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="absolute -right-3 top-6 z-50 flex h-6 w-6 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all hover:scale-110"
+        >
+          <svg
+            className={`w-3 h-3 text-gray-600 transition-transform duration-300 ${isExpanded ? '' : 'rotate-180'}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+      )}
 
       {/* 1. Header: Logo */}
-      <div className="flex items-center justify-between mb-6">
+      <div className={`flex items-center mb-6 pt-4 ${isExpanded ? 'justify-between' : 'justify-center'}`}>
         <Link to="/" className="flex items-center gap-3">
-          <img src={Logo} alt="AlineCRM" className="h-9 w-9 rounded-full" />
-          <span className="text-xl font-bold text-gray-900 tracking-tight">AlineCRM</span>
+          <img src={Logo} alt="AlineCRM" className="h-9 w-9 rounded-full flex-shrink-0" />
+          {isExpanded && <span className="text-xl font-bold text-gray-900 tracking-tight whitespace-nowrap">AlineCRM</span>}
         </Link>
-        <button className="text-gray-400 hover:text-gray-600 transition-colors">
-          <img src="/icons/sidebar-close-icon.svg" alt="Collapse" className="w-5 h-5" />
-        </button>
       </div>
 
-      {/* 2. User Profile Dropdown */}
-      <div className="mb-8 flex cursor-pointer items-center justify-between rounded-xl bg-gray-50 px-4 py-3 hover:bg-gray-100 transition-colors">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-sm font-bold text-foreground">
+      {/* 2. User Profile */}
+      <div className={`mb-8 flex cursor-pointer items-center rounded-xl bg-gray-50 py-3 hover:bg-gray-100 transition-colors ${isExpanded ? 'justify-between px-4' : 'justify-center px-2'
+        }`}>
+        <div className={`flex items-center ${isExpanded ? 'gap-3' : 'justify-center'}`}>
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-sm font-bold text-foreground flex-shrink-0">
             {userInitials}
           </div>
-          <span className="text-sm font-semibold text-foreground truncate max-w-[120px]">{userName}</span>
+          {isExpanded && (
+            <>
+              <span className="text-sm font-semibold text-foreground truncate max-w-[120px]">{userName}</span>
+              <img src="/icons/expand-icon.svg" alt="Expand" className="w-3 h-3 text-gray-400 ml-auto" />
+            </>
+          )}
         </div>
-        <img src="/icons/expand-icon.svg" alt="Expand" className="w-3 h-3 text-gray-400" />
       </div>
 
       {/* 3. Navigation */}
@@ -80,40 +109,75 @@ export default function Sidebar() {
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${isActive
-                ? 'bg-gray-100 text-gray-900 font-semibold'
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-            >
-              <img
-                src={isActive ? item.activeIcon : item.icon}
-                alt={item.name}
-                className="w-5 h-5 transition-transform duration-200"
-              />
-              {item.name}
-            </Link>
+            <div key={item.name} className="relative group">
+              <Link
+                to={item.path}
+                className={`flex items-center rounded-xl py-3 text-sm font-medium transition-all duration-200 ${isExpanded ? 'gap-3 px-4' : 'justify-center px-3'
+                  } ${isActive
+                    ? 'bg-gray-100 text-gray-900 font-semibold'
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+              >
+                <img
+                  src={isActive ? item.activeIcon : item.icon}
+                  alt={item.name}
+                  className="w-5 h-5 transition-transform duration-200 flex-shrink-0"
+                />
+                {isExpanded && item.name}
+              </Link>
+
+              {/* Tooltip for collapsed state */}
+              {!isExpanded && (
+                <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+                  {item.name}
+                  <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
+                </div>
+              )}
+            </div>
           );
         })}
       </nav>
 
       {/* 4. Footer & Sign Out */}
-      <div className="mt-auto flex flex-col gap-4 pt-6">
+      <div className="mt-auto flex flex-col gap-4 pt-6 pb-4">
         {/* Mindfulness Button */}
-        <button className="group flex w-full items-center gap-3 rounded-2xl bg-[#1A1A1A] p-2 text-white shadow-lg shadow-gray-200 transition-all hover:bg-black hover:shadow-xl active:scale-[0.98]">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-            <img src="/icons/mindfulness-icon.svg" alt="Mindfulness" className="w-5 h-5 invert brightness-0 filter" />
-          </div>
-          <span className="text-sm font-bold">Mindfulness</span>
-        </button>
+        <div className="relative group">
+          <button className={`group flex w-full items-center rounded-2xl bg-[#1A1A1A] p-2 text-white shadow-lg shadow-gray-200 transition-all hover:bg-black hover:shadow-xl active:scale-[0.98] ${isExpanded ? 'gap-3' : 'justify-center'
+            }`}>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 flex-shrink-0">
+              <img src="/icons/mindfulness-icon.svg" alt="Mindfulness" className="w-5 h-5 invert brightness-0 filter" />
+            </div>
+            {isExpanded && <span className="text-sm font-bold">Mindfulness</span>}
+          </button>
+
+          {/* Tooltip for mindfulness in collapsed state */}
+          {!isExpanded && (
+            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+              Mindfulness
+              <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
+            </div>
+          )}
+        </div>
 
         {/* Sign Out */}
-        <Link to="/login" className="flex items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium text-gray-400 hover:text-red-600 transition-colors">
-          <img src="/icons/logout-icon.svg" alt="Logout" className="w-4 h-4 opacity-70" />
-          Sign Out
-        </Link>
+        <div className="relative group">
+          <Link
+            to="/login"
+            className={`flex items-center rounded-xl py-2 text-sm font-medium text-gray-400 hover:text-red-600 transition-colors ${isExpanded ? 'justify-center gap-2' : 'justify-center'
+              }`}
+          >
+            <img src="/icons/logout-icon.svg" alt="Logout" className="w-4 h-4 opacity-70 flex-shrink-0" />
+            {isExpanded && 'Sign Out'}
+          </Link>
+
+          {/* Tooltip for sign out in collapsed state */}
+          {!isExpanded && (
+            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+              Sign Out
+              <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
+            </div>
+          )}
+        </div>
       </div>
     </aside>
   );

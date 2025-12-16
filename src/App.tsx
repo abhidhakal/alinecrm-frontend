@@ -8,24 +8,27 @@ import About from './pages/About';
 import Login from './pages/Login';
 
 import { ToastProvider } from './context/ToastContext';
+import { SidebarProvider } from './context/SidebarContext';
 import Dashboard from './pages/Dashboard';
 import Contacts from './pages/Contacts';
 
 export default function App() {
   return (
     <ToastProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/product" element={<Product />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/contacts" element={<Contacts />} />
-        </Routes>
-      </BrowserRouter>
+      <SidebarProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/product" element={<Product />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/contacts" element={<Contacts />} />
+          </Routes>
+        </BrowserRouter>
+      </SidebarProvider>
     </ToastProvider>
   );
 }

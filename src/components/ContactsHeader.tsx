@@ -1,10 +1,16 @@
 
-export default function ContactsHeader() {
+
+interface ContactsHeaderProps {
+  onRefresh?: () => void;
+  onAddContact?: () => void;
+}
+
+export default function ContactsHeader({ onRefresh, onAddContact }: ContactsHeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex w-full flex-col gap-4 border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 py-6">
       <div className="flex w-full items-center justify-between">
         {/* Left: Title */}
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Contacts</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Contacts</h1>
 
         {/* Right: Global Actions */}
         <div className="flex items-center gap-3">
@@ -34,7 +40,10 @@ export default function ContactsHeader() {
           Last updated just now
         </div>
 
-        <button className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-all hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 hover:rotate-90 duration-500">
+        <button
+          onClick={onRefresh}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-all hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 hover:rotate-90 duration-500"
+        >
           <img src="/icons/sync-icon.svg" alt="Refresh" className="h-4.5 w-4.5 opacity-70 hover:opacity-100" />
         </button>
       </div>
@@ -50,25 +59,28 @@ export default function ContactsHeader() {
             <input
               type="text"
               placeholder="search contacts, companies..."
-              className="h-10 w-[280px] rounded-full border border-transparent bg-gray-100/50 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-500 focus:bg-white focus:border-gray-200 focus:ring-2 focus:ring-gray-100 outline-none transition-all"
+              className="h-10 w-[280px] rounded-full border border-transparent bg-gray-100/50 pl-10 pr-4 text-sm text-foreground placeholder:text-gray-500 focus:bg-white focus:border-gray-200 focus:ring-2 focus:ring-gray-100 outline-none transition-all"
             />
           </div>
 
           {/* Filter */}
-          <button className="flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-gray-700 transition-colors">
+          <button className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-gray-700 transition-colors">
             <img src="/icons/filter-list-on.svg" alt="Filter" className="h-4 w-4" />
             Filter
           </button>
 
           {/* Sort By */}
-          <button className="flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-gray-700 transition-colors">
+          <button className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-gray-700 transition-colors">
             <img src="/icons/sort-icon.svg" alt="Sort" className="h-4 w-4" />
             Sort By
           </button>
         </div>
 
         {/* Add Contact */}
-        <button className="flex items-center gap-2 rounded-xl bg-[#1A1A1A] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-black hover:shadow-md active:scale-[0.98]">
+        <button
+          onClick={onAddContact}
+          className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
+        >
           <img src="/icons/plus-icon.svg" alt="Add" className="h-4 w-4 invert brightness-0 filter" />
           Add Contact
         </button>
