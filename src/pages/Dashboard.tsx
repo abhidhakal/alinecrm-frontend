@@ -5,21 +5,9 @@ export default function Dashboard() {
   return (
     <div className="flex min-h-screen w-full bg-white font-sans">
       <Sidebar />
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col ml-[312px] transition-all max-w-[calc(100vw-312px)]">
         <DashboardHeader />
-        <main className="flex-1 p-8 bg-gray-50">
-          {/* Main Content Area - Placeholders for now */}
-          <div className="mb-8 flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2 text-sm font-medium text-black">
-                <img src="/icons/customize-icon.svg" alt="" />
-                Customise
-              </div>
-              <span className="text-xs text-green-600 font-medium">• Last updated just now</span>
-            </div>
-          </div>
-
-          {/* Placeholder for Widgets */}
+        <main className="flex-1 p-8 bg-white">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Widget 1 */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm min-h-[150px]">

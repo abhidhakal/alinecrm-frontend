@@ -20,10 +20,15 @@ export default function Login() {
 
         setLoading(true);
         try {
-            await axios.post('http://localhost:3000/auth/login', {
+            const response = await axios.post('http://localhost:3000/auth/login', {
                 email,
                 password
             });
+
+            // Store token and user data
+            localStorage.setItem('access_token', response.data.access_token);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+
             showToast('Login successful!', 'success');
             navigate('/dashboard');
         } catch (error: any) {
