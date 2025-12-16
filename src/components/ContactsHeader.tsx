@@ -56,7 +56,7 @@ export default function ContactsHeader() {
 
           {/* Filter */}
           <button className="flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-gray-700 transition-colors">
-            <img src="/icons/filter-icon.svg" alt="Filter" className="h-4 w-4" />
+            <img src="/icons/filter-list-on.svg" alt="Filter" className="h-4 w-4" />
             Filter
           </button>
 
