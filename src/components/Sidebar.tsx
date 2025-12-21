@@ -46,6 +46,7 @@ export default function Sidebar() {
   const location = useLocation();
   const { isExpanded, setIsExpanded } = useSidebar();
   const [isHovered, setIsHovered] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const userName = user.name || 'John Doe';
@@ -89,19 +90,69 @@ export default function Sidebar() {
       </div>
 
       {/* 2. User Profile */}
-      <div className={`mb-8 flex cursor-pointer items-center rounded-xl bg-gray-50 py-3 hover:bg-gray-100 transition-colors ${isExpanded ? 'justify-between px-4' : 'justify-center px-2'
-        }`}>
-        <div className={`flex items-center ${isExpanded ? 'gap-3' : 'justify-center'}`}>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-sm font-bold text-foreground flex-shrink-0">
-            {userInitials}
+      <div className={`relative mb-6 ${isExpanded ? 'px-2' : 'px-0'}`}>
+        <div
+          onClick={() => setIsProfileOpen(!isProfileOpen)}
+          className={`flex cursor-pointer items-center rounded-2xl border border-transparent transition-all duration-200 ${isExpanded
+            ? 'p-2 hover:bg-gray-50 hover:border-gray-200 justify-between'
+            : 'p-2 justify-center hover:bg-gray-50'
+            } ${isProfileOpen ? 'bg-gray-50 border-gray-200' : ''}`}
+        >
+          <div className={`flex items-center ${isExpanded ? 'gap-3' : 'justify-center'}`}>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 border border-gray-200 text-sm font-bold text-foreground flex-shrink-0 shadow-sm">
+              {userInitials}
+            </div>
+            {isExpanded && (
+              <div className="flex flex-col overflow-hidden">
+                <span className="text-sm font-bold text-foreground truncate max-w-[120px] leading-tight">{userName}</span>
+                <span className="text-[10px] font-medium text-gray-500 truncate">View Profile</span>
+              </div>
+            )}
           </div>
           {isExpanded && (
-            <>
-              <span className="text-sm font-semibold text-foreground truncate max-w-[120px]">{userName}</span>
-              <img src="/icons/expand-icon.svg" alt="Expand" className="w-3 h-3 text-gray-400 ml-auto" />
-            </>
+            <img
+              src="/icons/expand-icon.svg"
+              alt="Expand"
+              className={`w-3 h-3 text-gray-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`}
+            />
           )}
         </div>
+
+        {/* Profile Dropdown */}
+        {isProfileOpen && (
+          <div className={`absolute z-50 rounded-2xl border border-gray-100 bg-white shadow-xl shadow-gray-200/50 p-1.5 flex flex-col gap-0.5 ${isExpanded ? 'left-2 right-2 top-full mt-2' : 'left-full top-0 ml-3 w-48'
+            }`}>
+            
+            {/* Profile */}
+            <button className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-left group">
+               <img src="/icons/account-icon.svg" alt="Profile" className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity" />
+               Profile
+            </button>
+
+            {/* Settings */}
+            <button className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-left group">
+               <img src="/icons/settings-icon.svg" alt="Settings" className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity" />
+               Settings
+            </button>
+
+             {/* Contact */}
+            <button className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-left group">
+               <img src="/icons/mail-icon.svg" alt="Contact" className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity" />
+               Contact
+            </button>
+
+            <div className="h-px bg-gray-100 my-1 mx-2"></div>
+
+            {/* Logout */}
+            <Link
+              to="/login"
+              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors group"
+            >
+              <img src="/icons/logout-icon.svg" alt="Logout" className="w-4 h-4 opacity-80 group-hover:opacity-100" />
+              Sign Out
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* 3. Navigation */}
@@ -154,26 +205,6 @@ export default function Sidebar() {
           {!isExpanded && (
             <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
               Mindfulness
-              <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
-            </div>
-          )}
-        </div>
-
-        {/* Sign Out */}
-        <div className="relative group">
-          <Link
-            to="/login"
-            className={`flex items-center rounded-xl py-2 text-sm font-medium text-gray-400 hover:text-red-600 transition-colors ${isExpanded ? 'justify-center gap-2' : 'justify-center'
-              }`}
-          >
-            <img src="/icons/logout-icon.svg" alt="Logout" className="w-4 h-4 opacity-70 flex-shrink-0" />
-            {isExpanded && 'Sign Out'}
-          </Link>
-
-          {/* Tooltip for sign out in collapsed state */}
-          {!isExpanded && (
-            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
-              Sign Out
               <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
             </div>
           )}

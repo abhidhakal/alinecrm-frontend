@@ -1,11 +1,14 @@
 import Sidebar from "../components/Sidebar";
 import DashboardHeader from "../components/DashboardHeader";
+import { useSidebar } from "../context/SidebarContext";
 
 export default function Dashboard() {
+  const { isExpanded } = useSidebar();
   return (
     <div className="flex min-h-screen w-full bg-white font-sans">
       <Sidebar />
-      <div className="flex flex-1 flex-col ml-[312px] transition-all max-w-[calc(100vw-312px)]">
+      <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'
+        }`}>
         <DashboardHeader />
         <main className="flex-1 p-8 bg-white">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

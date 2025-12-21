@@ -3,7 +3,7 @@ export default function DashboardHeader() {
     <header className="sticky top-0 z-30 flex w-full flex-col gap-5 border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 py-6">
       <div className="flex w-full items-center justify-between">
         {/* Left: Title */}
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Dashboard</h1>
 
         {/* Right: Actions */}
         <div className="flex items-center gap-3">

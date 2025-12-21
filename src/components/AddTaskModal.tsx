@@ -45,113 +45,129 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-[40px] w-full max-w-[900px] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
-        {/* Header */}
-        <div className="px-12 py-10 flex items-center justify-between">
-          <div>
-            <p className="text-sm font-bold text-gray-400 mb-1">Task Details</p>
-            <h2 className="text-3xl font-extra-bold text-gray-900 tracking-tight">Create New Task</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-3 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <img src="/icons/close-icon-large.svg" alt="close" className="h-7 w-7" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="px-12 pb-12 flex gap-10">
-          {/* Left Column */}
-          <div className="flex-1 space-y-8">
-            <div className="space-y-4">
-              <div className="space-y-1.5 px-1">
-                <label className="text-[13px] font-bold text-gray-800 uppercase tracking-wide">Task Title</label>
-                <input
-                  required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Prediction Model for XYZ Company"
-                  className="w-full text-xl font-bold text-gray-900 bg-transparent border-b-2 border-gray-100 focus:border-blue-400 outline-none pb-2 transition-all placeholder:text-gray-200"
-                />
-              </div>
-
-              <div className="space-y-2 px-1 pt-4">
-                <label className="text-[13px] font-bold text-gray-800 uppercase tracking-wide">Task Description</label>
-                <textarea
-                  required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Develop and deploy a predictive model..."
-                  rows={4}
-                  className="w-full text-[15px] font-medium text-gray-500 leading-relaxed bg-transparent border-none outline-none resize-none placeholder:text-gray-300"
-                />
-              </div>
+      <div className="bg-white rounded-[24px] w-full max-w-[850px] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200 flex flex-col md:flex-row">
+        
+        {/* Main Form Area */}
+        <div className="flex-1 p-8 md:p-10">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">Create New Task</h2>
+              <p className="text-sm font-medium text-gray-500 mt-1">Add details for your new task card</p>
             </div>
-
-            <div className="bg-[#EAF3FF] rounded-[32px] p-8 space-y-8">
-              <div className="space-y-2">
-                <label className="text-[12px] font-bold text-gray-800 uppercase tracking-wider">Category</label>
-                <input
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  placeholder="AI Models"
-                  className="w-full text-2xl font-bold text-gray-900 bg-transparent outline-none placeholder:text-blue-200"
-                />
-              </div>
-
-              <div className="flex gap-8">
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-3 text-gray-800 font-bold">
-                    <img src="/icons/calendar-icon-filled.svg" alt="due" className="h-5 w-5 opacity-70" />
-                    <label className="text-[13px]">Due Date</label>
-                  </div>
-                  <input
-                    required
-                    type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    className="w-full bg-white/50 px-4 py-2.5 rounded-xl text-sm font-bold text-gray-800 outline-none border border-transparent focus:border-blue-200 transition-all"
-                  />
-                </div>
-              </div>
-            </div>
-
             <button
-              disabled={loading}
-              type="submit"
-              className="w-full py-5 bg-gray-900 text-white rounded-[24px] font-bold text-lg shadow-xl hover:bg-black transition-all active:scale-[0.99] disabled:opacity-50 mt-4"
+              onClick={onClose}
+              className="md:hidden p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
-              {loading ? "Saving Changes..." : "Save and Create Task"}
+              <img src="/icons/close-icon-small.svg" alt="close" className="h-6 w-6" />
             </button>
           </div>
 
-          {/* Right Column (Mocking the design) */}
-          <div className="w-[300px] border border-gray-100 rounded-[35px] p-8 space-y-8 flex flex-col justify-between">
-            <div className="space-y-6">
-              <h3 className="text-[16px] font-bold text-gray-800">Assigned To</h3>
-              <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-700 uppercase tracking-wide">Task Title</label>
+              <input
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Redesign Homepage"
+                className="w-full text-lg font-semibold text-foreground bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:bg-white focus:border-gray-300 focus:ring-4 focus:ring-gray-100 outline-none transition-all placeholder:text-gray-400"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-700 uppercase tracking-wide">Description</label>
+              <textarea
+                required
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Add a detailed description..."
+                rows={4}
+                className="w-full text-sm font-medium text-foreground bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:bg-white focus:border-gray-300 focus:ring-4 focus:ring-gray-100 outline-none transition-all resize-none placeholder:text-gray-400"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide">Category</label>
+                <input
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="Design"
+                  className="w-full text-sm font-semibold text-foreground bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:bg-white focus:border-gray-300 outline-none transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-700 uppercase tracking-wide">Due Date</label>
+                <input
+                  required
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="w-full text-sm font-semibold text-foreground bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:bg-white focus:border-gray-300 outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <button
+                disabled={loading}
+                type="submit"
+                className="w-full py-3.5 bg-foreground text-white rounded-xl font-bold text-sm shadow-lg hover:bg-black/90 transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <span className="animate-pulse">Creating...</span>
+                ) : (
+                  <>
+                    <img src="/icons/plus-icon.svg" alt="" className="h-4 w-4 invert brightness-0" />
+                    Create Task
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Sidebar / Right Column */}
+        <div className="hidden md:flex w-[280px] bg-gray-50/50 border-l border-gray-100 p-8 flex-col">
+          <div className="flex justify-end mb-6">
+             <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-200/50 rounded-full transition-colors"
+            >
+              <img src="/icons/close-icon-small.svg" alt="close" className="h-6 w-6 opacity-40 hover:opacity-100 transition-opacity" />
+            </button>
+          </div>
+
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Assigned To</h3>
+              <div className="space-y-3">
                 {[
                   { name: "John Doe", id: 1 },
                   { name: "Anne Lee", id: 2 },
                   { name: "Oleg Fitzergald", id: 3 },
                 ].map((u) => (
-                  <div key={u.id} className="flex items-center gap-4 bg-gray-50/80 p-3 rounded-2xl border border-white">
-                    <img src={`https://i.pravatar.cc/150?u=${u.id}`} className="h-10 w-10 rounded-full shadow-sm ring-2 ring-white" />
-                    <span className="text-[14px] font-bold text-gray-800">{u.name}</span>
+                  <div key={u.id} className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
+                    <img src={`https://i.pravatar.cc/150?u=${u.id}`} className="h-8 w-8 rounded-full object-cover" />
+                    <span className="text-xs font-bold text-gray-700">{u.name}</span>
                   </div>
                 ))}
+                <button className="w-full py-2 border border-dashed border-gray-300 rounded-xl text-xs font-bold text-gray-400 hover:border-gray-400 hover:text-gray-500 transition-all">
+                  + Add Assignee
+                </button>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <h3 className="text-[16px] font-bold text-gray-800">Assigned By</h3>
-              <div className="flex items-center gap-4 bg-gray-50/80 p-3 rounded-2xl border border-white">
-                <img src="https://i.pravatar.cc/150?u=99" className="h-10 w-10 rounded-full shadow-sm ring-2 ring-white" />
-                <span className="text-[14px] font-bold text-gray-800">Jake Bailey</span>
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Assigned By</h3>
+              <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
+                <img src="https://i.pravatar.cc/150?u=99" className="h-8 w-8 rounded-full object-cover" />
+                <span className="text-xs font-bold text-gray-700">Jake Bailey</span>
               </div>
             </div>
           </div>
-        </form>
+        </div>
+
       </div>
     </div>
   );

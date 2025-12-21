@@ -66,17 +66,17 @@ export default function Tasks() {
   const getCardBg = (status: TaskStatusType) => {
     switch (status) {
       case TaskStatus.TODO: return "bg-[#EAF3FF]";
-      case TaskStatus.IN_PROGRESS: return "bg-[#FFF4E5]";
-      case TaskStatus.COMPLETE: return "bg-[#E8F8F0]";
+      case TaskStatus.IN_PROGRESS: return "bg-[#FFEBD6]";
+      case TaskStatus.COMPLETE: return "bg-[#DDF5E6]";
       default: return "bg-white";
     }
   };
 
   const getProgressColor = (status: TaskStatusType) => {
     switch (status) {
-      case TaskStatus.TODO: return "bg-[#2E7DFF]";
-      case TaskStatus.IN_PROGRESS: return "bg-[#FFA352]";
-      case TaskStatus.COMPLETE: return "bg-[#2FB36B]";
+      case TaskStatus.TODO: return "bg-[#2F80ED]";
+      case TaskStatus.IN_PROGRESS: return "bg-[#F2994A]";
+      case TaskStatus.COMPLETE: return "bg-[#27AE60]";
       default: return "bg-blue-500";
     }
   };
@@ -85,39 +85,39 @@ export default function Tasks() {
     const filteredTasks = tasks.filter((t: Task) => t.status === status);
     const getBadgeColor = (s: TaskStatusType) => {
       switch (s) {
-        case TaskStatus.TODO: return "bg-[#2E7DFF]";
-        case TaskStatus.IN_PROGRESS: return "bg-[#FFA352]";
-        case TaskStatus.COMPLETE: return "bg-[#2FB36B]";
+        case TaskStatus.TODO: return "bg-[#2F80ED]";
+        case TaskStatus.IN_PROGRESS: return "bg-[#F2994A]";
+        case TaskStatus.COMPLETE: return "bg-[#27AE60]";
         default: return "bg-gray-500";
       }
     };
 
     return (
       <div
-        className="flex flex-col gap-6 w-[400px] h-fit min-h-[200px] bg-white rounded-[24px] p-4 pt-6 shadow-sm border border-gray-100/50 pb-8"
+        className="flex flex-col gap-2 w-[450px] h-fit min-h-[180px] bg-white rounded-[16px] p-3 shadow-md border border-gray-100/50 pb-4"
         onDragOver={onDragOver}
         onDrop={(e) => onDrop(e, status)}
       >
-        <div className="flex items-center justify-between mb-2 px-2">
+        <div className="flex items-center justify-between mb-2 px-1">
           <div className="flex items-center gap-3">
-            <span className={`px-5 py-2.5 rounded-2xl text-white font-bold text-base shadow-sm ${getBadgeColor(status)}`}>
+            <span className={`px-4 py-2 rounded-xl text-white font-semibold text-[15px] shadow-sm ${getBadgeColor(status)}`}>
               {label}
             </span>
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-sm font-bold text-gray-500 border border-gray-50">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-50 text-xs font-semibold text-black border border-gray-100">
               {filteredTasks.length}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <button className="p-2 hover:bg-gray-50 rounded-full transition-colors">
-              <img src="/icons/more-horizontal.svg" alt="more" className="h-6 w-6 opacity-60" />
+              <img src="/icons/more-horizontal.svg" alt="more" className="h-5 w-5 opacity-40" />
             </button>
             <button onClick={() => openAddModal(status)} className="p-2 hover:bg-gray-50 rounded-full transition-colors">
-              <img src="/icons/plus-icon.svg" alt="add" className="h-6 w-6 opacity-80" />
+              <img src="/icons/plus-icon.svg" alt="add" className="h-5 w-5 opacity-60" />
             </button>
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 px-1">
+        <div className="flex flex-col gap-3 px-1">
           {filteredTasks.map((task: Task) => (
             <div
               key={task.id}
@@ -127,17 +127,17 @@ export default function Tasks() {
                 setSelectedTask(task);
                 setIsModalOpen(true);
               }}
-              className={`p-5 rounded-[10px] cursor-grab active:cursor-grabbing hover:shadow-xl transition-all duration-300 ${getCardBg(status)}`}
+              className={`p-5 rounded-[16px] cursor-grab active:cursor-grabbing hover:shadow-lg transition-all duration-300 ${getCardBg(status)}`}
             >
-              <h3 className="text-xl font-bold text-gray-900 leading-tight mb-1">{task.title}</h3>
-              <p className="text-sm font-medium text-gray-500/80 mb-4">Open for description</p>
+              <h3 className="text-[17px] font-bold text-foreground leading-snug mb-1">{task.title}</h3>
+              <p className="text-[13px] font-medium text-muted mb-5">Open for description</p>
 
-              <div className="flex items-center mb-5">
-                <div className="flex -space-x-3 overflow-hidden">
+              <div className="flex items-center mb-6">
+                <div className="flex -space-x-2.5 overflow-hidden">
                   {[1, 2, 3].map((_, i) => (
                     <img
                       key={i}
-                      className="inline-block h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover"
+                      className="inline-block h-8 w-8 rounded-full ring-2 ring-white shadow-sm object-cover"
                       src={`https://i.pravatar.cc/150?u=${task.id}-${i}`}
                       alt="avatar"
                     />
@@ -147,18 +147,18 @@ export default function Tasks() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1">
-                  <span className="text-base font-bold text-gray-900">Progress</span>
-                  <div className="h-[5px] w-[100px] rounded-full bg-white overflow-hidden">
+                  <span className="text-[13px] font-bold text-gray-900">Progress</span>
+                  <div className="h-[6px] w-[80px] rounded-full bg-white/60 overflow-hidden">
                     <div
-                      className={`h-full transition-all duration-700 ease-out ${getProgressColor(status)}`}
+                      className={`h-full transition-all duration-700 ease-out rounded-full ${getProgressColor(status)}`}
                       style={{ width: `${task.progress}%` }}
                     ></div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 text-gray-800">
-                  <img src="/icons/calendar-icon.svg" alt="calendar" className="h-[20px] w-[20px]" />
-                  <span className="text-sm font-bold text-[#1a1a1a]">
+                  <img src="/icons/calendar-icon.svg" alt="calendar" className="h-4 w-4 opacity-60" />
+                  <span className="text-[12px] font-bold text-gray-700">
                     {new Date(task.dueDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </span>
                 </div>
@@ -174,22 +174,29 @@ export default function Tasks() {
     <div className="flex min-h-screen w-full bg-white relative font-sans">
       <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
-        <TasksHeader onRefresh={fetchTasks} onAddTask={() => openAddModal()} />
+        <TasksHeader onRefresh={fetchTasks} />
 
-        <div className="px-10 pt-6 pb-2">
+        <div className="px-10 pt-2 pb-2 flex items-center justify-between">
           <p className="text-xs font-bold text-gray-500 opacity-60 tracking-tight">*drag and drop tasks from to-do till complete</p>
+          <button
+            onClick={() => openAddModal()}
+            className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-black hover:shadow-md active:scale-[0.98]"
+          >
+            <img src="/icons/plus-icon.svg" alt="Add" className="h-6 w-6 invert brightness-0 filter" />
+            Add Task
+          </button>
         </div>
 
-        <main className="flex-1 mx-6 mb-10 overflow-x-auto bg-[#f5f5f5] p-6 relative scrollbar-hide rounded-[20px]">
-          <div className="flex gap-10 items-start justify-center">
+        <main className="flex-1 mx-6 mb-10 overflow-x-auto bg-[#f5f5f5] p-6 relative scrollbar-hide rounded-[16px]">
+          <div className="flex gap-10 items-start justify-center shadow-sm">
             {renderColumn(TaskStatus.TODO, "To-Do")}
             {renderColumn(TaskStatus.IN_PROGRESS, "In Progress")}
             {renderColumn(TaskStatus.COMPLETE, "Complete")}
           </div>
 
-          <div className="absolute bottom-10 left-10">
+          <div className="absolute bottom-5 left-5">
             <button
-              className="flex items-center gap-3 px-8 py-3.5 bg-white rounded-[20px] shadow-lg hover:shadow-xl transition-all hover:bg-gray-50 group border border-gray-100"
+              className="flex items-center gap-3 px-8 py-3.5 bg-white rounded-[16px] shadow-lg hover:shadow-xl transition-all hover:bg-red-50 group border border-gray-100 hover:border-[#D64545]"
               onDragOver={onDragOver}
               onDrop={async (e) => {
                 const taskIdString = e.dataTransfer.getData("taskId");
@@ -205,8 +212,8 @@ export default function Tasks() {
                 }
               }}
             >
-              <img src="/icons/delete-icon.svg" alt="trash" className="h-5 w-5 opacity-60 group-hover:opacity-100 transition-opacity" />
-              <span className="text-sm font-bold text-gray-700">Trash</span>
+              <img src="/icons/delete-icon.svg" alt="trash" className="h-6 w-6 text-black transition-all group-hover:invert-[15%] group-hover:sepia-[95%] group-hover:saturate-[6932%] group-hover:hue-rotate-[358deg] group-hover:contrast-[109%] group-hover:text-red-600" />
+              <span className="text-[16px] font-bold text-foreground group-hover:text-red-600 transition-colors">Delete</span>
             </button>
           </div>
         </main>

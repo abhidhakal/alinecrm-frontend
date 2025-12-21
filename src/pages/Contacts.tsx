@@ -109,8 +109,45 @@ export default function Contacts() {
 
         <ContactsHeader
           onRefresh={fetchContacts}
-          onAddContact={() => setIsModalOpen(true)}
         />
+
+        {/* Controls Toolbar */}
+        <div className="px-8 pt-6 pb-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {/* Search Contacts */}
+            <div className="relative group">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                <img src="/icons/search-icon.svg" alt="Search" className="h-4 w-4 opacity-100" />
+              </div>
+              <input
+                type="text"
+                placeholder="search contacts, companies..."
+                className="h-10 w-[280px] rounded-full border border-transparent bg-gray-100/50 pl-10 pr-4 text-sm text-foreground placeholder:text-gray-500 focus:bg-white focus:border-gray-200 focus:ring-2 focus:ring-gray-100 outline-none transition-all"
+              />
+            </div>
+
+            {/* Filter */}
+            <button className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-gray-700 transition-colors">
+              <img src="/icons/filter-list-on.svg" alt="Filter" className="h-4 w-4" />
+              Filter
+            </button>
+
+            {/* Sort By */}
+            <button className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-gray-700 transition-colors">
+              <img src="/icons/sort-icon.svg" alt="Sort" className="h-4 w-4" />
+              Sort By
+            </button>
+          </div>
+
+          {/* Add Contact */}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
+          >
+            <img src="/icons/plus-icon.svg" alt="Add" className="h-4 w-4 invert brightness-0 filter" />
+            Add Contact
+          </button>
+        </div>
 
         <AddContactModal
           isOpen={isModalOpen}
@@ -129,23 +166,23 @@ export default function Contacts() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b border-gray-100">
-                    <th className="py-4 pl-4 pr-6 text-center w-[60px]">
+                    <th className="py-4 pl-6 pr-3 text-center w-[40px]">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-foreground/5"
+                        className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-foreground/5 mx-auto"
                         checked={selectedContacts.length === contacts.length && contacts.length > 0}
                         onChange={toggleSelectAll}
                       />
                     </th>
-                    <th className="py-4 px-6 text-center text-sm font-bold text-foreground uppercase tracking-wide">Name</th>
-                    <th className="py-4 px-6 text-center text-sm font-bold text-foreground uppercase tracking-wide">Company</th>
-                    <th className="py-4 px-6 text-center text-sm font-bold text-foreground uppercase tracking-wide">Address</th>
-                    <th className="py-4 px-6 text-center text-sm font-bold text-foreground uppercase tracking-wide">Priority</th>
-                    <th className="py-4 px-6 text-center text-sm font-bold text-foreground uppercase tracking-wide">Email</th>
-                    <th className="py-4 px-6 text-center text-sm font-bold text-foreground uppercase tracking-wide">Phone</th>
-                    <th className="py-4 px-6 text-center text-sm font-bold text-foreground uppercase tracking-wide">Created Date</th>
-                    <th className="py-4 pl-6 pr-4 text-center text-sm font-bold text-foreground uppercase tracking-wide">
-                      <img src="/icons/settings-icon.svg" alt="Settings" className="h-4 w-4 mx-auto opacity-70" />
+                    <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Name</th>
+                    <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Company</th>
+                    <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Address</th>
+                    <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Priority</th>
+                    <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Email</th>
+                    <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Phone</th>
+                    <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Created Date</th>
+                    <th className="py-4 px-3 text-center w-[60px]">
+                      <img src="/icons/settings-icon.svg" alt="Settings" className="h-6 w-6 mx-auto" />
                     </th>
                   </tr>
                 </thead>
@@ -158,12 +195,12 @@ export default function Contacts() {
                     </tr>
                   ) : (
                     <>
-                      {contacts.map((contact, index) => (
+                      {contacts.map((contact) => (
                         <tr
                           key={contact.id}
-                          className={`group transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} hover:bg-gray-50`}
+                          className={`group transition-colors border-b border-gray-50 hover:bg-gray-50/50`}
                         >
-                          <td className="py-4 pl-4 pr-6 text-center">
+                          <td className="py-4 pl-6 pr-3 text-center">
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-foreground/5 mx-auto"
@@ -171,28 +208,28 @@ export default function Contacts() {
                               onChange={() => toggleSelectContact(contact.id)}
                             />
                           </td>
-                          <td className="py-4 px-6 text-center text-base font-semibold text-foreground">{contact.name}</td>
-                          <td className="py-4 px-6 text-center text-base font-medium text-foreground">{contact.companyName || '-'}</td>
-                          <td className="py-4 px-6 text-center text-base font-medium text-foreground">{contact.address}</td>
-                          <td className="py-4 px-6 text-center">
+                          <td className="py-4 px-3 text-center text-sm font-semibold text-foreground">{contact.name}</td>
+                          <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{contact.companyName || '-'}</td>
+                          <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{contact.address}</td>
+                          <td className="py-4 px-3 text-center">
                             <span
-                              className={`inline-flex items-center justify-center rounded-full px-4 py-1 text-xs font-medium text-white
-                                ${contact.priority === 'High' ? 'bg-[#D3455B]' : ''}
-                                ${contact.priority === 'Medium' ? 'bg-[#E88F2C]' : ''}
-                                ${contact.priority === 'Low' ? 'bg-[#4CA76D]' : ''}
+                              className={`inline-flex items-center justify-center rounded-full px-4 py-1.5 text-sm font-bold
+                                ${contact.priority === 'High' ? 'bg-red-50 text-red-600' : ''}
+                                ${contact.priority === 'Medium' ? 'bg-orange-50 text-orange-600' : ''}
+                                ${contact.priority === 'Low' ? 'bg-green-50 text-green-600' : ''}
                               `}>
                               {contact.priority}
                             </span>
                           </td>
-                          <td className="py-4 px-6 text-center text-base font-semibold text-foreground">{contact.email}</td>
-                          <td className="py-4 px-6 text-center text-base font-medium text-foreground">{contact.phone}</td>
-                          <td className="py-4 px-6 text-center text-base font-medium text-foreground">{formatDate(contact.createdAt)}</td>
-                          <td className="py-4 pl-6 pr-4 text-center relative">
+                          <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{contact.email}</td>
+                          <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{contact.phone}</td>
+                          <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{formatDate(contact.createdAt)}</td>
+                          <td className="py-4 px-3 text-center relative">
                             <button
                               onClick={() => toggleMenu(contact.id)}
-                              className="p-1 rounded hover:bg-gray-200 transition-colors mx-auto"
+                              className="flex items-center justify-center p-1.5 rounded-lg hover:bg-gray-100 transition-colors mx-auto"
                             >
-                              <img src="/icons/more-vertical.svg" alt="Options" className="h-4 w-4 text-gray-500" />
+                              <img src="/icons/more-vertical.svg" alt="Options" className="h-6 w-6 text-black" />
                             </button>
 
                             {/* Dropdown Menu */}

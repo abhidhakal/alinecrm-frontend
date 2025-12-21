@@ -1,4 +1,4 @@
-import ContactsHeader from "../components/ContactsHeader";
+import SocialsHeader from "../components/SocialsHeader";
 import Sidebar from "../components/Sidebar";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -10,7 +10,7 @@ export default function Socials() {
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'
         }`} >
 
-          <ContactsHeader/>
+          <SocialsHeader/>
 
         </div>
     </div>
