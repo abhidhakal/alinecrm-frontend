@@ -1,6 +1,6 @@
 export default function DashboardHeader() {
   return (
-    <header className="sticky top-0 z-30 flex w-full flex-col gap-5 border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 py-6">
+    <header className="sticky top-0 z-30 flex w-full flex-col gap-4 border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 pt-8 pb-4">
       <div className="flex w-full items-center justify-between">
         {/* Left: Title */}
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">Dashboard</h1>
@@ -31,8 +31,8 @@ export default function DashboardHeader() {
       {/* Sub Header: Customise & Last Updated */}
       <div className="flex w-full items-center justify-between pl-1">
         <div className="flex items-center gap-6">
-          <button className="flex items-center gap-2 text-md font-bold text-foreground hover:text-blakc transition-colors">
-            <img src="/icons/customize-icon.svg" alt="" className="h-5 w-5" />
+          <button className="flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2 text-sm font-bold text-foreground transition-all hover:bg-gray-50 hover:border-gray-300">
+            <img src="/icons/customize-icon.svg" alt="" className="h-4 w-4" />
             Customise
           </button>
           <div className="flex items-center gap-2 text-xs font-semibold text-[#00A86B]">

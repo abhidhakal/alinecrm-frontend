@@ -173,31 +173,36 @@ export default function Tasks() {
   return (
     <div className="flex min-h-screen w-full bg-white relative font-sans">
       <Sidebar />
-      <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
+      <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[90px] max-w-[calc(100vw-110px)]'}`}>
         <TasksHeader onRefresh={fetchTasks} />
 
-        <div className="px-10 pt-2 pb-2 flex items-center justify-between">
-          <p className="text-xs font-bold text-gray-500 opacity-60 tracking-tight">*drag and drop tasks from to-do till complete</p>
-          <button
-            onClick={() => openAddModal()}
-            className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-black hover:shadow-md active:scale-[0.98]"
-          >
-            <img src="/icons/plus-icon.svg" alt="Add" className="h-6 w-6 invert brightness-0 filter" />
-            Add Task
-          </button>
-        </div>
+        <div className="flex-1 p-4 h-[calc(100vh-88px)]">
+          <main className="w-full h-full bg-[#f5f5f5] rounded-[16px] p-6 relative flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between mb-8 px-2">
+              <p className="text-xs font-bold text-muted opacity-70 tracking-tight">*drag and drop tasks from to-do till complete</p>
+              <button
+                onClick={() => openAddModal()}
+                className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-black hover:shadow-md active:scale-[0.98]"
+              >
+                <img src="/icons/task-icon-filled.svg" alt="Add" className="h-5 w-5 invert brightness-0 filter" />
+                Add Task
+              </button>
+            </div>
 
-        <main className="flex-1 mx-6 mb-10 overflow-x-auto bg-[#f5f5f5] p-6 relative scrollbar-hide rounded-[16px]">
-          <div className="flex gap-10 items-start justify-center shadow-sm">
-            {renderColumn(TaskStatus.TODO, "To-Do")}
-            {renderColumn(TaskStatus.IN_PROGRESS, "In Progress")}
-            {renderColumn(TaskStatus.COMPLETE, "Complete")}
-          </div>
+            {/* Columns */}
+            <div className="flex-1 overflow-x-auto scrollbar-hide pb-4">
+              <div className="flex gap-8 items-start justify-center h-full min-w-fit mx-auto">
+                {renderColumn(TaskStatus.TODO, "To-Do")}
+                {renderColumn(TaskStatus.IN_PROGRESS, "In Progress")}
+                {renderColumn(TaskStatus.COMPLETE, "Complete")}
+              </div>
+            </div>
 
-          <div className="absolute bottom-5 left-5">
-            <button
-              className="flex items-center gap-3 px-8 py-3.5 bg-white rounded-[16px] shadow-lg hover:shadow-xl transition-all hover:bg-red-50 group border border-gray-100 hover:border-[#D64545]"
-              onDragOver={onDragOver}
+            {/* Delete Button */}
+            <div className="absolute bottom-8 left-8">
+              <button
+                className="flex items-center gap-3 px-8 py-3.5 bg-white rounded-[16px] shadow-lg hover:shadow-xl transition-all hover:bg-red-50 group border border-gray-100 hover:border-[#D64545]"
+                onDragOver={onDragOver}
               onDrop={async (e) => {
                 const taskIdString = e.dataTransfer.getData("taskId");
                 if (!taskIdString) return;
@@ -212,11 +217,12 @@ export default function Tasks() {
                 }
               }}
             >
-              <img src="/icons/delete-icon.svg" alt="trash" className="h-6 w-6 text-black transition-all group-hover:invert-[15%] group-hover:sepia-[95%] group-hover:saturate-[6932%] group-hover:hue-rotate-[358deg] group-hover:contrast-[109%] group-hover:text-red-600" />
-              <span className="text-[16px] font-bold text-foreground group-hover:text-red-600 transition-colors">Delete</span>
-            </button>
-          </div>
-        </main>
+                <img src="/icons/delete-icon.svg" alt="trash" className="h-6 w-6 text-black transition-all group-hover:invert-[15%] group-hover:sepia-[95%] group-hover:saturate-[6932%] group-hover:hue-rotate-[358deg] group-hover:contrast-[109%] group-hover:text-red-600" />
+                <span className="text-[16px] font-bold text-foreground group-hover:text-red-600 transition-colors">Delete</span>
+              </button>
+            </div>
+          </main>
+        </div>
 
         <TaskModal
           isOpen={isModalOpen}

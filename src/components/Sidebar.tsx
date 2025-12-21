@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../assets/aline-logo.svg';
 import { useSidebar } from '../context/SidebarContext';
+import LogoutConfirmationModal from './LogoutConfirmationModal';
 
 const navItems = [
   {
@@ -44,9 +45,11 @@ const navItems = [
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { isExpanded, setIsExpanded } = useSidebar();
   const [isHovered, setIsHovered] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const userName = user.name || 'John Doe';
@@ -56,7 +59,21 @@ export default function Sidebar() {
     .join('')
     .toUpperCase().substring(0, 2);
 
+  const handleLogout = () => {
+    // Clear all storage
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Close modals
+    setIsLogoutModalOpen(false);
+    setIsProfileOpen(false);
+    
+    // Redirect to login
+    navigate('/login');
+  };
+
   return (
+    <>
     <aside
       className={`fixed left-4 top-4 z-40 h-[calc(100vh-32px)] flex flex-col rounded-[16px] border border-gray-200 bg-white shadow-sm transition-all duration-300 ${isExpanded ? 'w-[250px] px-4' : 'w-[80px] px-3'
         }`}
@@ -144,13 +161,13 @@ export default function Sidebar() {
             <div className="h-px bg-gray-100 my-1 mx-2"></div>
 
             {/* Logout */}
-            <Link
-              to="/login"
-              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors group"
+            <button
+              onClick={() => setIsLogoutModalOpen(true)}
+              className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors group"
             >
               <img src="/icons/logout-icon.svg" alt="Logout" className="w-4 h-4 opacity-80 group-hover:opacity-100" />
               Sign Out
-            </Link>
+            </button>
           </div>
         )}
       </div>
@@ -211,5 +228,12 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+
+    <LogoutConfirmationModal
+      isOpen={isLogoutModalOpen}
+      onClose={() => setIsLogoutModalOpen(false)}
+      onConfirm={handleLogout}
+    />
+    </>
   );
 }
