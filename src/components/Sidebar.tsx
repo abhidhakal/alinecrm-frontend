@@ -38,7 +38,7 @@ const navItems = [
     name: 'Socials',
     icon: '/icons/social-icon.svg',
     activeIcon: '/icons/social-icon.svg',
-    path: '/socials'
+    path: '/social-media'
   },
 ];
 

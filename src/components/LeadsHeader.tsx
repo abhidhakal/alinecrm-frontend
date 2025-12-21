@@ -1,14 +1,14 @@
-interface ContactsHeaderProps {
+interface LeadsHeaderProps {
   onRefresh?: () => void;
-  onAddContact?: () => void;
+  onAddLead?: () => void;
 }
 
-export default function ContactsHeader({ onRefresh, onAddContact }: ContactsHeaderProps) {
+export default function LeadsHeader({ onRefresh, onAddLead }: LeadsHeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex w-full flex-col gap-4 border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 py-6">
       <div className="flex w-full items-center justify-between">
         {/* Left: Title */}
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Contacts</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Leads</h1>
 
         {/* Right: Global Actions */}
         <div className="flex items-center gap-3">
@@ -49,14 +49,14 @@ export default function ContactsHeader({ onRefresh, onAddContact }: ContactsHead
       {/* Sub Header: Controls */}
       <div className="flex w-full items-center justify-between mt-2">
         <div className="flex items-center gap-4">
-          {/* Search Contacts */}
+          {/* Search Leads */}
           <div className="relative group">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
               <img src="/icons/search-icon.svg" alt="Search" className="h-4 w-4 opacity-100" />
             </div>
             <input
               type="text"
-              placeholder="search contacts, companies..."
+              placeholder="search leads, projects..."
               className="h-10 w-[280px] rounded-full border border-transparent bg-gray-100/50 pl-10 pr-4 text-sm text-foreground placeholder:text-gray-500 focus:bg-white focus:border-gray-200 focus:ring-2 focus:ring-gray-100 outline-none transition-all"
             />
           </div>
@@ -74,13 +74,13 @@ export default function ContactsHeader({ onRefresh, onAddContact }: ContactsHead
           </button>
         </div>
 
-        {/* Add Contact */}
+        {/* Add LEad */}
         <button
-          onClick={onAddContact}
+          onClick={onAddLead}
           className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
         >
           <img src="/icons/plus-icon.svg" alt="Add" className="h-4 w-4 invert brightness-0 filter" />
-          Add Contact
+          Add Lead
         </button>
       </div>
     </header>

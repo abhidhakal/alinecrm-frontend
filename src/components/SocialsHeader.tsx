@@ -1,9 +1,8 @@
-interface ContactsHeaderProps {
-  onRefresh?: () => void;
-  onAddContact?: () => void;
+interface SocialsHeaderProps {
+  onRefresh?: ()=> void;
 }
 
-export default function ContactsHeader({ onRefresh, onAddContact }: ContactsHeaderProps) {
+export default function ContactsHeader({ onRefresh }: SocialsHeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex w-full flex-col gap-4 border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 py-6">
       <div className="flex w-full items-center justify-between">
@@ -73,15 +72,6 @@ export default function ContactsHeader({ onRefresh, onAddContact }: ContactsHead
             Sort By
           </button>
         </div>
-
-        {/* Add Contact */}
-        <button
-          onClick={onAddContact}
-          className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
-        >
-          <img src="/icons/plus-icon.svg" alt="Add" className="h-4 w-4 invert brightness-0 filter" />
-          Add Contact
-        </button>
       </div>
     </header>
   );

@@ -11,6 +11,10 @@ import { ToastProvider } from './context/ToastContext';
 import { SidebarProvider } from './context/SidebarContext';
 import Dashboard from './pages/Dashboard';
 import Contacts from './pages/Contacts';
+import Leads from './pages/Leads';
+import Campaigns from './pages/Campaigns';
+import Socials from './pages/Socials';
+import Tasks from './pages/Tasks';
 
 export default function App() {
   return (
@@ -26,6 +30,10 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/contacts" element={<Contacts />} />
+            <Route path="/leads" element={<Leads />} />
+            <Route path="/campaigns" element={<Campaigns />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/social-media" element={<Socials />} />
           </Routes>
         </BrowserRouter>
       </SidebarProvider>
