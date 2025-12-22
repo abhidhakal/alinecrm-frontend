@@ -1,13 +1,13 @@
-interface TasksHeaderProps {
+interface UsersHeaderProps {
   onRefresh?: () => void;
 }
 
-export default function TasksHeader({ onRefresh }: TasksHeaderProps) {
+export default function UsersHeader({ onRefresh }: UsersHeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex w-full items-center justify-between border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 pt-8 pb-4">
       {/* Left: Title and Last Updated */}
       <div className="flex items-center gap-4">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Tasks</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Users</h1>
         <div className="flex items-center gap-2 text-xs font-semibold text-[#00A86B]">
           <div className="h-1.5 w-1.5 rounded-full bg-[#00A86B]"></div>
           Last updated just now
@@ -23,7 +23,7 @@ export default function TasksHeader({ onRefresh }: TasksHeaderProps) {
           </div>
           <input
             type="text"
-            placeholder="search anything"
+            placeholder="search users"
             className="h-10 w-[220px] rounded-full border border-gray-100 bg-gray-50/50 pl-10 pr-4 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-400 focus:border-gray-200 focus:bg-white focus:ring-4 focus:ring-gray-100"
           />
         </div>

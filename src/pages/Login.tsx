@@ -4,12 +4,14 @@ import axios from 'axios';
 import Mascot from '../assets/aline-mascot.png';
 import Logo from '../assets/aline-logo.svg';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const { showToast } = useToast();
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -25,12 +27,18 @@ export default function Login() {
                 password
             });
 
-            // Store token and user data
-            localStorage.setItem('access_token', response.data.access_token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
+            // Store token and user data using AuthContext
+            login(response.data.access_token, response.data.user);
 
             showToast('Login successful!', 'success');
-            navigate('/dashboard');
+            
+            // Redirect based on role
+            const userRole = response.data.user.role;
+            if (userRole === 'admin' || userRole === 'superadmin') {
+                navigate('/admin/dashboard');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (error: any) {
             const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
             showToast(Array.isArray(message) ? message[0] : message, 'error');
@@ -41,7 +49,7 @@ export default function Login() {
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-[#F5F5F5]">
-            <div className="flex w-full max-w-[1200px] items-center justify-between rounded-[40px] bg-white p-12 shadow-sm md:flex-row flex-col gap-10">
+            <div className="relative flex w-full max-w-[1200px] items-center justify-between rounded-[40px] bg-white p-12 shadow-sm md:flex-row flex-col gap-10">
 
                 {/* Left Side - Mascot */}
                 <div className="flex w-full md:w-1/2 items-center justify-center">
@@ -117,6 +125,15 @@ export default function Login() {
                         </button>
                     </div>
                 </div>
+
+                {/* Return to HomePage */}
+                <button 
+                    onClick={() => navigate('/')} 
+                    className="absolute bottom-12 right-12 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
+                >
+                    <img src="/icons/chevron-left.svg" alt="Back" className="h-4 w-4" />
+                    Return to HomePage
+                </button>
             </div>
         </div>
     );
