@@ -43,7 +43,7 @@ export default function DashboardHeader() {
 
         <div className="flex items-center gap-2">
           <button className="flex items-center gap-2 mr-2 rounded-xl bg-[#1A1A1A] px-10 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-black hover:shadow-md active:scale-[0.98]">
-            <img src="/icons/plus-icon.svg" alt="Add" className="h-4 w-4 invert brightness-0 filter" />
+            <img src="/icons/plus-icon.svg" alt="Add" className="h-5 w-5 invert brightness-0 filter" />
             Add New
           </button>
 

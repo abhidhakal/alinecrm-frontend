@@ -14,31 +14,31 @@ const navItems = [
   {
     name: 'Leads',
     icon: '/icons/filter-icon.svg',
-    activeIcon: '/icons/filter-icon.svg',
+    activeIcon: '/icons/filter-icon-filled.svg',
     path: '/leads'
   },
   {
     name: 'Contacts',
     icon: '/icons/contact-icon.svg',
-    activeIcon: '/icons/contact-icon.svg',
+    activeIcon: '/icons/contact-icon-filled.svg',
     path: '/contacts'
   },
   {
     name: 'Campaigns',
     icon: '/icons/campaign-icon.svg',
-    activeIcon: '/icons/campaign-icon.svg',
+    activeIcon: '/icons/campaign-icon-filled.svg',
     path: '/campaigns'
   },
   {
     name: 'Tasks',
     icon: '/icons/task-icon.svg',
-    activeIcon: '/icons/task-icon.svg',
+    activeIcon: '/icons/task-icon-filled.svg',
     path: '/tasks'
   },
   {
     name: 'Socials',
     icon: '/icons/social-icon.svg',
-    activeIcon: '/icons/social-icon.svg',
+    activeIcon: '/icons/social-icon-filled.svg',
     path: '/social-media'
   },
 ];

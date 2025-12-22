@@ -180,13 +180,22 @@ export default function Tasks() {
           <main className="w-full h-full bg-[#f5f5f5] rounded-[16px] p-6 relative flex flex-col overflow-hidden">
             <div className="flex items-center justify-between mb-8 px-2">
               <p className="text-xs font-bold text-muted opacity-70 tracking-tight">*drag and drop tasks from to-do till complete</p>
-              <button
+              <div className="flex flex-row gap-4">
+                <button
+                onClick={() => openAddModal()}
+                className="flex items-center gap-2 rounded-xl bg-white-700 border border-border px-6 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-white hover:shadow-md active:scale-[0.98]"
+              >
+                <img src="/icons/plus-icon.svg" alt="Add" className="h-5 w-5 filter" />
+                Add Card
+              </button>
+                <button
                 onClick={() => openAddModal()}
                 className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-black hover:shadow-md active:scale-[0.98]"
               >
                 <img src="/icons/task-icon-filled.svg" alt="Add" className="h-5 w-5 invert brightness-0 filter" />
                 Add Task
               </button>
+              </div>
             </div>
 
             {/* Columns */}
@@ -199,7 +208,7 @@ export default function Tasks() {
             </div>
 
             {/* Delete Button */}
-            <div className="absolute bottom-8 left-8">
+            <div className="absolute bottom-5 left-5">
               <button
                 className="flex items-center gap-3 px-8 py-3.5 bg-white rounded-[16px] shadow-lg hover:shadow-xl transition-all hover:bg-red-50 group border border-gray-100 hover:border-[#D64545]"
                 onDragOver={onDragOver}
