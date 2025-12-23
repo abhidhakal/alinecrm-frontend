@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const { showToast } = useToast();
     const { login } = useAuth();
@@ -84,13 +85,26 @@ export default function Login() {
                         {/* Password Input */}
                         <div className="flex flex-col gap-2">
                             <label className="text-sm font-semibold text-foreground">Enter your password</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="********"
-                                className="w-full rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-gray-200"
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="********"
+                                    className="w-full rounded-lg bg-gray-100 px-4 py-3 pr-12 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-gray-200"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
+                                >
+                                    <img 
+                                        src={showPassword ? "/icons/visibility-off.svg" : "/icons/visibility-on.svg"} 
+                                        alt={showPassword ? "Hide password" : "Show password"} 
+                                        className="h-5 w-5"
+                                    />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Remember Me */}
@@ -129,10 +143,17 @@ export default function Login() {
                 {/* Return to HomePage */}
                 <button 
                     onClick={() => navigate('/')} 
-                    className="absolute bottom-12 right-12 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
+                    className="absolute bottom-12 right-44 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
                 >
                     <img src="/icons/chevron-left.svg" alt="Back" className="h-4 w-4" />
                     Return to HomePage
+                </button>
+
+                <button 
+                    onClick={() => navigate('/')} 
+                    className="absolute bottom-12 right-12 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
+                >
+                    Click to Sign Up
                 </button>
             </div>
         </div>

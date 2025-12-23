@@ -10,6 +10,7 @@ export default function Leads() {
   const { isExpanded } = useSidebar();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -23,6 +24,7 @@ export default function Leads() {
       setLoading(true);
       const data = await leadsApi.getAll();
       setLeads(data);
+      setLastUpdated(new Date());
     } catch (error) {
       console.error('Error fetching leads:', error);
     } finally {
@@ -105,7 +107,7 @@ export default function Leads() {
       <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
         
-        <LeadsHeader />
+        <LeadsHeader onRefresh={fetchLeads} lastUpdated={lastUpdated} />
 
         <div className="p-8 space-y-8">
 
@@ -352,20 +354,28 @@ export default function Leads() {
 
                     {/* Card Footer */}
                     <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${
-                        lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
-                        lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
-                        lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
-                        'bg-gray-50 text-gray-600 ring-gray-500/20'
-                      }`}>
-                        <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
-                          lead.status === 'New' ? 'bg-blue-600' :
-                          lead.status === 'Qualified' ? 'bg-green-600' :
-                          lead.status === 'Closed Won' ? 'bg-purple-600' :
-                          'bg-gray-500'
-                        }`}></span>
-                        {lead.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${
+                          lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
+                          lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
+                          lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
+                          'bg-gray-50 text-gray-600 ring-gray-500/20'
+                        }`}>
+                          <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
+                            lead.status === 'New' ? 'bg-blue-600' :
+                            lead.status === 'Qualified' ? 'bg-green-600' :
+                            lead.status === 'Closed Won' ? 'bg-purple-600' :
+                            'bg-gray-500'
+                          }`}></span>
+                          {lead.status}
+                        </span>
+                        {lead.assignedTo && (
+                          <div className="flex items-center gap-1.5 rounded-full bg-gray-50 px-2 py-1 border border-gray-100" title={`Assigned to ${lead.assignedTo.name}`}>
+                            <img src={`https://i.pravatar.cc/150?u=${lead.assignedTo.id}`} alt="" className="h-4 w-4 rounded-full" />
+                            <span className="text-[10px] font-bold text-gray-600">{lead.assignedTo.name.split(' ')[0]}</span>
+                          </div>
+                        )}
+                      </div>
                       <div className="text-right">
                         <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Potential Value</p>
                         <p className="text-sm font-bold text-gray-900">

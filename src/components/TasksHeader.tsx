@@ -1,8 +1,13 @@
+import { useRelativeTime } from '../hooks/useRelativeTime';
+
 interface TasksHeaderProps {
   onRefresh?: () => void;
+  lastUpdated?: Date | null;
 }
 
-export default function TasksHeader({ onRefresh }: TasksHeaderProps) {
+export default function TasksHeader({ onRefresh, lastUpdated = null }: TasksHeaderProps) {
+  const relativeTime = useRelativeTime(lastUpdated);
+  
   return (
     <header className="sticky top-0 z-30 flex w-full items-center justify-between border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 pt-8 pb-4">
       {/* Left: Title and Last Updated */}
@@ -10,7 +15,7 @@ export default function TasksHeader({ onRefresh }: TasksHeaderProps) {
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Tasks</h1>
         <div className="flex items-center gap-2 text-xs font-semibold text-[#00A86B]">
           <div className="h-1.5 w-1.5 rounded-full bg-[#00A86B]"></div>
-          Last updated just now
+          Last updated {relativeTime}
         </div>
       </div>
 

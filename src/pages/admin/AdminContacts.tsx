@@ -10,6 +10,7 @@ export default function AdminContacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedContacts, setSelectedContacts] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,7 @@ export default function AdminContacts() {
       setLoading(true);
       const data = await contactsApi.getAll();
       setContacts(data);
+      setLastUpdated(new Date());
     } catch (error) {
       console.error('Error fetching contacts:', error);
     } finally {
@@ -109,6 +111,7 @@ export default function AdminContacts() {
 
         <ContactsHeader
           onRefresh={fetchContacts}
+          lastUpdated={lastUpdated}
         />
 
         {/* Admin Banner */}

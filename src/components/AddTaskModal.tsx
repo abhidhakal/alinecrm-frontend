@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TaskStatus, type TaskStatusType, tasksApi } from "../api/tasks";
+import { usersApi, type User } from "../api/users";
+import { useAuth } from "../context/AuthContext";
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -9,12 +11,27 @@ interface AddTaskModalProps {
 }
 
 export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus }: AddTaskModalProps) {
+  const { user: currentUser, isAdmin } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [status] = useState<TaskStatusType>(initialStatus || TaskStatus.TODO);
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [assignedToId, setAssignedToId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (isOpen && isAdmin) {
+      usersApi.getAll().then(setUsers).catch(console.error);
+    }
+  }, [isOpen, isAdmin]);
+
+  useEffect(() => {
+    if (currentUser && !assignedToId) {
+      setAssignedToId(currentUser.id);
+    }
+  }, [currentUser]);
 
   if (!isOpen) return null;
 
@@ -29,6 +46,7 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
         dueDate: dueDate ? new Date(dueDate).toISOString() : new Date().toISOString(),
         status,
         progress: 0,
+        assignedToIds: assignedToId ? [assignedToId] : [],
       });
       onSuccess();
       onClose();
@@ -142,27 +160,32 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
             <div className="space-y-4">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Assigned To</h3>
               <div className="space-y-3">
-                {[
-                  { name: "John Doe", id: 1 },
-                  { name: "Anne Lee", id: 2 },
-                  { name: "Oleg Fitzergald", id: 3 },
-                ].map((u) => (
-                  <div key={u.id} className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
-                    <img src={`https://i.pravatar.cc/150?u=${u.id}`} className="h-8 w-8 rounded-full object-cover" />
-                    <span className="text-xs font-bold text-gray-700">{u.name}</span>
+                {isAdmin ? (
+                  <select
+                    value={assignedToId || ''}
+                    onChange={(e) => setAssignedToId(Number(e.target.value))}
+                    className="w-full text-xs font-bold text-gray-700 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm outline-none focus:border-gray-300 transition-all"
+                  >
+                    {users.map(u => (
+                      <option key={u.id} value={u.id}>
+                        {u.name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
+                    <img src={`https://i.pravatar.cc/150?u=${currentUser?.id}`} className="h-8 w-8 rounded-full object-cover" />
+                    <span className="text-xs font-bold text-gray-700">{currentUser?.name}</span>
                   </div>
-                ))}
-                <button className="w-full py-2 border border-dashed border-gray-300 rounded-xl text-xs font-bold text-gray-400 hover:border-gray-400 hover:text-gray-500 transition-all">
-                  + Add Assignee
-                </button>
+                )}
               </div>
             </div>
 
             <div className="space-y-4">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Assigned By</h3>
               <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
-                <img src="https://i.pravatar.cc/150?u=99" className="h-8 w-8 rounded-full object-cover" />
-                <span className="text-xs font-bold text-gray-700">Jake Bailey</span>
+                <img src={`https://i.pravatar.cc/150?u=${currentUser?.id}`} className="h-8 w-8 rounded-full object-cover" />
+                <span className="text-xs font-bold text-gray-700">{currentUser?.name}</span>
               </div>
             </div>
           </div>

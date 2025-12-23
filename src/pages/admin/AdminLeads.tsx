@@ -10,6 +10,7 @@ export default function AdminLeads() {
   const { isExpanded } = useSidebar();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -23,6 +24,7 @@ export default function AdminLeads() {
       setLoading(true);
       const data = await leadsApi.getAll();
       setLeads(data);
+      setLastUpdated(new Date());
     } catch (error) {
       console.error('Error fetching leads:', error);
     } finally {
@@ -105,7 +107,7 @@ export default function AdminLeads() {
       <AdminSidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
         
-        <LeadsHeader />
+        <LeadsHeader onRefresh={fetchLeads} lastUpdated={lastUpdated} />
 
         {/* Admin Banner */}
         <div className="mx-8 mt-6 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white shadow-lg">

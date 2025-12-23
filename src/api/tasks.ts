@@ -24,10 +24,22 @@ export interface Task {
   updatedAt: string;
 }
 
+export interface CreateTaskDto {
+  title: string;
+  description: string;
+  category?: string;
+  progress?: number;
+  dueDate: string;
+  status?: TaskStatusType;
+  assignedToIds?: number[];
+  relatedLeadId?: number;
+  relatedContactId?: number;
+}
+
 export const tasksApi = {
   getAll: () => api.get<Task[]>('/tasks'),
   getOne: (id: number) => api.get<Task>(`/tasks/${id}`),
-  create: (data: Partial<Task>) => api.post<Task>('/tasks', data),
+  create: (data: CreateTaskDto) => api.post<Task>('/tasks', data),
   update: (id: number, data: Partial<Task>) => api.patch<Task>(`/tasks/${id}`, data),
   delete: (id: number) => api.delete(`/tasks/${id}`),
 };

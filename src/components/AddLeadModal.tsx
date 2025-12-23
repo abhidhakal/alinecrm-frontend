@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { CreateLeadDto } from '../api/leads';
 import { contactsApi, type Contact } from '../api/contacts';
+import { usersApi, type User } from '../api/users';
+import { useAuth } from '../context/AuthContext';
 
 interface AddLeadModalProps {
   isOpen: boolean;
@@ -9,6 +11,7 @@ interface AddLeadModalProps {
 }
 
 export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModalProps) {
+  const { user: currentUser, isAdmin } = useAuth();
   const [formData, setFormData] = useState<CreateLeadDto>({
     name: '',
     email: '',
@@ -20,18 +23,29 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
     potentialValue: 0,
     probability: 0,
     notes: '',
-    contactId: undefined
+    contactId: undefined,
+    assignedToId: currentUser?.id
   });
   const [submitting, setSubmitting] = useState(false);
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [contactSearch, setContactSearch] = useState('');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       contactsApi.getAll().then(setContacts).catch(console.error);
+      if (isAdmin) {
+        usersApi.getAll().then(setUsers).catch(console.error);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, isAdmin]);
+
+  useEffect(() => {
+    if (currentUser && !formData.assignedToId) {
+      setFormData(prev => ({ ...prev, assignedToId: currentUser.id }));
+    }
+  }, [currentUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +63,8 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
         potentialValue: 0,
         probability: 0,
         notes: '',
-        contactId: undefined
+        contactId: undefined,
+        assignedToId: currentUser?.id
       });
       setSelectedContact(null);
       setContactSearch('');
@@ -90,17 +105,17 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl">
-        <div className="mb-6 flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="w-full max-w-5xl rounded-2xl bg-white p-6 shadow-xl max-h-[95vh] overflow-y-auto">
+        <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">Add New Lead</h2>
           <button onClick={onClose} className="rounded-full p-2 hover:bg-gray-100">
             <img src="/icons/close-icon-large.svg" alt="Close" className="h-6 w-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Full Name *</label>
               <input
@@ -170,6 +185,23 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
                 <option value="Closed Lost">Closed Lost</option>
               </select>
             </div>
+            {isAdmin && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Assigned To</label>
+                <select
+                  name="assignedToId"
+                  value={formData.assignedToId || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, assignedToId: Number(e.target.value) }))}
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                >
+                  {users.map(u => (
+                    <option key={u.id} value={u.id}>
+                      {u.name} ({u.role})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Potential Value ($)</label>
               <input

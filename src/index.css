@@ -23,13 +23,13 @@
 
 html {
   scroll-behavior: smooth;
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   line-height: 1.6;
 
   margin: 0;
@@ -43,14 +43,27 @@ h4,
 h5,
 h6, 
 p {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   font-weight: 600;
   line-height: 1.2;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hero-gradient {
+    background: linear-gradient(to bottom, #ffffff 0%, #BFD7EA 35%, #65889F 80%, #0B3954 100%);
+  }
 }
 
 input,
 button,
 textarea,
 select {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
 }

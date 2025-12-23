@@ -10,6 +10,7 @@ export default function Contacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedContacts, setSelectedContacts] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,7 @@ export default function Contacts() {
       setLoading(true);
       const data = await contactsApi.getAll();
       setContacts(data);
+      setLastUpdated(new Date());
     } catch (error) {
       console.error('Error fetching contacts:', error);
     } finally {
@@ -109,6 +111,7 @@ export default function Contacts() {
 
         <ContactsHeader
           onRefresh={fetchContacts}
+          lastUpdated={lastUpdated}
         />
 
         {/* Controls Toolbar */}
@@ -178,6 +181,7 @@ export default function Contacts() {
                     <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Company</th>
                     <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Address</th>
                     <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Priority</th>
+                    <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Assigned To</th>
                     <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Email</th>
                     <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Phone</th>
                     <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Created Date</th>
@@ -220,6 +224,16 @@ export default function Contacts() {
                               `}>
                               {contact.priority}
                             </span>
+                          </td>
+                          <td className="py-4 px-3 text-center">
+                            {contact.user ? (
+                              <div className="flex items-center justify-center gap-2">
+                                <img src={`https://i.pravatar.cc/150?u=${contact.user.id}`} alt="" className="h-6 w-6 rounded-full" />
+                                <span className="text-sm font-medium text-foreground">{contact.user.name}</span>
+                              </div>
+                            ) : (
+                              <span className="text-sm text-gray-400">-</span>
+                            )}
                           </td>
                           <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{contact.email}</td>
                           <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{contact.phone}</td>

@@ -9,6 +9,7 @@ export interface Contact {
   companyName: string;
   industry?: string;
   priority: 'High' | 'Medium' | 'Low';
+  user?: { id: number; name: string; email: string };
   createdAt: string;
 }
 
@@ -20,6 +21,7 @@ export interface CreateContactDto {
   companyName?: string;
   industry?: string;
   priority?: 'High' | 'Medium' | 'Low';
+  assignedToId?: number;
 }
 
 export const contactsApi = {

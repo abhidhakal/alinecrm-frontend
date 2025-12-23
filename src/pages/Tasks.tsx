@@ -13,11 +13,13 @@ export default function Tasks() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [initialStatus, setInitialStatus] = useState<TaskStatusType>(TaskStatus.TODO);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchTasks = async () => {
     try {
       const response = await tasksApi.getAll();
       setTasks(response.data);
+      setLastUpdated(new Date());
     } catch (error) {
       console.error("Failed to fetch tasks:", error);
     }
@@ -134,14 +136,23 @@ export default function Tasks() {
 
               <div className="flex items-center mb-5">
                 <div className="flex -space-x-3 overflow-hidden">
-                  {[1, 2, 3].map((_, i) => (
+                  {task.assignedTo?.length > 0 ? (
+                    task.assignedTo.map((user) => (
+                      <img
+                        key={user.id}
+                        className="inline-block h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover"
+                        src={`https://i.pravatar.cc/150?u=${user.id}`}
+                        alt={user.name}
+                        title={user.name}
+                      />
+                    ))
+                  ) : (
                     <img
-                      key={i}
                       className="inline-block h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover"
-                      src={`https://i.pravatar.cc/150?u=${task.id}-${i}`}
-                      alt="avatar"
+                      src={`https://i.pravatar.cc/150?u=1`}
+                      alt="Default"
                     />
-                  ))}
+                  )}
                 </div>
               </div>
 
@@ -174,7 +185,7 @@ export default function Tasks() {
     <div className="flex min-h-screen w-full bg-white relative font-sans">
       <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
-        <TasksHeader onRefresh={fetchTasks} />
+        <TasksHeader onRefresh={fetchTasks} lastUpdated={lastUpdated} />
 
         <div className="px-10 pt-6 pb-2 flex items-center justify-between">
           <p className="text-xs font-bold text-gray-500 opacity-60 tracking-tight">*drag and drop tasks from to-do till complete</p>

@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { CreateContactDto } from '../api/contacts';
+import { usersApi, type User } from '../api/users';
+import { useAuth } from '../context/AuthContext';
 
 interface AddContactModalProps {
   isOpen: boolean;
@@ -8,6 +10,7 @@ interface AddContactModalProps {
 }
 
 export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContactModalProps) {
+  const { user: currentUser, isAdmin } = useAuth();
   const [formData, setFormData] = useState<CreateContactDto>({
     name: '',
     email: '',
@@ -15,9 +18,23 @@ export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContac
     address: '',
     companyName: '',
     industry: '',
-    priority: 'Medium'
+    priority: 'Medium',
+    assignedToId: currentUser?.id
   });
   const [submitting, setSubmitting] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    if (isOpen && isAdmin) {
+      usersApi.getAll().then(setUsers).catch(console.error);
+    }
+  }, [isOpen, isAdmin]);
+
+  useEffect(() => {
+    if (currentUser && !formData.assignedToId) {
+      setFormData(prev => ({ ...prev, assignedToId: currentUser.id }));
+    }
+  }, [currentUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +49,8 @@ export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContac
         address: '',
         companyName: '',
         industry: '',
-        priority: 'Medium'
+        priority: 'Medium',
+        assignedToId: currentUser?.id
       });
       onClose();
     } catch (error) {
@@ -133,6 +151,26 @@ export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContac
               </select>
             </div>
           </div>
+
+          {isAdmin && (
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-2">
+                Assigned To
+              </label>
+              <select
+                name="assignedToId"
+                value={formData.assignedToId || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, assignedToId: Number(e.target.value) }))}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-gray-100 outline-none transition-all"
+              >
+                {users.map(u => (
+                  <option key={u.id} value={u.id}>
+                    {u.name} ({u.role})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Address */}
           <div>

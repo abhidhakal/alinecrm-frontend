@@ -13,11 +13,13 @@ export default function AdminTasks() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [initialStatus, setInitialStatus] = useState<TaskStatusType>(TaskStatus.TODO);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchTasks = async () => {
     try {
       const response = await tasksApi.getAll();
       setTasks(response.data);
+      setLastUpdated(new Date());
     } catch (error) {
       console.error("Failed to fetch tasks:", error);
     }
@@ -174,7 +176,7 @@ export default function AdminTasks() {
     <div className="flex min-h-screen w-full bg-white relative font-sans">
       <AdminSidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
-        <TasksHeader onRefresh={fetchTasks} />
+        <TasksHeader onRefresh={fetchTasks} lastUpdated={lastUpdated} />
 
         {/* Admin Banner */}
         <div className="mx-10 mt-6 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white shadow-lg">

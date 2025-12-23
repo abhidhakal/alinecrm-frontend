@@ -13,6 +13,8 @@ export interface Lead {
   probability?: number;
   notes?: string;
   contactId?: number;
+  assignedToId?: number;
+  assignedTo?: { id: number; name: string; email: string };
   createdAt: string;
   updatedAt: string;
 }
@@ -29,6 +31,7 @@ export interface CreateLeadDto {
   probability?: number;
   notes?: string;
   contactId?: number;
+  assignedToId?: number;
 }
 
 export interface UpdateLeadDto extends Partial<CreateLeadDto> {}
