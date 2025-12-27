@@ -8,13 +8,13 @@ export interface Lead {
   companyName?: string;
   jobTitle?: string;
   status: 'New' | 'Contacted' | 'Qualified' | 'Proposal' | 'Negotiation' | 'Closed Won' | 'Closed Lost';
-  source?: string;
+  source?: 'Organic' | 'Social Media' | 'Word of Mouth' | 'Contacts';
+  inquiredFor?: string;
   potentialValue?: number;
   probability?: number;
   notes?: string;
   contactId?: number;
-  assignedToId?: number;
-  assignedTo?: { id: number; name: string; email: string };
+  assignedTo?: { id: number; name: string; email: string; profilePicture?: string }[];
   createdAt: string;
   updatedAt: string;
 }
@@ -26,12 +26,13 @@ export interface CreateLeadDto {
   companyName?: string;
   jobTitle?: string;
   status?: string;
-  source?: string;
+  source?: 'Organic' | 'Social Media' | 'Word of Mouth' | 'Contacts';
+  inquiredFor?: string;
   potentialValue?: number;
   probability?: number;
   notes?: string;
   contactId?: number;
-  assignedToId?: number;
+  assignedToIds?: number[];
 }
 
 export interface UpdateLeadDto extends Partial<CreateLeadDto> {}

@@ -75,24 +75,41 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               <div className="space-y-2">
                 {task.assignedTo?.length > 0 ? task.assignedTo.map((user) => (
                   <div key={user.id} className="flex items-center gap-3 bg-gray-50 p-2.5 rounded-xl">
-                    <img src={`https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} className="h-9 w-9 rounded-full border-2 border-white shadow-sm" />
+                    {user.profilePicture ? (
+                      <img src={user.profilePicture} alt={user.name} className="h-9 w-9 rounded-full border-2 border-white shadow-sm object-cover" />
+                    ) : (
+                      <div className="h-9 w-9 rounded-full border-2 border-white shadow-sm bg-gray-200 flex items-center justify-center">
+                        <span className="text-xs font-bold text-gray-600">
+                          {user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                        </span>
+                      </div>
+                    )}
                     <span className="text-sm font-bold text-gray-800">{user.name}</span>
                   </div>
                 )) : (
-                  <div className="flex items-center gap-3 bg-gray-50 p-2.5 rounded-xl">
-                    <img src={`https://i.pravatar.cc/150?u=1`} alt="John Doe" className="h-9 w-9 rounded-full border-2 border-white shadow-sm" />
-                    <span className="text-sm font-bold text-gray-800">John Doe</span>
-                  </div>
+                  <div className="text-sm text-gray-500 italic">Not assigned</div>
                 )}
               </div>
             </div>
 
             <div className="space-y-3">
               <h3 className="text-base font-bold text-foreground">Assigned By</h3>
-              <div className="flex items-center gap-3 bg-gray-50 p-2.5 rounded-xl">
-                <img src={`https://i.pravatar.cc/150?u=${task.assignedBy?.id || 99}`} alt="Assigner" className="h-9 w-9 rounded-full border-2 border-white shadow-sm" />
-                <span className="text-sm font-bold text-gray-800">{task.assignedBy?.name || "Jake Bailey"}</span>
-              </div>
+              {task.assignedBy ? (
+                <div className="flex items-center gap-3 bg-gray-50 p-2.5 rounded-xl">
+                  {task.assignedBy.profilePicture ? (
+                    <img src={task.assignedBy.profilePicture} alt={task.assignedBy.name} className="h-9 w-9 rounded-full border-2 border-white shadow-sm object-cover" />
+                  ) : (
+                    <div className="h-9 w-9 rounded-full border-2 border-white shadow-sm bg-gray-200 flex items-center justify-center">
+                      <span className="text-xs font-bold text-gray-600">
+                        {task.assignedBy.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                      </span>
+                    </div>
+                  )}
+                  <span className="text-sm font-bold text-gray-800">{task.assignedBy.name}</span>
+                </div>
+              ) : (
+                <div className="text-sm text-gray-500 italic">Unknown</div>
+              )}
             </div>
           </div>
 

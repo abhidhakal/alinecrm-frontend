@@ -3,11 +3,18 @@ import { useRelativeTime } from '../hooks/useRelativeTime';
 interface LeadsHeaderProps {
   onRefresh?: () => void;
   lastUpdated?: Date | null;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
 }
 
-export default function LeadsHeader({ onRefresh, lastUpdated = null }: LeadsHeaderProps) {
+export default function LeadsHeader({
+  onRefresh,
+  lastUpdated = null,
+  searchQuery = '',
+  onSearchChange
+}: LeadsHeaderProps) {
   const relativeTime = useRelativeTime(lastUpdated);
-  
+
   return (
     <header className="sticky top-0 z-30 flex w-full items-center justify-between border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 pt-8 pb-4">
       {/* Left: Title and Last Updated */}
@@ -29,6 +36,8 @@ export default function LeadsHeader({ onRefresh, lastUpdated = null }: LeadsHead
           <input
             type="text"
             placeholder="search anything"
+            value={searchQuery}
+            onChange={(e) => onSearchChange?.(e.target.value)}
             className="h-10 w-[220px] rounded-full border border-gray-100 bg-gray-50/50 pl-10 pr-4 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-400 focus:border-gray-200 focus:bg-white focus:ring-4 focus:ring-gray-100"
           />
         </div>

@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import Sidebar from "../components/Sidebar";
-import ContactsHeader from "../components/ContactsHeader";
-import AddContactModal from "../components/AddContactModal";
-import { contactsApi } from "../api/contacts";
-import type { Contact, CreateContactDto } from "../api/contacts";
-import { useSidebar } from "../context/SidebarContext";
+import Sidebar from "../../components/Sidebar";
+import ContactsHeader from "../../components/ContactsHeader";
+import AddContactModal from "../../components/AddContactModal";
+import { contactsApi } from "../../api/contacts";
+import type { Contact, CreateContactDto } from "../../api/contacts";
+import { useSidebar } from "../../context/SidebarContext";
 
 export default function Contacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -12,8 +12,11 @@ export default function Contacts() {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { isExpanded } = useSidebar();
 
   useEffect(() => {
@@ -33,16 +36,78 @@ export default function Contacts() {
     }
   };
 
-  const handleCreateContact = async (data: CreateContactDto) => {
-    await contactsApi.create(data);
-    await fetchContacts();
+  const handleCsvImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const text = e.target?.result as string;
+      const rows = text.split('\n').map(row => row.split(','));
+      const headers = rows[0].map(h => h.trim().toLowerCase());
+
+      const newContacts: CreateContactDto[] = rows.slice(1)
+        .filter(row => row.length >= headers.length && row[0].trim() !== '')
+        .map(row => {
+          const contact: any = {};
+          headers.forEach((header, index) => {
+            if (header === 'name') contact.name = row[index].trim();
+            if (header === 'email') contact.email = row[index].trim();
+            if (header === 'phone') contact.phone = row[index].trim();
+            if (header === 'address') contact.address = row[index].trim();
+            if (header === 'company') contact.companyName = row[index].trim();
+            if (header === 'industry') contact.industry = row[index].trim();
+            if (header === 'priority') contact.priority = (row[index].trim() as any) || 'Medium';
+          });
+          return contact as CreateContactDto;
+        });
+
+      try {
+        setLoading(true);
+        await contactsApi.bulkCreate(newContacts);
+        await fetchContacts();
+        alert(`Successfully imported ${newContacts.length} contacts`);
+      } catch (error) {
+        console.error('Error importing contacts:', error);
+        alert('Failed to import contacts. Please check your CSV format.');
+      } finally {
+        setLoading(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const filteredContacts = contacts.filter(contact => {
+    const query = searchQuery.toLowerCase();
+    return (
+      contact.name.toLowerCase().includes(query) ||
+      (contact.companyName && contact.companyName.toLowerCase().includes(query)) ||
+      contact.email.toLowerCase().includes(query) ||
+      contact.address.toLowerCase().includes(query)
+    );
+  });
+
+  const handleSubmitContact = async (data: CreateContactDto) => {
+    try {
+      if (editingContact) {
+        await contactsApi.update(editingContact.id, data);
+      } else {
+        await contactsApi.create(data);
+      }
+      await fetchContacts();
+      setIsModalOpen(false);
+      setEditingContact(null);
+    } catch (error) {
+      console.error('Error submitting contact:', error);
+    }
   };
 
   const toggleSelectAll = () => {
-    if (selectedContacts.length === contacts.length) {
+    if (selectedContacts.length === filteredContacts.length) {
       setSelectedContacts([]);
     } else {
-      setSelectedContacts(contacts.map(c => c.id));
+      setSelectedContacts(filteredContacts.map(c => c.id));
     }
   };
 
@@ -68,9 +133,9 @@ export default function Contacts() {
   };
 
   const handleEdit = (contact: Contact) => {
-    console.log('Edit contact:', contact);
+    setEditingContact(contact);
+    setIsModalOpen(true);
     setOpenMenuId(null);
-    // TODO: Implement edit functionality
   };
 
   const handleDelete = async (contactId: number) => {
@@ -112,6 +177,8 @@ export default function Contacts() {
         <ContactsHeader
           onRefresh={fetchContacts}
           lastUpdated={lastUpdated}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
 
         {/* Controls Toolbar */}
@@ -125,6 +192,8 @@ export default function Contacts() {
               <input
                 type="text"
                 placeholder="search contacts, companies..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-10 w-[280px] rounded-full border border-transparent bg-gray-100/50 pl-10 pr-4 text-sm text-foreground placeholder:text-gray-500 focus:bg-white focus:border-gray-200 focus:ring-2 focus:ring-gray-100 outline-none transition-all"
               />
             </div>
@@ -142,20 +211,42 @@ export default function Contacts() {
             </button>
           </div>
 
-          {/* Add Contact */}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
-          >
-            <img src="/icons/contact-icon-filled.svg" alt="Add" className="h-5 w-5 invert brightness-0 filter" />
-            Add Contact
-          </button>
+          <div className="flex items-center gap-3">
+            {/* CSV Import */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleCsvImport}
+              accept=".csv"
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-gray-50 hover:shadow-md active:scale-[0.98]"
+            >
+              <img src="/icons/csv-icon.svg" alt="CSV" className="h-5 w-5" />
+              Import CSV
+            </button>
+
+            {/* Add Contact */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-2 rounded-xl bg-foreground px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
+            >
+              <img src="/icons/contact-icon-filled.svg" alt="Add" className="h-5 w-5 invert brightness-0 filter" />
+              Add Contact
+            </button>
+          </div>
         </div>
 
         <AddContactModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleCreateContact}
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingContact(null);
+          }}
+          onSubmit={handleSubmitContact}
+          contact={editingContact}
         />
 
         {/* Main Content Area */}
@@ -185,26 +276,28 @@ export default function Contacts() {
                     <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Email</th>
                     <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Phone</th>
                     <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Created Date</th>
-                    <th className="py-4 px-3 text-center w-[60px]">
-                      <img src="/icons/settings-icon.svg" alt="Settings" className="h-6 w-6 mx-auto" />
-                    </th>
+                    <th className="py-4 px-3 text-center text-[14px] font-semibold text-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {contacts.length === 0 ? (
+                  {filteredContacts.length === 0 ? (
                     <tr>
                       <td colSpan={9} className="py-20 text-center text-gray-500">
-                        No contacts found. Click "Add Contact" to create one.
+                        {contacts.length === 0 ? 'No contacts found. Click "Add Contact" to create one.' : 'No matching contacts found.'}
                       </td>
                     </tr>
                   ) : (
                     <>
-                      {contacts.map((contact) => (
+                      {filteredContacts.map((contact) => (
                         <tr
                           key={contact.id}
-                          className={`group transition-colors border-b border-gray-50 hover:bg-gray-50/50`}
+                          onClick={() => handleEdit(contact)}
+                          className={`group cursor-pointer transition-colors border-b border-gray-50 hover:bg-gray-50/50`}
                         >
-                          <td className="py-4 pl-6 pr-3 text-center">
+                          <td
+                            className="py-4 pl-6 pr-3 text-center"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <input
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-foreground/5 mx-auto"
@@ -226,10 +319,34 @@ export default function Contacts() {
                             </span>
                           </td>
                           <td className="py-4 px-3 text-center">
-                            {contact.user ? (
+                            {contact.assignedTo && contact.assignedTo.length > 0 ? (
                               <div className="flex items-center justify-center gap-2">
-                                <img src={`https://i.pravatar.cc/150?u=${contact.user.id}`} alt="" className="h-6 w-6 rounded-full" />
-                                <span className="text-sm font-medium text-foreground">{contact.user.name}</span>
+                                <div className="flex -space-x-2">
+                                  {contact.assignedTo.slice(0, 3).map((user) => (
+                                    user.profilePicture ? (
+                                      <img
+                                        key={user.id}
+                                        src={user.profilePicture}
+                                        alt={user.name}
+                                        title={user.name}
+                                        className="h-6 w-6 rounded-full ring-2 ring-white object-cover"
+                                      />
+                                    ) : (
+                                      <div
+                                        key={user.id}
+                                        className="h-6 w-6 rounded-full ring-2 ring-white bg-gray-200 flex items-center justify-center"
+                                        title={user.name}
+                                      >
+                                        <span className="text-[10px] font-bold text-gray-600">
+                                          {user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                                        </span>
+                                      </div>
+                                    )
+                                  ))}
+                                </div>
+                                {contact.assignedTo.length > 3 && (
+                                  <span className="text-xs font-medium text-gray-500">+{contact.assignedTo.length - 3}</span>
+                                )}
                               </div>
                             ) : (
                               <span className="text-sm text-gray-400">-</span>
@@ -238,7 +355,10 @@ export default function Contacts() {
                           <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{contact.email}</td>
                           <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{contact.phone}</td>
                           <td className="py-4 px-3 text-center text-sm font-medium text-foreground">{formatDate(contact.createdAt)}</td>
-                          <td className="py-4 px-3 text-center relative">
+                          <td
+                            className="py-4 px-3 text-center relative"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <button
                               onClick={() => toggleMenu(contact.id)}
                               className="flex items-center justify-center p-1.5 rounded-lg hover:bg-gray-100 transition-colors mx-auto"
@@ -252,16 +372,6 @@ export default function Contacts() {
                                 ref={menuRef}
                                 className="absolute right-0 top-12 z-50 w-48 rounded-xl bg-white shadow-lg border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200"
                               >
-                                <button
-                                  onClick={() => handleEdit(contact)}
-                                  className="w-full px-4 py-2.5 text-left text-sm font-medium text-foreground hover:bg-gray-50 transition-colors flex items-center gap-3"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                  </svg>
-                                  Edit
-                                </button>
-
                                 <button
                                   onClick={() => handleArchive(contact)}
                                   className="w-full px-4 py-2.5 text-left text-sm font-medium text-foreground hover:bg-gray-50 transition-colors flex items-center gap-3"

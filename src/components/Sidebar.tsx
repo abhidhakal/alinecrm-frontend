@@ -118,8 +118,12 @@ export default function Sidebar() {
             } ${isProfileOpen ? 'bg-gray-50 border-gray-200' : ''}`}
         >
           <div className={`flex items-center ${isExpanded ? 'gap-3' : 'justify-center'}`}>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 border border-gray-200 text-sm font-bold text-foreground flex-shrink-0 shadow-sm">
-              {userInitials}
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 border border-gray-200 text-sm font-bold text-foreground flex-shrink-0 shadow-sm overflow-hidden">
+              {user.profilePicture ? (
+                <img src={user.profilePicture} alt={userName} className="h-full w-full object-cover" />
+              ) : (
+                userInitials
+              )}
             </div>
             {isExpanded && (
               <div className="flex flex-col overflow-hidden">
@@ -143,10 +147,14 @@ export default function Sidebar() {
             }`}>
             
             {/* Profile */}
-            <button className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-left group">
+            <Link
+              to="/profile"
+              onClick={() => setIsProfileOpen(false)}
+              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-left group"
+            >
                <img src="/icons/account-icon.svg" alt="Profile" className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity" />
                Profile
-            </button>
+            </Link>
 
             {/* Settings */}
             <button className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-left group">
@@ -236,13 +244,13 @@ export default function Sidebar() {
 
         {/* Mindfulness Button */}
         <div className="relative group">
-          <button className={`group flex w-full items-center rounded-2xl bg-[#1A1A1A] p-2 text-white shadow-lg shadow-gray-200 transition-all hover:bg-black hover:shadow-xl active:scale-[0.98] ${isExpanded ? 'gap-3' : 'justify-center'
+          <Link to="/mindfulness" className={`group flex w-full items-center rounded-2xl bg-[#1A1A1A] p-2 text-white shadow-lg shadow-gray-200 transition-all hover:bg-black hover:shadow-xl active:scale-[0.98] ${isExpanded ? 'gap-3' : 'justify-center'
             }`}>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 flex-shrink-0">
               <img src="/icons/mindfulness-icon.svg" alt="Mindfulness" className="w-5 h-5 invert brightness-0 filter" />
             </div>
             {isExpanded && <span className="text-sm font-bold">Mindfulness</span>}
-          </button>
+          </Link>
 
           {/* Tooltip for mindfulness in collapsed state */}
           {!isExpanded && (

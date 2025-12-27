@@ -5,6 +5,7 @@ export interface User {
   name: string;
   email: string;
   role: 'user' | 'admin' | 'superadmin';
+  profilePicture?: string;
 }
 
 export interface CreateUserDto {
@@ -19,9 +20,14 @@ export interface UpdateUserDto {
   email?: string;
   password?: string;
   role?: 'user' | 'admin' | 'superadmin';
+  profilePicture?: string;
 }
 
 export const usersApi = {
+  getCurrentUser: async (): Promise<User> => {
+    const response = await api.get('/auth/me');
+    return response.data;
+  },
   getAll: async (): Promise<User[]> => {
     const response = await api.get('/users');
     return response.data;

@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
-import Sidebar from "../components/Sidebar";
-import DashboardHeader from "../components/DashboardHeader";
-import { useSidebar } from "../context/SidebarContext";
+import Sidebar from "../../components/Sidebar";
+import DashboardHeader from "../../components/DashboardHeader";
+import { useSidebar } from "../../context/SidebarContext";
 
 export default function Dashboard() {
   const { isExpanded } = useSidebar();

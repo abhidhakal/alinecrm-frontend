@@ -19,12 +19,13 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
     companyName: '',
     jobTitle: '',
     status: 'New',
-    source: '',
+    source: 'Organic',
+    inquiredFor: '',
     potentialValue: 0,
     probability: 0,
     notes: '',
     contactId: undefined,
-    assignedToId: currentUser?.id
+    assignedToIds: []
   });
   const [submitting, setSubmitting] = useState(false);
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -42,8 +43,8 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
   }, [isOpen, isAdmin]);
 
   useEffect(() => {
-    if (currentUser && !formData.assignedToId) {
-      setFormData(prev => ({ ...prev, assignedToId: currentUser.id }));
+    if (currentUser && (!formData.assignedToIds || formData.assignedToIds.length === 0)) {
+      setFormData(prev => ({ ...prev, assignedToIds: [currentUser.id] }));
     }
   }, [currentUser]);
 
@@ -59,12 +60,13 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
         companyName: '',
         jobTitle: '',
         status: 'New',
-        source: '',
+        source: 'Organic',
+        inquiredFor: '',
         potentialValue: 0,
         probability: 0,
         notes: '',
         contactId: undefined,
-        assignedToId: currentUser?.id
+        assignedToIds: currentUser ? [currentUser.id] : []
       });
       setSelectedContact(null);
       setContactSearch('');
@@ -89,8 +91,8 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
     setContactSearch('');
   };
 
-  const filteredContacts = contacts.filter(c => 
-    c.name.toLowerCase().includes(contactSearch.toLowerCase()) || 
+  const filteredContacts = contacts.filter(c =>
+    c.name.toLowerCase().includes(contactSearch.toLowerCase()) ||
     c.email.toLowerCase().includes(contactSearch.toLowerCase())
   ).slice(0, 5); // Limit to 5 suggestions
 
@@ -185,21 +187,65 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
                 <option value="Closed Lost">Closed Lost</option>
               </select>
             </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Lead Source</label>
+              <select
+                name="source"
+                value={formData.source}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+              >
+                <option value="Organic">Organic</option>
+                <option value="Social Media">Social Media</option>
+                <option value="Word of Mouth">Word of Mouth</option>
+                <option value="Contacts">Contacts</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Inquired For / Service</label>
+              <input
+                name="inquiredFor"
+                value={formData.inquiredFor}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
+                placeholder="e.g. Web Development"
+              />
+            </div>
             {isAdmin && (
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Assigned To</label>
-                <select
-                  name="assignedToId"
-                  value={formData.assignedToId || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, assignedToId: Number(e.target.value) }))}
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
-                >
+                <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-xl p-3 bg-gray-50">
                   {users.map(u => (
-                    <option key={u.id} value={u.id}>
-                      {u.name} ({u.role})
-                    </option>
+                    <label key={u.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white cursor-pointer transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={formData.assignedToIds?.includes(u.id) || false}
+                        onChange={(e) => {
+                          const newIds = e.target.checked
+                            ? [...(formData.assignedToIds || []), u.id]
+                            : (formData.assignedToIds || []).filter(id => id !== u.id);
+                          setFormData(prev => ({ ...prev, assignedToIds: newIds }));
+                        }}
+                        className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-2 focus:ring-gray-200"
+                      />
+                      {u.profilePicture ? (
+                        <img src={u.profilePicture} className="h-7 w-7 rounded-full object-cover" alt={u.name} />
+                      ) : (
+                        <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-[10px] font-bold text-gray-600">
+                            {u.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                          </span>
+                        </div>
+                      )}
+                      <span className="text-sm font-medium text-gray-700">{u.name} ({u.role})</span>
+                      {formData.assignedToIds?.includes(u.id) && (
+                        <svg className="h-4 w-4 text-green-500 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </label>
                   ))}
-                </select>
+                </div>
               </div>
             )}
             <div className="space-y-2">
@@ -278,7 +324,7 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
               </div>
             )}
           </div>
-          
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Notes</label>
             <textarea

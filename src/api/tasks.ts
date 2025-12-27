@@ -18,8 +18,8 @@ export interface Task {
   assignedDate?: string;
   dueDate: string;
   status: TaskStatusType;
-  assignedTo: { id: number; name: string; email: string }[];
-  assignedBy?: { id: number; name: string };
+  assignedTo: { id: number; name: string; email: string; profilePicture?: string }[];
+  assignedBy?: { id: number; name: string; profilePicture?: string };
   createdAt: string;
   updatedAt: string;
 }

@@ -81,16 +81,16 @@ export default function AdminLeads() {
     working: leads.filter(l => ['Negotiation', 'Proposal'].includes(l.status)).length,
     cancelled: leads.filter(l => l.status === 'Closed Lost').length,
     pipelineValue: leads.filter(l => l.status !== 'Closed Lost').reduce((acc, curr) => acc + (curr.potentialValue || 0), 0),
-    winRate: leads.length > 0 
-      ? Math.round((leads.filter(l => l.status === 'Closed Won').length / leads.length) * 100) 
+    winRate: leads.length > 0
+      ? Math.round((leads.filter(l => l.status === 'Closed Won').length / leads.length) * 100)
       : 0
   };
 
   // Filter Leads
   const filteredLeads = leads.filter(lead => {
     const matchesSearch = lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         lead.companyName?.toLowerCase().includes(searchQuery.toLowerCase());
-    
+      lead.companyName?.toLowerCase().includes(searchQuery.toLowerCase());
+
     if (!matchesSearch) return false;
 
     if (activeTab === 'All') return true;
@@ -98,7 +98,7 @@ export default function AdminLeads() {
     if (activeTab === 'Qualified') return lead.status === 'Qualified';
     if (activeTab === 'Working') return ['Negotiation', 'Contacted'].includes(lead.status);
     if (activeTab === 'Proposed') return lead.status === 'Proposal';
-    
+
     return true;
   });
 
@@ -106,8 +106,13 @@ export default function AdminLeads() {
     <div className="flex min-h-screen w-full bg-white">
       <AdminSidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
-        
-        <LeadsHeader onRefresh={fetchLeads} lastUpdated={lastUpdated} />
+
+        <LeadsHeader
+          onRefresh={fetchLeads}
+          lastUpdated={lastUpdated}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
 
         {/* Admin Banner */}
         <div className="mx-8 mt-6 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white shadow-lg">
@@ -238,24 +243,23 @@ export default function AdminLeads() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`relative pb-4 text-sm font-medium transition-colors ${
-                      activeTab === tab 
-                        ? 'text-gray-900 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-gray-900' 
+                    className={`relative pb-4 text-sm font-medium transition-colors ${activeTab === tab
+                        ? 'text-gray-900 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-gray-900'
                         : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                      }`}
                   >
                     {tab}
                     <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                      {tab === 'All' ? leads.length : 
-                       tab === 'New' ? stats.new :
-                       tab === 'Qualified' ? stats.qualified :
-                       tab === 'Working' ? stats.working + stats.contacted :
-                       tab === 'Proposed' ? leads.filter(l => l.status === 'Proposal').length : 0}
+                      {tab === 'All' ? leads.length :
+                        tab === 'New' ? stats.new :
+                          tab === 'Qualified' ? stats.qualified :
+                            tab === 'Working' ? stats.working + stats.contacted :
+                              tab === 'Proposed' ? leads.filter(l => l.status === 'Proposal').length : 0}
                     </span>
                   </button>
                 ))}
               </div>
-              
+
               <div className="flex items-center gap-3">
                 <button className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
                   <img src="/icons/filter-list-on.svg" alt="Filter" className="h-4 w-4" />
@@ -266,13 +270,13 @@ export default function AdminLeads() {
                   Export Data
                 </button>
                 <div className="flex rounded-lg border border-gray-200 p-1">
-                  <button 
+                  <button
                     onClick={() => setViewMode('grid')}
                     className={`rounded p-1 ${viewMode === 'grid' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
                   >
                     <img src="/icons/grid-view-icon-filled.svg" alt="Grid" className={`h-4 w-4 ${viewMode === 'grid' ? '' : 'opacity-50'}`} />
                   </button>
-                  <button 
+                  <button
                     onClick={() => setViewMode('list')}
                     className={`rounded p-1 ${viewMode === 'list' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
                   >
@@ -291,8 +295,8 @@ export default function AdminLeads() {
               /* Grid View */
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {filteredLeads.map((lead) => (
-                  <div 
-                    key={lead.id} 
+                  <div
+                    key={lead.id}
                     onClick={() => {
                       setSelectedLead(lead);
                       setIsEditModalOpen(true);
@@ -312,7 +316,7 @@ export default function AdminLeads() {
                       </div>
                       <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                         <div className="relative dropdown-container">
-                          <button 
+                          <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setActiveDropdownId(activeDropdownId === lead.id ? null : lead.id);
@@ -321,7 +325,7 @@ export default function AdminLeads() {
                           >
                             <img src="/icons/more-vertical.svg" alt="More" className="h-4 w-4" />
                           </button>
-                          
+
                           {activeDropdownId === lead.id && (
                             <div className="absolute right-0 top-full z-10 mt-1 w-32 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
                               <button
@@ -374,18 +378,16 @@ export default function AdminLeads() {
 
                     {/* Card Footer */}
                     <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${
-                        lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
-                        lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
-                        lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
-                        'bg-gray-50 text-gray-600 ring-gray-500/20'
-                      }`}>
-                        <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
-                          lead.status === 'New' ? 'bg-blue-600' :
-                          lead.status === 'Qualified' ? 'bg-green-600' :
-                          lead.status === 'Closed Won' ? 'bg-purple-600' :
-                          'bg-gray-500'
-                        }`}></span>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
+                          lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
+                            lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
+                              'bg-gray-50 text-gray-600 ring-gray-500/20'
+                        }`}>
+                        <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${lead.status === 'New' ? 'bg-blue-600' :
+                            lead.status === 'Qualified' ? 'bg-green-600' :
+                              lead.status === 'Closed Won' ? 'bg-purple-600' :
+                                'bg-gray-500'
+                          }`}></span>
                         {lead.status}
                       </span>
                       <div className="text-right">
@@ -401,8 +403,8 @@ export default function AdminLeads() {
             ) : (
               <div className="flex flex-col gap-3">
                 {filteredLeads.map((lead) => (
-                  <div 
-                    key={lead.id} 
+                  <div
+                    key={lead.id}
                     onClick={() => {
                       setSelectedLead(lead);
                       setIsEditModalOpen(true);
@@ -446,18 +448,16 @@ export default function AdminLeads() {
 
                     {/* Status & Actions */}
                     <div className="flex items-center gap-8">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${
-                        lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
-                        lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
-                        lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
-                        'bg-gray-50 text-gray-600 ring-gray-500/20'
-                      }`}>
-                        <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
-                          lead.status === 'New' ? 'bg-blue-600' :
-                          lead.status === 'Qualified' ? 'bg-green-600' :
-                          lead.status === 'Closed Won' ? 'bg-purple-600' :
-                          'bg-gray-500'
-                        }`}></span>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
+                          lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
+                            lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
+                              'bg-gray-50 text-gray-600 ring-gray-500/20'
+                        }`}>
+                        <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${lead.status === 'New' ? 'bg-blue-600' :
+                            lead.status === 'Qualified' ? 'bg-green-600' :
+                              lead.status === 'Closed Won' ? 'bg-purple-600' :
+                                'bg-gray-500'
+                          }`}></span>
                         {lead.status}
                       </span>
 
@@ -470,7 +470,7 @@ export default function AdminLeads() {
 
                       <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                         <div className="relative dropdown-container">
-                          <button 
+                          <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setActiveDropdownId(activeDropdownId === lead.id ? null : lead.id);
@@ -479,7 +479,7 @@ export default function AdminLeads() {
                           >
                             <img src="/icons/more-vertical.svg" alt="More" className="h-4 w-4" />
                           </button>
-                          
+
                           {activeDropdownId === lead.id && (
                             <div className="absolute right-0 top-full z-10 mt-1 w-32 rounded-lg border border-gray-200 bg-white py-1 shadow-lg text-left">
                               <button

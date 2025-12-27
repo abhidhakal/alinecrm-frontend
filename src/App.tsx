@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './Landing';
 import Product from './pages/Product';
@@ -6,18 +5,20 @@ import Features from './pages/Features';
 import Pricing from './pages/Pricing';
 import About from './pages/About';
 import Login from './pages/Login';
+import Profile from './pages/employee/Profile';
 
 import { ToastProvider } from './context/ToastContext';
 import { SidebarProvider } from './context/SidebarContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute';
-import Dashboard from './pages/Dashboard';
-import Contacts from './pages/Contacts';
-import Leads from './pages/Leads';
-import Campaigns from './pages/Campaigns';
-import Socials from './pages/Socials';
-import Tasks from './pages/Tasks';
-import Users from './pages/Users';
+import Dashboard from './pages/employee/Dashboard';
+import Contacts from './pages/employee/Contacts';
+import Leads from './pages/employee/Leads';
+import Campaigns from './pages/employee/Campaigns';
+import Socials from './pages/employee/Socials';
+import Tasks from './pages/employee/Tasks';
+import Mindfulness from './pages/employee/Mindfulness';
+import Users from './pages/admin/Users';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminContacts from './pages/admin/AdminContacts';
 import AdminLeads from './pages/admin/AdminLeads';
@@ -41,11 +42,13 @@ export default function App() {
               
               {/* User Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
               <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
               <Route path="/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
               <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
               <Route path="/social-media" element={<ProtectedRoute><Socials /></ProtectedRoute>} />
+              <Route path="/mindfulness" element={<ProtectedRoute><Mindfulness /></ProtectedRoute>} />
               
               {/* Admin Routes */}
               <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

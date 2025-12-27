@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { CreateContactDto } from '../api/contacts';
+import type { CreateContactDto, Contact } from '../api/contacts';
 import { usersApi, type User } from '../api/users';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,9 +7,10 @@ interface AddContactModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: CreateContactDto) => Promise<void>;
+  contact?: Contact | null;
 }
 
-export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContactModalProps) {
+export default function AddContactModal({ isOpen, onClose, onSubmit, contact }: AddContactModalProps) {
   const { user: currentUser, isAdmin } = useAuth();
   const [formData, setFormData] = useState<CreateContactDto>({
     name: '',
@@ -19,7 +20,7 @@ export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContac
     companyName: '',
     industry: '',
     priority: 'Medium',
-    assignedToId: currentUser?.id
+    assignedToIds: []
   });
   const [submitting, setSubmitting] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
@@ -31,10 +32,32 @@ export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContac
   }, [isOpen, isAdmin]);
 
   useEffect(() => {
-    if (currentUser && !formData.assignedToId) {
-      setFormData(prev => ({ ...prev, assignedToId: currentUser.id }));
+    if (isOpen && contact) {
+      // Editing mode - populate with existing data
+      setFormData({
+        name: contact.name,
+        email: contact.email,
+        phone: contact.phone,
+        address: contact.address,
+        companyName: contact.companyName || '',
+        industry: contact.industry || '',
+        priority: contact.priority,
+        assignedToIds: contact.assignedTo?.map(u => u.id) || []
+      });
+    } else if (isOpen && !contact) {
+      // Create mode - reset to defaults
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        companyName: '',
+        industry: '',
+        priority: 'Medium',
+        assignedToIds: currentUser ? [currentUser.id] : []
+      });
     }
-  }, [currentUser]);
+  }, [isOpen, contact, currentUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +73,7 @@ export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContac
         companyName: '',
         industry: '',
         priority: 'Medium',
-        assignedToId: currentUser?.id
+        assignedToIds: currentUser ? [currentUser.id] : []
       });
       onClose();
     } catch (error) {
@@ -75,7 +98,7 @@ export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContac
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-foreground">Add New Contact</h2>
+            <h2 className="text-2xl font-bold text-foreground">{contact ? 'Edit Contact' : 'Add New Contact'}</h2>
             <button
               onClick={onClose}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -157,18 +180,38 @@ export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContac
               <label className="block text-sm font-semibold text-foreground mb-2">
                 Assigned To
               </label>
-              <select
-                name="assignedToId"
-                value={formData.assignedToId || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, assignedToId: Number(e.target.value) }))}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:border-gray-300 focus:ring-2 focus:ring-gray-100 outline-none transition-all"
-              >
+              <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-xl p-3 bg-gray-50/50">
                 {users.map(u => (
-                  <option key={u.id} value={u.id}>
-                    {u.name} ({u.role})
-                  </option>
+                  <label key={u.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white cursor-pointer transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={formData.assignedToIds?.includes(u.id) || false}
+                      onChange={(e) => {
+                        const newIds = e.target.checked
+                          ? [...(formData.assignedToIds || []), u.id]
+                          : (formData.assignedToIds || []).filter(id => id !== u.id);
+                        setFormData(prev => ({ ...prev, assignedToIds: newIds }));
+                      }}
+                      className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-2 focus:ring-gray-200"
+                    />
+                    {u.profilePicture ? (
+                      <img src={u.profilePicture} className="h-7 w-7 rounded-full object-cover" alt={u.name} />
+                    ) : (
+                      <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-gray-600">
+                          {u.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                        </span>
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-gray-700">{u.name} ({u.role})</span>
+                    {formData.assignedToIds?.includes(u.id) && (
+                      <svg className="h-4 w-4 text-green-500 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </label>
                 ))}
-              </select>
+              </div>
             </div>
           )}
 
@@ -232,7 +275,7 @@ export default function AddContactModal({ isOpen, onClose, onSubmit }: AddContac
               disabled={submitting}
               className="px-6 py-2.5 rounded-xl bg-foreground text-white text-sm font-semibold hover:bg-foreground/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {submitting ? 'Creating...' : 'Create Contact'}
+              {submitting ? (contact ? 'Updating...' : 'Creating...') : (contact ? 'Update Contact' : 'Create Contact')}
             </button>
           </div>
         </form>

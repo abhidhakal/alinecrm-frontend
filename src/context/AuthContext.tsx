@@ -14,6 +14,7 @@ export interface User {
   name: string;
   email: string;
   role: RoleType;
+  profilePicture?: string;
 }
 
 interface AuthContextType {

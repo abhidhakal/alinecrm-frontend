@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import TasksHeader from "../components/TasksHeader";
-import TaskModal from "../components/TaskModal";
-import AddTaskModal from "../components/AddTaskModal";
-import { useSidebar } from "../context/SidebarContext";
-import { tasksApi, TaskStatus, type Task, type TaskStatusType } from "../api/tasks";
+import Sidebar from "../../components/Sidebar";
+import TasksHeader from "../../components/TasksHeader";
+import TaskModal from "../../components/TaskModal";
+import AddTaskModal from "../../components/AddTaskModal";
+import { useSidebar } from "../../context/SidebarContext";
+import { tasksApi, TaskStatus, type Task, type TaskStatusType } from "../../api/tasks";
 
 export default function Tasks() {
   const { isExpanded } = useSidebar();
@@ -14,6 +14,7 @@ export default function Tasks() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [initialStatus, setInitialStatus] = useState<TaskStatusType>(TaskStatus.TODO);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchTasks = async () => {
     try {
@@ -24,6 +25,10 @@ export default function Tasks() {
       console.error("Failed to fetch tasks:", error);
     }
   };
+
+  const filteredTasks = tasks.filter(task =>
+    task.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     fetchTasks();
@@ -84,7 +89,7 @@ export default function Tasks() {
   };
 
   const renderColumn = (status: TaskStatusType, label: string) => {
-    const filteredTasks = tasks.filter((t: Task) => t.status === status);
+    const statusTasks = filteredTasks.filter((t: Task) => t.status === status);
     const getBadgeColor = (s: TaskStatusType) => {
       switch (s) {
         case TaskStatus.TODO: return "bg-[#2E7DFF]";
@@ -106,7 +111,7 @@ export default function Tasks() {
               {label}
             </span>
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-sm font-bold text-gray-500 border border-gray-50">
-              {filteredTasks.length}
+              {statusTasks.length}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -120,7 +125,7 @@ export default function Tasks() {
         </div>
 
         <div className="flex flex-col gap-5 px-1">
-          {filteredTasks.map((task: Task) => (
+          {statusTasks.map((task: Task) => (
             <div
               key={task.id}
               draggable
@@ -138,20 +143,30 @@ export default function Tasks() {
                 <div className="flex -space-x-3 overflow-hidden">
                   {task.assignedTo?.length > 0 ? (
                     task.assignedTo.map((user) => (
-                      <img
-                        key={user.id}
-                        className="inline-block h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover"
-                        src={`https://i.pravatar.cc/150?u=${user.id}`}
-                        alt={user.name}
-                        title={user.name}
-                      />
+                      user.profilePicture ? (
+                        <img
+                          key={user.id}
+                          className="inline-block h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover"
+                          src={user.profilePicture}
+                          alt={user.name}
+                          title={user.name}
+                        />
+                      ) : (
+                        <div
+                          key={user.id}
+                          className="h-9 w-9 rounded-full ring-2 ring-white shadow-sm bg-gray-200 flex items-center justify-center"
+                          title={user.name}
+                        >
+                          <span className="text-xs font-bold text-gray-600">
+                            {user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                          </span>
+                        </div>
+                      )
                     ))
                   ) : (
-                    <img
-                      className="inline-block h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover"
-                      src={`https://i.pravatar.cc/150?u=1`}
-                      alt="Default"
-                    />
+                    <div className="h-9 w-9 rounded-full ring-2 ring-white shadow-sm bg-gray-200 flex items-center justify-center">
+                      <span className="text-xs font-bold text-gray-600">?</span>
+                    </div>
                   )}
                 </div>
               </div>
@@ -185,7 +200,12 @@ export default function Tasks() {
     <div className="flex min-h-screen w-full bg-white relative font-sans">
       <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
-        <TasksHeader onRefresh={fetchTasks} lastUpdated={lastUpdated} />
+        <TasksHeader
+          onRefresh={fetchTasks}
+          lastUpdated={lastUpdated}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
 
         <div className="px-10 pt-6 pb-2 flex items-center justify-between">
           <p className="text-xs font-bold text-gray-500 opacity-60 tracking-tight">*drag and drop tasks from to-do till complete</p>

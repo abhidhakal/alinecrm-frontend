@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TaskStatus, type TaskStatusType, tasksApi } from "../api/tasks";
+import { TaskStatus, type TaskStatusType, tasksApi, type Task } from "../api/tasks";
 import { usersApi, type User } from "../api/users";
 import { useAuth } from "../context/AuthContext";
 
@@ -8,9 +8,10 @@ interface AddTaskModalProps {
   onClose: () => void;
   onSuccess: () => void;
   initialStatus?: TaskStatusType;
+  task?: Task | null;
 }
 
-export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus }: AddTaskModalProps) {
+export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus, task }: AddTaskModalProps) {
   const { user: currentUser, isAdmin } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -19,7 +20,7 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
   const [status] = useState<TaskStatusType>(initialStatus || TaskStatus.TODO);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
-  const [assignedToId, setAssignedToId] = useState<number | null>(null);
+  const [assignedToIds, setAssignedToIds] = useState<number[]>([]);
 
   useEffect(() => {
     if (isOpen && isAdmin) {
@@ -28,10 +29,22 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
   }, [isOpen, isAdmin]);
 
   useEffect(() => {
-    if (currentUser && !assignedToId) {
-      setAssignedToId(currentUser.id);
+    if (isOpen && task) {
+      // Editing mode - populate with existing data
+      setTitle(task.title);
+      setDescription(task.description);
+      setCategory(task.category || '');
+      setDueDate(task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '');
+      setAssignedToIds(task.assignedTo?.map(u => u.id) || []);
+    } else if (isOpen && !task) {
+      // Create mode - reset to defaults
+      setTitle('');
+      setDescription('');
+      setCategory('');
+      setDueDate('');
+      setAssignedToIds(currentUser ? [currentUser.id] : []);
     }
-  }, [currentUser]);
+  }, [isOpen, task, currentUser]);
 
   if (!isOpen) return null;
 
@@ -39,23 +52,37 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
     e.preventDefault();
     setLoading(true);
     try {
-      await tasksApi.create({
-        title,
-        description,
-        category,
-        dueDate: dueDate ? new Date(dueDate).toISOString() : new Date().toISOString(),
-        status,
-        progress: 0,
-        assignedToIds: assignedToId ? [assignedToId] : [],
-      });
+      if (task) {
+        // Update existing task
+        await tasksApi.update(task.id, {
+          title,
+          description,
+          category,
+          dueDate: dueDate ? new Date(dueDate).toISOString() : new Date().toISOString(),
+          status,
+          assignedToIds: assignedToIds,
+        });
+      } else {
+        // Create new task
+        await tasksApi.create({
+          title,
+          description,
+          category,
+          dueDate: dueDate ? new Date(dueDate).toISOString() : new Date().toISOString(),
+          status,
+          progress: 0,
+          assignedToIds: assignedToIds,
+        });
+      }
       onSuccess();
       onClose();
       setTitle("");
       setDescription("");
       setCategory("");
       setDueDate("");
+      setAssignedToIds([]);
     } catch (error) {
-      console.error("Failed to create task:", error);
+      console.error(task ? "Failed to update task:" : "Failed to create task:", error);
     } finally {
       setLoading(false);
     }
@@ -69,7 +96,7 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
         <div className="flex-1 p-8 md:p-10">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">Create New Task</h2>
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">{task ? 'Edit Task' : 'Create New Task'}</h2>
               <p className="text-sm font-medium text-gray-500 mt-1">Add details for your new task card</p>
             </div>
             <button
@@ -133,11 +160,11 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
                 className="w-full py-3.5 bg-foreground text-white rounded-xl font-bold text-sm shadow-lg hover:bg-black/90 transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <span className="animate-pulse">Creating...</span>
+                  <span className="animate-pulse">{task ? 'Updating...' : 'Creating...'}</span>
                 ) : (
                   <>
                     <img src="/icons/plus-icon.svg" alt="" className="h-4 w-4 invert brightness-0" />
-                    Create Task
+                    {task ? 'Update Task' : 'Create Task'}
                   </>
                 )}
               </button>
@@ -161,20 +188,45 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Assigned To</h3>
               <div className="space-y-3">
                 {isAdmin ? (
-                  <select
-                    value={assignedToId || ''}
-                    onChange={(e) => setAssignedToId(Number(e.target.value))}
-                    className="w-full text-xs font-bold text-gray-700 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm outline-none focus:border-gray-300 transition-all"
-                  >
+                  <div className="space-y-2">
                     {users.map(u => (
-                      <option key={u.id} value={u.id}>
-                        {u.name}
-                      </option>
+                      <label key={u.id} className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={assignedToIds.includes(u.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setAssignedToIds([...assignedToIds, u.id]);
+                            } else {
+                              setAssignedToIds(assignedToIds.filter(id => id !== u.id));
+                            }
+                          }}
+                          className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-2 focus:ring-gray-200"
+                        />
+                        {u.profilePicture ? (
+                          <img src={u.profilePicture} className="h-8 w-8 rounded-full object-cover" alt={u.name} />
+                        ) : (
+                          <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                            <span className="text-xs font-bold text-gray-600">
+                              {u.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                            </span>
+                          </div>
+                        )}
+                        <span className="text-xs font-bold text-gray-700">{u.name}</span>
+                      </label>
                     ))}
-                  </select>
+                  </div>
                 ) : (
                   <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
-                    <img src={`https://i.pravatar.cc/150?u=${currentUser?.id}`} className="h-8 w-8 rounded-full object-cover" />
+                    {currentUser?.profilePicture ? (
+                      <img src={currentUser.profilePicture} className="h-8 w-8 rounded-full object-cover" alt={currentUser.name} />
+                    ) : (
+                      <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-xs font-bold text-gray-600">
+                          {currentUser?.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                        </span>
+                      </div>
+                    )}
                     <span className="text-xs font-bold text-gray-700">{currentUser?.name}</span>
                   </div>
                 )}
@@ -184,7 +236,15 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
             <div className="space-y-4">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Assigned By</h3>
               <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm">
-                <img src={`https://i.pravatar.cc/150?u=${currentUser?.id}`} className="h-8 w-8 rounded-full object-cover" />
+                {currentUser?.profilePicture ? (
+                  <img src={currentUser.profilePicture} className="h-8 w-8 rounded-full object-cover" alt={currentUser.name} />
+                ) : (
+                  <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-xs font-bold text-gray-600">
+                      {currentUser?.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                    </span>
+                  </div>
+                )}
                 <span className="text-xs font-bold text-gray-700">{currentUser?.name}</span>
               </div>
             </div>

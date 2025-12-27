@@ -14,6 +14,7 @@ export default function AdminTasks() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [initialStatus, setInitialStatus] = useState<TaskStatusType>(TaskStatus.TODO);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchTasks = async () => {
     try {
@@ -24,6 +25,10 @@ export default function AdminTasks() {
       console.error("Failed to fetch tasks:", error);
     }
   };
+
+  const filteredTasks = tasks.filter(task =>
+    task.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     fetchTasks();
@@ -84,7 +89,7 @@ export default function AdminTasks() {
   };
 
   const renderColumn = (status: TaskStatusType, label: string) => {
-    const filteredTasks = tasks.filter((t: Task) => t.status === status);
+    const statusTasks = filteredTasks.filter((t: Task) => t.status === status);
     const getBadgeColor = (s: TaskStatusType) => {
       switch (s) {
         case TaskStatus.TODO: return "bg-[#2E7DFF]";
@@ -106,7 +111,7 @@ export default function AdminTasks() {
               {label}
             </span>
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-sm font-bold text-gray-500 border border-gray-50">
-              {filteredTasks.length}
+              {statusTasks.length}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -120,7 +125,7 @@ export default function AdminTasks() {
         </div>
 
         <div className="flex flex-col gap-5 px-1">
-          {filteredTasks.map((task: Task) => (
+          {statusTasks.map((task: Task) => (
             <div
               key={task.id}
               draggable
@@ -176,7 +181,12 @@ export default function AdminTasks() {
     <div className="flex min-h-screen w-full bg-white relative font-sans">
       <AdminSidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
-        <TasksHeader onRefresh={fetchTasks} lastUpdated={lastUpdated} />
+        <TasksHeader
+          onRefresh={fetchTasks}
+          lastUpdated={lastUpdated}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
 
         {/* Admin Banner */}
         <div className="mx-10 mt-6 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white shadow-lg">

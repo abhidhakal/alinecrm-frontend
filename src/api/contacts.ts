@@ -9,7 +9,7 @@ export interface Contact {
   companyName: string;
   industry?: string;
   priority: 'High' | 'Medium' | 'Low';
-  user?: { id: number; name: string; email: string };
+  assignedTo?: { id: number; name: string; email: string; profilePicture?: string }[];
   createdAt: string;
 }
 
@@ -21,7 +21,7 @@ export interface CreateContactDto {
   companyName?: string;
   industry?: string;
   priority?: 'High' | 'Medium' | 'Low';
-  assignedToId?: number;
+  assignedToIds?: number[];
 }
 
 export const contactsApi = {
@@ -37,6 +37,11 @@ export const contactsApi = {
 
   create: async (data: CreateContactDto): Promise<Contact> => {
     const response = await api.post('/contacts', data);
+    return response.data;
+  },
+
+  bulkCreate: async (data: CreateContactDto[]): Promise<Contact[]> => {
+    const response = await api.post('/contacts/bulk', data);
     return response.data;
   },
 
