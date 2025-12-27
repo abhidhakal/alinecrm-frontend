@@ -52,9 +52,7 @@ export default function EditLeadModal({ isOpen, onClose, onSubmit, lead }: EditL
         assignedToIds: lead.assignedTo?.map(u => u.id) || []
       });
       contactsApi.getAll().then(setContacts).catch(console.error);
-      if (isAdmin) {
-        usersApi.getAll().then(setUsers).catch(console.error);
-      }
+      usersApi.getAll().then(setUsers).catch(console.error);
     }
   }, [isOpen, lead, isAdmin]);
 
@@ -216,43 +214,42 @@ export default function EditLeadModal({ isOpen, onClose, onSubmit, lead }: EditL
                 placeholder="e.g. Web Development"
               />
             </div>
-            {isAdmin && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Assigned To</label>
-                <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-xl p-3 bg-gray-50">
-                  {users.map(u => (
-                    <label key={u.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white cursor-pointer transition-colors">
-                      <input
-                        type="checkbox"
-                        checked={formData.assignedToIds?.includes(u.id) || false}
-                        onChange={(e) => {
-                          const newIds = e.target.checked
-                            ? [...(formData.assignedToIds || []), u.id]
-                            : (formData.assignedToIds || []).filter(id => id !== u.id);
-                          setFormData(prev => ({ ...prev, assignedToIds: newIds }));
-                        }}
-                        className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-2 focus:ring-gray-200"
-                      />
-                      {u.profilePicture ? (
-                        <img src={u.profilePicture} className="h-7 w-7 rounded-full object-cover" alt={u.name} />
-                      ) : (
-                        <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-[10px] font-bold text-gray-600">
-                            {u.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
-                          </span>
-                        </div>
-                      )}
-                      <span className="text-sm font-medium text-gray-700">{u.name} ({u.role})</span>
-                      {formData.assignedToIds?.includes(u.id) && (
-                        <svg className="h-4 w-4 text-green-500 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </label>
-                  ))}
-                </div>
+            {/* Assignment Section (Visible to all) */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Assigned To</label>
+              <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-xl p-3 bg-gray-50">
+                {users.map(u => (
+                  <label key={u.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white cursor-pointer transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={formData.assignedToIds?.includes(u.id) || false}
+                      onChange={(e) => {
+                        const newIds = e.target.checked
+                          ? [...(formData.assignedToIds || []), u.id]
+                          : (formData.assignedToIds || []).filter(id => id !== u.id);
+                        setFormData(prev => ({ ...prev, assignedToIds: newIds }));
+                      }}
+                      className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-2 focus:ring-gray-200"
+                    />
+                    {u.profilePicture ? (
+                      <img src={u.profilePicture} className="h-7 w-7 rounded-full object-cover" alt={u.name} />
+                    ) : (
+                      <div className="h-7 w-7 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-gray-600">
+                          {u.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                        </span>
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-gray-700">{u.name} ({u.role})</span>
+                    {formData.assignedToIds?.includes(u.id) && (
+                      <svg className="h-4 w-4 text-green-500 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </label>
+                ))}
               </div>
-            )}
+            </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Potential Value ($)</label>
               <input

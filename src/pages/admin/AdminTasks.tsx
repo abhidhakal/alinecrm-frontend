@@ -141,14 +141,33 @@ export default function AdminTasks() {
 
               <div className="flex items-center mb-5">
                 <div className="flex -space-x-3 overflow-hidden">
-                  {[1, 2, 3].map((_, i) => (
-                    <img
-                      key={i}
-                      className="inline-block h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover"
-                      src={`https://i.pravatar.cc/150?u=${task.id}-${i}`}
-                      alt="avatar"
-                    />
-                  ))}
+                  {task.assignedTo?.length > 0 ? (
+                    task.assignedTo.map((user) => (
+                      user.profilePicture ? (
+                        <img
+                          key={user.id}
+                          className="inline-block h-9 w-9 rounded-full ring-2 ring-white shadow-sm object-cover"
+                          src={user.profilePicture}
+                          alt={user.name}
+                          title={user.name}
+                        />
+                      ) : (
+                        <div
+                          key={user.id}
+                          className="h-9 w-9 rounded-full ring-2 ring-white shadow-sm bg-gray-200 flex items-center justify-center"
+                          title={user.name}
+                        >
+                          <span className="text-xs font-bold text-gray-600">
+                            {user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                          </span>
+                        </div>
+                      )
+                    ))
+                  ) : (
+                    <div className="h-9 w-9 rounded-full ring-2 ring-white shadow-sm bg-gray-200 flex items-center justify-center">
+                      <span className="text-xs font-bold text-gray-600">?</span>
+                    </div>
+                  )}
                 </div>
               </div>
 

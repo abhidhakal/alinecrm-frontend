@@ -1,0 +1,6 @@
+name,email,phone,address,company,industry,priority
+John Doe,john.doe@example.com,+1234567890,123 Main St,Tech Corp,Software,High
+Jane Smith,jane.smith@example.com,+0987654321,456 Oak Ave,Design Studio,Creative,Medium
+Bob Johnson,bob.johnson@example.com,+1122334455,789 Pine Rd,Builders Inc,Construction,Low
+Alice Brown,alice.brown@example.com,+9988776655,321 Elm St,Flower Shop,Retail,Medium
+Charlie Wilson,charlie.wilson@example.com,+5544332211,654 Maple Dr,Green Energy,Sustainability,High

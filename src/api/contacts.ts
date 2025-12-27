@@ -52,5 +52,9 @@ export const contactsApi = {
 
   delete: async (id: number): Promise<void> => {
     await api.delete(`/contacts/${id}`);
+  },
+
+  bulkDelete: async (ids: number[]): Promise<void> => {
+    await api.post('/contacts/delete-bulk', { ids });
   }
 };

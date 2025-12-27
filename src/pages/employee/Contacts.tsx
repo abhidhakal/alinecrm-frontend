@@ -156,6 +156,24 @@ export default function Contacts() {
     // TODO: Implement archive functionality
   };
 
+  const handleBulkDelete = async () => {
+    if (selectedContacts.length === 0) return;
+
+    if (window.confirm(`Are you sure you want to delete ${selectedContacts.length} contacts?`)) {
+      try {
+        setLoading(true);
+        await contactsApi.bulkDelete(selectedContacts);
+        await fetchContacts();
+        setSelectedContacts([]);
+      } catch (error) {
+        console.error('Error deleting contacts:', error);
+        alert('Failed to delete some contacts.');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -212,6 +230,17 @@ export default function Contacts() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Selection Actions */}
+            {selectedContacts.length > 0 && (
+              <button
+                onClick={handleBulkDelete}
+                className="flex items-center gap-2 rounded-xl bg-red-50 px-6 py-2.5 text-sm font-semibold text-red-600 shadow-sm transition-all hover:bg-red-100 active:scale-[0.98]"
+              >
+                <img src="/icons/delete-icon.svg" alt="Delete" className="h-5 w-5 opacity-80" />
+                Delete Selected ({selectedContacts.length})
+              </button>
+            )}
+
             {/* CSV Import */}
             <input
               type="file"
@@ -264,7 +293,7 @@ export default function Contacts() {
                       <input
                         type="checkbox"
                         className="h-4 w-4 rounded border-gray-300 text-foreground focus:ring-foreground/5 mx-auto"
-                        checked={selectedContacts.length === contacts.length && contacts.length > 0}
+                        checked={selectedContacts.length === filteredContacts.length && filteredContacts.length > 0}
                         onChange={toggleSelectAll}
                       />
                     </th>
