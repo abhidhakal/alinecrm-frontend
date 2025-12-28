@@ -116,4 +116,20 @@ export const campaignsApi = {
     });
     return response.data;
   },
+
+  getUnsubscribed: async (page = 1, limit = 50) => {
+    const response = await api.get<{ items: any[]; total: number }>('/campaigns/settings/unsubscribed', {
+      params: { page, limit },
+    });
+    return response.data;
+  },
+
+  addUnsubscribed: async (email: string, reason?: string) => {
+    const response = await api.post('/campaigns/settings/unsubscribed', { email, reason });
+    return response.data;
+  },
+
+  removeUnsubscribed: async (email: string) => {
+    await api.delete(`/campaigns/settings/unsubscribed/${email}`);
+  },
 };

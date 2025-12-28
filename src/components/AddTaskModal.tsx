@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { TaskStatus, type TaskStatusType, tasksApi, type Task } from "../api/tasks";
 import { usersApi, type User } from "../api/users";
 import { useAuth } from "../context/AuthContext";
+import DatePicker from "./DatePicker";
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -91,7 +92,7 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
       <div className="bg-white rounded-[24px] w-full max-w-[850px] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200 flex flex-col md:flex-row">
-        
+
         {/* Main Form Area */}
         <div className="flex-1 p-8 md:p-10">
           <div className="flex items-center justify-between mb-8">
@@ -143,12 +144,11 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-700 uppercase tracking-wide">Due Date</label>
-                <input
-                  required
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full text-sm font-semibold text-foreground bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:bg-white focus:border-gray-300 outline-none transition-all"
+                <DatePicker
+                  date={dueDate ? new Date(dueDate) : undefined}
+                  setDate={(date) => setDueDate(date ? date.toISOString() : "")}
+                  placeholder="Select due date"
+                  position="top"
                 />
               </div>
             </div>
@@ -175,7 +175,7 @@ export default function AddTaskModal({ isOpen, onClose, onSuccess, initialStatus
         {/* Sidebar / Right Column */}
         <div className="hidden md:flex w-[280px] bg-gray-50/50 border-l border-gray-100 p-8 flex-col">
           <div className="flex justify-end mb-6">
-             <button
+            <button
               onClick={onClose}
               className="p-2 hover:bg-gray-200/50 rounded-full transition-colors"
             >

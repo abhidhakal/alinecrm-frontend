@@ -43,7 +43,7 @@ h2,
 h3,
 h4,
 h5,
-h6, 
+h6,
 p {
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 600;
@@ -54,10 +54,12 @@ p {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .hero-gradient {
     background: linear-gradient(to bottom, #ffffff 0%, #BFD7EA 35%, #65889F 80%, #0B3954 100%);
   }

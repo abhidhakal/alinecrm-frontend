@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { useSidebar } from '../../context/SidebarContext';
 import CampaignsHeader from '../../components/CampaignsHeader';
 import CampaignCard from '../../components/CampaignCard';
 import { campaignsApi } from '../../api/campaigns';
 import type { Campaign } from '../../api/campaigns';
+import { templatesApi, type EmailTemplate } from '../../api/templates';
 import CreateCampaignModal from '../../components/CreateCampaignModal';
+import CreateTemplateModal from '../../components/CreateTemplateModal';
+import CampaignSettingsModal from '../../components/CampaignSettingsModal';
 
 export default function Campaigns() {
   const { isExpanded } = useSidebar();
@@ -16,6 +19,14 @@ export default function Campaigns() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(true);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   const fetchCampaigns = async () => {
     try {
@@ -30,8 +41,21 @@ export default function Campaigns() {
     }
   };
 
+  const fetchTemplates = async () => {
+    try {
+      setLoadingTemplates(true);
+      const data = await templatesApi.getAll();
+      setTemplates(data);
+    } catch (error) {
+      console.error('Failed to fetch templates', error);
+    } finally {
+      setLoadingTemplates(false);
+    }
+  };
+
   useEffect(() => {
     fetchCampaigns();
+    fetchTemplates();
   }, []);
 
   const handleRefresh = () => {
@@ -48,9 +72,11 @@ export default function Campaigns() {
     setSelectedIds(newSelected);
   };
 
-  const filteredCampaigns = campaigns.filter((campaign) =>
-    campaign.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCampaigns = campaigns.filter((campaign) => {
+    const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || campaign.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="flex min-h-screen w-full bg-white font-sans">
@@ -69,7 +95,10 @@ export default function Campaigns() {
               <h2 className="text-xl font-bold text-gray-900">Email Campaign</h2>
 
               <div className="flex items-center gap-3">
-                <button className="p-2 text-gray-400 hover:text-gray-600">
+                <button
+                  onClick={() => setIsSettingsModalOpen(true)}
+                  className="p-2 text-gray-400 hover:text-gray-600 active:scale-95 transition-all"
+                >
                   <img src="/icons/settings-icon.svg" alt="Settings" className="h-5 w-5" />
                 </button>
 
@@ -100,12 +129,43 @@ export default function Campaigns() {
                 </div>
 
                 {/* Status Dropdown */}
-                <button className="flex h-10 items-center gap-2 rounded-full border border-gray-100 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-50">
-                  Status
-                  <svg className="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                    className="flex h-10 items-center gap-2 rounded-full border border-gray-100 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all active:scale-95"
+                  >
+                    <span className="capitalize">{statusFilter === 'all' ? 'Status' : statusFilter}</span>
+                    <svg className={`h-4 w-4 text-gray-400 transition-transform ${isStatusDropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+
+                  {isStatusDropdownOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setIsStatusDropdownOpen(false)}
+                      ></div>
+                      <div className="absolute left-0 mt-2 z-20 w-40 origin-top-left rounded-xl border border-gray-100 bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none animate-in fade-in slide-in-from-top-1 duration-200">
+                        {['all', 'draft', 'scheduled', 'sending', 'sent', 'failed'].map((status) => (
+                          <button
+                            key={status}
+                            onClick={() => {
+                              setStatusFilter(status);
+                              setIsStatusDropdownOpen(false);
+                            }}
+                            className={`flex w-full items-center px-4 py-2 text-sm capitalize transition-colors ${statusFilter === status
+                              ? 'bg-gray-50 font-bold text-black'
+                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                              }`}
+                          >
+                            {status}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
               {/* Pagination / Count */}
@@ -157,9 +217,83 @@ export default function Campaigns() {
               ))
             )}
           </div>
+
+          {/* Templates Section */}
+          <div className="mt-16 mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Email Templates</h2>
+                <p className="text-sm text-gray-500">Reusable designs for your campaigns</p>
+              </div>
+              <button
+                onClick={() => setIsTemplateModalOpen(true)}
+                className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm transition-all hover:bg-gray-50 active:scale-[0.98]"
+              >
+                <img src="/icons/add-icon.svg" alt="" className="h-4 w-4" />
+                Create Template
+              </button>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {loadingTemplates ? (
+                <div className="col-span-full flex h-32 items-center justify-center text-gray-400 text-sm">
+                  Loading templates...
+                </div>
+              ) : templates.length === 0 ? (
+                <div className="col-span-full flex h-48 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-100 bg-gray-50/30 text-gray-500">
+                  <p className="font-medium text-gray-900">No templates yet</p>
+                  <p className="text-sm">Create templates to reuse them in campaigns</p>
+                </div>
+              ) : (
+                templates.map((template) => (
+                  <div
+                    key={template.id}
+                    className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:border-gray-200 hover:shadow-md"
+                  >
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-gray-400 transition-colors group-hover:bg-black group-hover:text-white">
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <h3 className="mb-1 font-bold text-gray-900">{template.name}</h3>
+                    <p className="mb-4 text-xs text-gray-500 line-clamp-2">
+                      {template.description || 'No description provided'}
+                    </p>
+                    <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
+                      <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
+                        Edited {new Date(template.updatedAt).toLocaleDateString()}
+                      </span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingTemplate(template);
+                            setIsTemplateModalOpen(true);
+                          }}
+                          className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                        >
+                          <img src="/icons/edit-icon.svg" alt="Edit" className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (window.confirm('Delete this template?')) {
+                              await templatesApi.delete(template.id);
+                              fetchTemplates();
+                            }
+                          }}
+                          className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                        >
+                          <img src="/icons/delete-icon.svg" alt="Delete" className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </main>
 
-        {/* Modal */}
+        {/* Campaign Modal */}
         {isCreateModalOpen && (
           <CreateCampaignModal
             isOpen={isCreateModalOpen}
@@ -173,6 +307,31 @@ export default function Campaigns() {
               setEditingCampaign(null);
             }}
             campaignToEdit={editingCampaign}
+          />
+        )}
+
+        {/* Template Modal */}
+        {isTemplateModalOpen && (
+          <CreateTemplateModal
+            isOpen={isTemplateModalOpen}
+            onClose={() => {
+              setIsTemplateModalOpen(false);
+              setEditingTemplate(null);
+            }}
+            onSuccess={() => {
+              fetchTemplates();
+              setIsTemplateModalOpen(false);
+              setEditingTemplate(null);
+            }}
+            templateToEdit={editingTemplate}
+          />
+        )}
+
+        {/* Settings Modal */}
+        {isSettingsModalOpen && (
+          <CampaignSettingsModal
+            isOpen={isSettingsModalOpen}
+            onClose={() => setIsSettingsModalOpen(false)}
           />
         )}
       </div>

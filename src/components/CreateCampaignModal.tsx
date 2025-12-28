@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { campaignsApi } from '../api/campaigns';
 import type { Campaign, CreateCampaignDto } from '../api/campaigns';
+import { templatesApi, type EmailTemplate } from '../api/templates';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
+import DatePicker from './DatePicker';
 
 interface CreateCampaignModalProps {
   isOpen: boolean;
@@ -23,6 +25,9 @@ export default function CreateCampaignModal({
   const [loading, setLoading] = useState(false);
   const [estimating, setEstimating] = useState(false);
   const [estimatedCount, setEstimatedCount] = useState<number | null>(null);
+
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
 
   const [formData, setFormData] = useState<CreateCampaignDto>({
     name: '',
@@ -69,7 +74,7 @@ export default function CreateCampaignModal({
   </div>
 </body>
 </html>`,
-    scheduledAt: '',
+    scheduledAt: undefined,
     audienceFilters: {
       source: 'contacts',
       filters: {},
@@ -85,7 +90,7 @@ export default function CreateCampaignModal({
         senderName: campaignToEdit.senderName,
         senderEmail: campaignToEdit.senderEmail,
         htmlContent: campaignToEdit.htmlContent,
-        scheduledAt: campaignToEdit.scheduledAt || '',
+        scheduledAt: campaignToEdit.scheduledAt ? new Date(campaignToEdit.scheduledAt).toISOString() : undefined,
         audienceFilters: campaignToEdit.audienceFilters,
       });
       setEstimatedCount(campaignToEdit.totalRecipients);
@@ -97,6 +102,43 @@ export default function CreateCampaignModal({
       }));
     }
   }, [campaignToEdit, user]);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadTemplates();
+    }
+  }, [isOpen]);
+
+  const loadTemplates = async () => {
+    try {
+      setLoadingTemplates(true);
+      const data = await templatesApi.getAll();
+      setTemplates(data);
+    } catch (error) {
+      console.error('Failed to load templates', error);
+    } finally {
+      setLoadingTemplates(false);
+    }
+  };
+
+  const handleApplyTemplate = (templateId: string | null) => {
+    if (templateId === null) {
+      // Start from scratch - just move to next step
+      setStep(2);
+      return;
+    }
+    const template = templates.find(t => t.id === Number(templateId));
+    if (template) {
+      setFormData(prev => ({
+        ...prev,
+        name: template.suggestedTitle || prev.name,
+        subject: template.subject || prev.subject,
+        htmlContent: template.htmlContent
+      }));
+      showToast(`Applied "${template.name}" template`, 'info');
+      setStep(2);
+    }
+  };
 
   // Estimate audience when filters change
   useEffect(() => {
@@ -120,23 +162,34 @@ export default function CreateCampaignModal({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, shouldRun = false) => {
     e.preventDefault();
     try {
       setLoading(true);
       const dataToSubmit = {
         ...formData,
-        senderEmail: 'hi.alinecrm@gmail.com'
+        senderName: formData.senderName || user?.name || 'AlineCRM Member',
+        senderEmail: 'hi.alinecrm@gmail.com',
+        scheduledAt: formData.scheduledAt || undefined
       };
+
+      let savedCampaign: Campaign;
       if (campaignToEdit) {
-        await campaignsApi.update(campaignToEdit.id, dataToSubmit);
-        showToast('Campaign updated successfully', 'success');
+        savedCampaign = await campaignsApi.update(campaignToEdit.id, dataToSubmit);
       } else {
-        await campaignsApi.create(dataToSubmit);
-        showToast('Campaign created successfully', 'success');
+        savedCampaign = await campaignsApi.create(dataToSubmit);
       }
+
+      if (shouldRun) {
+        await campaignsApi.send(savedCampaign.id);
+        showToast('Campaign saved and started sending!', 'success');
+      } else {
+        showToast(`Campaign ${campaignToEdit ? 'updated' : 'created'} successfully`, 'success');
+      }
+
       onSuccess();
     } catch (error) {
+      console.error('Failed to save campaign', error);
       showToast('Failed to save campaign', 'error');
     } finally {
       setLoading(false);
@@ -176,16 +229,22 @@ export default function CreateCampaignModal({
 
         {/* Steps */}
         <div className="flex bg-gray-50 px-8 py-3 border-b border-gray-100">
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3, 4].map(i => (
             <button
               key={i}
-              onClick={() => setStep(i)}
+              onClick={() => {
+                // Only allow jumping back or to next logical step if valid
+                if (i < step || (i === step + 1 && formData.name) || campaignToEdit) {
+                  setStep(i);
+                }
+              }}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${step === i ? 'bg-white text-black shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
             >
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step === i ? 'bg-black text-white' : 'bg-gray-200'}`}>{i}</div>
-              {i === 1 && 'Details'}
-              {i === 2 && 'Content'}
-              {i === 3 && 'Audience'}
+              {i === 1 && 'Template'}
+              {i === 2 && 'Setup'}
+              {i === 3 && 'Design'}
+              {i === 4 && 'Audience'}
             </button>
           ))}
         </div>
@@ -194,8 +253,64 @@ export default function CreateCampaignModal({
         <div className="flex-1 overflow-y-auto px-8 py-6">
           <form id="campaign-form" onSubmit={handleSubmit} className="flex flex-col gap-6">
 
-            {/* Step 1: Details */}
+            {/* Step 1: Template Selection */}
             {step === 1 && (
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-gray-900">How would you like to start?</h3>
+                  <p className="text-sm text-gray-500">Pick a template to save time, or start with a blank canvas.</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Start from Scratch */}
+                  <button
+                    type="button"
+                    onClick={() => handleApplyTemplate(null)}
+                    className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl border-2 border-dashed border-gray-100 hover:border-black hover:bg-gray-50 transition-all group"
+                  >
+                    <div className="h-12 w-12 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                      <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900">Start from Scratch</p>
+                      <p className="text-xs text-gray-400">Build your campaign manually</p>
+                    </div>
+                  </button>
+
+                  {/* Template Cards */}
+                  {loadingTemplates ? (
+                    <div className="col-span-1 flex items-center justify-center bg-gray-50 rounded-2xl p-8">
+                      <p className="text-sm text-gray-400 animate-pulse">Loading templates...</p>
+                    </div>
+                  ) : (
+                    templates.map(t => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => handleApplyTemplate(t.id.toString())}
+                        className="flex flex-col text-left p-6 rounded-2xl border border-gray-100 hover:border-black hover:shadow-md transition-all group relative overflow-hidden"
+                      >
+                        <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="bg-black text-white text-[10px] uppercase font-bold px-2 py-1 rounded">Select</div>
+                        </div>
+                        <div className="mb-4 h-10 w-10 rounded-xl bg-gray-50 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <h4 className="font-bold text-gray-900 mb-1">{t.name}</h4>
+                        <p className="text-xs text-gray-500 line-clamp-1">{t.description || "No description"}</p>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Setup (Identity) */}
+            {step === 2 && (
               <div className="grid grid-cols-2 gap-6">
                 <div className="col-span-2 space-y-2">
                   <label className="text-sm font-medium text-gray-700">Campaign Name</label>
@@ -205,7 +320,7 @@ export default function CreateCampaignModal({
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full rounded-xl border border-gray-200 p-3 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
-                    placeholder="e.g. Black Friday Sale"
+                    placeholder="e.g. Summer Outreach 2025"
                   />
                 </div>
 
@@ -216,8 +331,8 @@ export default function CreateCampaignModal({
                     type="text"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full rounded-xl border border-gray-200 p-3 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
-                    placeholder="Get 50% off everything today only!"
+                    className="w-full rounded-xl border border-gray-200 p-3 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all font-medium"
+                    placeholder="The catchy part your audience sees first"
                   />
                 </div>
 
@@ -228,7 +343,7 @@ export default function CreateCampaignModal({
                     value={formData.previewText}
                     onChange={(e) => setFormData({ ...formData, previewText: e.target.value })}
                     className="w-full rounded-xl border border-gray-200 p-3 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
-                    placeholder="Don't miss out on these deals..."
+                    placeholder="A short snippet after the subject line"
                   />
                 </div>
 
@@ -244,54 +359,48 @@ export default function CreateCampaignModal({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Sender Email</label>
-                  <input
-                    readOnly
-                    type="email"
-                    value="hi.alinecrm@gmail.com"
-                    className="w-full cursor-not-allowed rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-500 outline-none"
-                  />
-                  <p className="text-xs text-gray-500">
-                    Sent from verified default address.
-                  </p>
-                </div>
-
-                <div className="col-span-2 space-y-2">
                   <label className="text-sm font-medium text-gray-700">Schedule (Optional)</label>
-                  <input
-                    type="datetime-local"
-                    value={formData.scheduledAt || ''}
-                    onChange={(e) => setFormData({ ...formData, scheduledAt: e.target.value })}
-                    className="w-full rounded-xl border border-gray-200 p-3 text-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
+                  <DatePicker
+                    date={formData.scheduledAt ? new Date(formData.scheduledAt) : undefined}
+                    setDate={(date) => setFormData({ ...formData, scheduledAt: date ? date.toISOString() : undefined })}
+                    placeholder="Select launch time"
                   />
-                  <p className="text-xs text-gray-500">Leave blank to keep as draft or send manually.</p>
                 </div>
               </div>
             )}
 
-            {/* Step 2: Content */}
-            {step === 2 && (
+            {/* Step 3: Design (The HTML) */}
+            {step === 3 && (
               <div className="flex flex-col h-full gap-4">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">Email Body (HTML)</label>
-                  <p className="text-xs text-gray-500">Supports basic HTML tags</p>
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900">Email Content</h4>
+                    <p className="text-xs text-gray-500">Edit the HTML directly or refine your template.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="text-xs font-semibold text-gray-400 hover:text-black transition-colors"
+                  >
+                    Change Template?
+                  </button>
                 </div>
                 <textarea
                   required
                   value={formData.htmlContent}
                   onChange={(e) => setFormData({ ...formData, htmlContent: e.target.value })}
-                  className="w-full flex-1 min-h-[400px] rounded-xl border border-gray-200 p-4 text-sm font-mono focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
-                  placeholder="<h1>Hello {{name}},</h1><p>Write your content here...</p>"
+                  className="w-full flex-1 min-h-[450px] rounded-2xl border border-gray-200 p-6 text-sm font-mono focus:border-black focus:ring-1 focus:ring-black outline-none transition-all bg-gray-50/30"
+                  placeholder="<h1>Hello {{name}},</h1>..."
                 />
               </div>
             )}
 
-            {/* Step 3: Audience */}
-            {step === 3 && (
+            {/* Step 4: Audience */}
+            {step === 4 && (
               <div className="space-y-6">
                 {/* Source Selection */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Audience Source</label>
+                  <label className="text-sm font-medium text-gray-700">Who should receive this?</label>
                   <div className="flex gap-4">
                     {['contacts', 'leads'].map((source) => (
                       <label key={source} className={`flex items-center gap-2 p-4 rounded-xl border cursor-pointer flex-1 transition-all ${formData.audienceFilters.source === source ? 'border-black bg-gray-50' : 'border-gray-200'}`}>
@@ -312,7 +421,7 @@ export default function CreateCampaignModal({
                 <div className="h-px bg-gray-100"></div>
 
                 {/* Filters */}
-                <h3 className="font-semibold text-gray-900">Filters</h3>
+                <h3 className="font-semibold text-gray-900">Refine Audience</h3>
 
                 {formData.audienceFilters.source === 'contacts' ? (
                   <div className="grid grid-cols-2 gap-4">
@@ -367,6 +476,8 @@ export default function CreateCampaignModal({
                           <option value="Organic">Organic</option>
                           <option value="Social Media">Social Media</option>
                           <option value="Referral">Referral</option>
+                          <option value="Word of Mouth">Word of Mouth</option>
+                          <option value="Contacts">Contacts</option>
                         </select>
                         <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
                           <img src="/icons/chevron-down.svg" alt="chevron" className="h-4 w-4 text-gray-400" />
@@ -380,32 +491,30 @@ export default function CreateCampaignModal({
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-gray-500">Created After</label>
-                    <input
-                      type="date"
-                      className="w-full rounded-xl border border-gray-200 p-2.5 text-sm"
-                      onChange={(e) => updateFilter('createdAtFrom', e.target.value)}
+                    <DatePicker
+                      date={formData.audienceFilters.filters.createdAtFrom ? new Date(formData.audienceFilters.filters.createdAtFrom) : undefined}
+                      setDate={(date) => updateFilter('createdAtFrom', date ? date.toISOString() : undefined)}
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-gray-500">Created Before</label>
-                    <input
-                      type="date"
-                      className="w-full rounded-xl border border-gray-200 p-2.5 text-sm"
-                      onChange={(e) => updateFilter('createdAtTo', e.target.value)}
+                    <DatePicker
+                      date={formData.audienceFilters.filters.createdAtTo ? new Date(formData.audienceFilters.filters.createdAtTo) : undefined}
+                      setDate={(date) => updateFilter('createdAtTo', date ? date.toISOString() : undefined)}
                     />
                   </div>
                 </div>
 
                 {/* Estimate */}
-                <div className="mt-4 rounded-xl bg-gray-50 p-4 flex items-center justify-between border border-gray-200">
-                  <div className="text-sm font-medium">Estimated Audience</div>
-                  <div className="text-2xl font-bold">
+                <div className="mt-4 rounded-xl bg-gray-50 p-6 flex items-center justify-between border border-gray-200 shadow-inner">
+                  <div className="text-sm font-semibold text-gray-600">Total Reach Potential</div>
+                  <div className="text-3xl font-black text-black">
                     {estimating ? (
-                      <span className="text-gray-400 text-sm">Calculating...</span>
+                      <span className="text-gray-400 text-sm animate-pulse">Calculating...</span>
                     ) : (
-                      estimatedCount !== null ? estimatedCount : '-'
+                      estimatedCount !== null ? estimatedCount.toLocaleString() : '-'
                     )}
-                    <span className="text-sm font-normal text-gray-500 ml-1">recipients</span>
+                    <span className="text-xs font-bold text-gray-400 ml-2 uppercase tracking-widest">recipients</span>
                   </div>
                 </div>
 
@@ -423,22 +532,44 @@ export default function CreateCampaignModal({
               if (step > 1) setStep(step - 1);
               else onClose();
             }}
-            className="rounded-xl px-6 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50"
+            className="rounded-xl px-6 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all"
           >
             {step === 1 ? 'Cancel' : 'Back'}
           </button>
 
-          <button
-            type="button"
-            onClick={(e) => {
-              if (step < 3) setStep(step + 1);
-              else handleSubmit(e as any);
-            }}
-            disabled={loading}
-            className="rounded-xl bg-black px-8 py-2.5 text-sm font-semibold text-white shadow-sm hover:scale-[1.02] active:scale-100 disabled:opacity-50 disabled:hover:scale-100 transition-all"
-          >
-            {loading ? 'Saving...' : (step === 3 ? (campaignToEdit ? 'Update Campaign' : 'Create Campaign') : 'Next')}
-          </button>
+          <div className="flex items-center gap-3">
+            {step === 4 ? (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => handleSubmit(e as any, false)}
+                  disabled={loading}
+                  className="rounded-xl border border-gray-200 bg-white px-6 py-2.5 text-sm font-semibold text-black shadow-sm hover:bg-gray-50 disabled:opacity-50 transition-all"
+                >
+                  {loading ? 'Saving...' : (campaignToEdit ? 'Save Changes' : 'Create Campaign')}
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => handleSubmit(e as any, true)}
+                  disabled={loading}
+                  className="rounded-xl bg-black px-8 py-2.5 text-sm font-semibold text-white shadow-lg shadow-black/10 hover:shadow-black/20 hover:scale-[1.02] active:scale-100 disabled:opacity-50 disabled:hover:scale-100 transition-all"
+                >
+                  {loading ? 'Sending...' : (campaignToEdit ? 'Save & Run' : 'Create & Run')}
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  if (step < 4) setStep(step + 1);
+                }}
+                disabled={step === 2 && !formData.name}
+                className="rounded-xl bg-black px-8 py-2.5 text-sm font-semibold text-white shadow-lg shadow-black/10 hover:shadow-black/20 hover:scale-[1.02] active:scale-100 disabled:opacity-50 disabled:hover:scale-100 transition-all"
+              >
+                Next
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

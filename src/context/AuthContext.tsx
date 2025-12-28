@@ -15,6 +15,7 @@ export interface User {
   email: string;
   role: RoleType;
   profilePicture?: string;
+  currency?: string;
 }
 
 interface AuthContextType {
@@ -38,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Load user from localStorage on mount
     const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('access_token');
-    
+
     if (storedUser && token) {
       try {
         setUser(JSON.parse(storedUser));

@@ -5,9 +5,11 @@ import LeadsHeader from "../../components/LeadsHeader";
 import AddLeadModal from "../../components/AddLeadModal";
 import EditLeadModal from "../../components/EditLeadModal";
 import { leadsApi, type Lead, type CreateLeadDto, type UpdateLeadDto } from "../../api/leads";
+import { useCurrency } from "../../context/CurrencyContext";
 
 export default function Leads() {
   const { isExpanded } = useSidebar();
+  const { formatCurrency } = useCurrency();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -224,8 +226,8 @@ export default function Leads() {
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={`relative pb-4 text-sm font-medium transition-colors ${activeTab === tab
-                        ? 'text-gray-900 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-gray-900'
-                        : 'text-gray-500 hover:text-gray-700'
+                      ? 'text-gray-900 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-gray-900'
+                      : 'text-gray-500 hover:text-gray-700'
                       }`}
                   >
                     {tab}
@@ -374,14 +376,14 @@ export default function Leads() {
                     <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
                       <div className="flex items-center gap-2">
                         <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
-                            lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
-                              lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
-                                'bg-gray-50 text-gray-600 ring-gray-500/20'
+                          lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
+                            lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
+                              'bg-gray-50 text-gray-600 ring-gray-500/20'
                           }`}>
                           <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${lead.status === 'New' ? 'bg-blue-600' :
-                              lead.status === 'Qualified' ? 'bg-green-600' :
-                                lead.status === 'Closed Won' ? 'bg-purple-600' :
-                                  'bg-gray-500'
+                            lead.status === 'Qualified' ? 'bg-green-600' :
+                              lead.status === 'Closed Won' ? 'bg-purple-600' :
+                                'bg-gray-500'
                             }`}></span>
                           {lead.status}
                         </span>
@@ -419,7 +421,7 @@ export default function Leads() {
                       <div className="text-right">
                         <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Potential Value</p>
                         <p className="text-sm font-bold text-gray-900">
-                          ${lead.potentialValue?.toLocaleString() || '0'}
+                          {formatCurrency(lead.potentialValue || 0)}
                         </p>
                       </div>
                     </div>
@@ -487,14 +489,14 @@ export default function Leads() {
                     {/* Status & Actions */}
                     <div className="flex items-center gap-8">
                       <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
-                          lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
-                            lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
-                              'bg-gray-50 text-gray-600 ring-gray-500/20'
+                        lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
+                          lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
+                            'bg-gray-50 text-gray-600 ring-gray-500/20'
                         }`}>
                         <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${lead.status === 'New' ? 'bg-blue-600' :
-                            lead.status === 'Qualified' ? 'bg-green-600' :
-                              lead.status === 'Closed Won' ? 'bg-purple-600' :
-                                'bg-gray-500'
+                          lead.status === 'Qualified' ? 'bg-green-600' :
+                            lead.status === 'Closed Won' ? 'bg-purple-600' :
+                              'bg-gray-500'
                           }`}></span>
                         {lead.status}
                       </span>
@@ -502,7 +504,7 @@ export default function Leads() {
                       <div className="text-right min-w-[100px]">
                         <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Value</p>
                         <p className="text-sm font-bold text-gray-900">
-                          ${lead.potentialValue?.toLocaleString() || '0'}
+                          {formatCurrency(lead.potentialValue || 0)}
                         </p>
                       </div>
 

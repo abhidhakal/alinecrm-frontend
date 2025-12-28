@@ -32,7 +32,7 @@ export default function Login() {
             login(response.data.access_token, response.data.user);
 
             showToast('Login successful!', 'success');
-            
+
             // Redirect based on role
             const userRole = response.data.user.role;
             if (userRole === 'admin' || userRole === 'superadmin') {
@@ -98,9 +98,9 @@ export default function Login() {
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
                                 >
-                                    <img 
-                                        src={showPassword ? "/icons/visibility-off.svg" : "/icons/visibility-on.svg"} 
-                                        alt={showPassword ? "Hide password" : "Show password"} 
+                                    <img
+                                        src={showPassword ? "/icons/visibility-off.svg" : "/icons/visibility-on.svg"}
+                                        alt={showPassword ? "Hide password" : "Show password"}
                                         className="h-5 w-5"
                                     />
                                 </button>
@@ -141,16 +141,16 @@ export default function Login() {
                 </div>
 
                 {/* Return to HomePage */}
-                <button 
-                    onClick={() => navigate('/')} 
+                <button
+                    onClick={() => navigate('/')}
                     className="absolute bottom-12 right-44 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
                 >
                     <img src="/icons/chevron-left.svg" alt="Back" className="h-4 w-4" />
                     Return to HomePage
                 </button>
 
-                <button 
-                    onClick={() => navigate('/')} 
+                <button
+                    onClick={() => navigate('/')}
                     className="absolute bottom-12 right-12 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
                 >
                     Click to Sign Up

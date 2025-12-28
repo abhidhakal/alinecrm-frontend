@@ -1,11 +1,12 @@
 import Header from '../components/Header';
+import { useCurrency } from '../context/CurrencyContext';
 
 const tiers = [
   {
     name: 'Starter',
     id: 'tier-starter',
     href: '#',
-    priceMonthly: '$15',
+    priceMonthly: 15,
     description: 'The essentials to provide your best work for clients.',
     features: ['5 users', 'Up to 1,000 subscribers', 'Basic analytics', '48-hour support response time'],
     featured: false,
@@ -14,7 +15,7 @@ const tiers = [
     name: 'Professional',
     id: 'tier-professional',
     href: '#',
-    priceMonthly: '$49',
+    priceMonthly: 49,
     description: 'A plan that scales with your rapidly growing business.',
     features: ['25 users', 'Up to 10,000 subscribers', 'Advanced analytics', '24-hour support response time', 'Marketing automations'],
     featured: true,
@@ -23,7 +24,7 @@ const tiers = [
     name: 'Enterprise',
     id: 'tier-enterprise',
     href: '#',
-    priceMonthly: '$99',
+    priceMonthly: 99,
     description: 'Dedicated support and infrastructure for your company.',
     features: ['Unlimited users', 'Unlimited subscribers', 'Custom reporting', '1-hour, dedicated support response time', 'SSO'],
     featured: false,
@@ -35,8 +36,10 @@ function classNames(...classes: string[]) {
 }
 
 export default function Pricing() {
+  const { formatCurrency } = useCurrency();
+
   return (
-    <div className="flex w-full flex-col min-h-screen bg-white font-sans">
+    <div className="flex w-full flex-col min-h-screen bg-white font-sans text-gray-900">
       <Header />
       <div className="py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -54,8 +57,8 @@ export default function Pricing() {
               <div
                 key={tier.id}
                 className={classNames(
-                  tier.featured ? 'ring-2 ring-indigo-600' : 'ring-1 ring-gray-200',
-                  'rounded-3xl p-8 xl:p-10'
+                  tier.featured ? 'ring-2 ring-indigo-600 shadow-xl' : 'ring-1 ring-gray-200',
+                  'rounded-3xl p-8 xl:p-10 transition-all hover:scale-[1.02]'
                 )}
               >
                 <div className="flex items-center justify-between gap-x-4">
@@ -63,7 +66,7 @@ export default function Pricing() {
                     id={tier.id}
                     className={classNames(
                       tier.featured ? 'text-indigo-600' : 'text-gray-900',
-                      'text-lg font-semibold leading-8'
+                      'text-lg font-bold leading-8'
                     )}
                   >
                     {tier.name}
@@ -71,7 +74,7 @@ export default function Pricing() {
                 </div>
                 <p className="mt-4 text-sm leading-6 text-gray-600">{tier.description}</p>
                 <p className="mt-6 flex items-baseline gap-x-1">
-                  <span className="text-4xl font-bold tracking-tight text-gray-900">{tier.priceMonthly}</span>
+                  <span className="text-4xl font-bold tracking-tight text-gray-900">{formatCurrency(tier.priceMonthly)}</span>
                   <span className="text-sm font-semibold leading-6 text-gray-600">/month</span>
                 </p>
                 <a
@@ -81,7 +84,7 @@ export default function Pricing() {
                     tier.featured
                       ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-500'
                       : 'text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300',
-                    'mt-6 block rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                    'mt-6 block rounded-xl px-3 py-2 text-center text-sm font-bold leading-6 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
                   )}
                 >
                   Buy plan

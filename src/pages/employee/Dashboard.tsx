@@ -2,9 +2,11 @@ import { useState, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
 import DashboardHeader from "../../components/DashboardHeader";
 import { useSidebar } from "../../context/SidebarContext";
+import { useCurrency } from "../../context/CurrencyContext";
 
 export default function Dashboard() {
   const { isExpanded } = useSidebar();
+  const { formatCurrency } = useCurrency();
   const [lastUpdated, setLastUpdated] = useState<Date | null>(new Date());
 
   const handleRefresh = useCallback(() => {
@@ -40,8 +42,8 @@ export default function Dashboard() {
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm min-h-[150px]">
               <h3 className="text-sm font-semibold text-gray-900">Total Pipeline</h3>
               <div className="mt-4 flex items-baseline gap-2">
-                <span className="text-4xl font-bold text-gray-900">$ 54k</span>
-                <span className="text-xs font-medium text-green-600">+3.8k vs last 30 days</span>
+                <span className="text-4xl font-bold text-gray-900">{formatCurrency('54k')}</span>
+                <span className="text-xs font-medium text-green-600">+{formatCurrency('3.8k')} vs last 30 days</span>
               </div>
             </div>
           </div>

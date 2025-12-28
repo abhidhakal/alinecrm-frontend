@@ -200,6 +200,7 @@ export default function EditLeadModal({ isOpen, onClose, onSubmit, lead }: EditL
               >
                 <option value="Organic">Organic</option>
                 <option value="Social Media">Social Media</option>
+                <option value="Referral">Referral</option>
                 <option value="Word of Mouth">Word of Mouth</option>
                 <option value="Contacts">Contacts</option>
               </select>

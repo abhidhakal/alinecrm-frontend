@@ -101,7 +101,7 @@ export default function AdminTasks() {
 
     return (
       <div
-        className="flex flex-col gap-6 w-[400px] h-fit min-h-[200px] bg-white rounded-[24px] p-4 pt-6 shadow-sm border border-gray-100/50 pb-8"
+        className="flex flex-col w-[400px] max-h-[calc(100vh-280px)] h-fit bg-white rounded-[24px] p-4 pt-6 shadow-sm border border-gray-100/50"
         onDragOver={onDragOver}
         onDrop={(e) => onDrop(e, status)}
       >
@@ -124,7 +124,7 @@ export default function AdminTasks() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 px-1">
+        <div className="overflow-y-auto no-scrollbar flex flex-col gap-5 px-1 pb-4 mt-4">
           {statusTasks.map((task: Task) => (
             <div
               key={task.id}
@@ -183,7 +183,7 @@ export default function AdminTasks() {
                 </div>
 
                 <div className="flex items-center gap-2 text-gray-800">
-                  <img src="/icons/calendar-icon.svg" alt="calendar" className="h-[20px] w-[20px]" />
+                  <img src="/icons/clock-icon.svg" alt="due date" className="h-[20px] w-[20px] opacity-70" />
                   <span className="text-sm font-bold text-[#1a1a1a]">
                     {new Date(task.dueDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </span>
@@ -245,7 +245,7 @@ export default function AdminTasks() {
             {renderColumn(TaskStatus.COMPLETE, "Complete")}
           </div>
 
-          <div className="absolute bottom-10 left-10">
+          <div className="absolute bottom-5 left-5">
             <button
               className="flex items-center gap-3 px-8 py-3.5 bg-white rounded-[20px] shadow-lg hover:shadow-xl transition-all hover:bg-gray-50 group border border-gray-100"
               onDragOver={onDragOver}

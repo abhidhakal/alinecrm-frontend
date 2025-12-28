@@ -6,6 +6,7 @@ export interface User {
   email: string;
   role: 'user' | 'admin' | 'superadmin';
   profilePicture?: string;
+  currency?: string;
 }
 
 export interface CreateUserDto {
@@ -21,6 +22,7 @@ export interface UpdateUserDto {
   password?: string;
   role?: 'user' | 'admin' | 'superadmin';
   profilePicture?: string;
+  currency?: string;
 }
 
 export const usersApi = {

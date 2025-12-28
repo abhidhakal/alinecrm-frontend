@@ -40,6 +40,6 @@ export const tasksApi = {
   getAll: () => api.get<Task[]>('/tasks'),
   getOne: (id: number) => api.get<Task>(`/tasks/${id}`),
   create: (data: CreateTaskDto) => api.post<Task>('/tasks', data),
-  update: (id: number, data: Partial<Task>) => api.patch<Task>(`/tasks/${id}`, data),
+  update: (id: number, data: Partial<Task> & { assignedToIds?: number[] }) => api.patch<Task>(`/tasks/${id}`, data),
   delete: (id: number) => api.delete(`/tasks/${id}`),
 };

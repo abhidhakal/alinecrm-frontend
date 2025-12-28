@@ -5,9 +5,11 @@ import LeadsHeader from "../../components/LeadsHeader";
 import AddLeadModal from "../../components/AddLeadModal";
 import EditLeadModal from "../../components/EditLeadModal";
 import { leadsApi, type Lead, type CreateLeadDto, type UpdateLeadDto } from "../../api/leads";
+import { useCurrency } from "../../context/CurrencyContext";
 
 export default function AdminLeads() {
   const { isExpanded } = useSidebar();
+  const { formatCurrency } = useCurrency();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -115,20 +117,20 @@ export default function AdminLeads() {
         />
 
         {/* Admin Banner */}
-        <div className="mx-8 mt-6 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white shadow-lg">
+        <div className="mx-8 mt-6 rounded-xl border border-gray-200 bg-white p-4 text-gray-900 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold">Administrator View</h3>
-                <p className="text-sm text-white/80">Viewing all leads across all users</p>
+                <h3 className="font-semibold text-gray-900">Administrator View</h3>
+                <p className="text-sm text-gray-500">Viewing all leads across all users</p>
               </div>
             </div>
-            <span className="rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium">
+            <span className="rounded-full bg-gray-100 px-4 py-1.5 text-sm font-medium text-gray-700">
               {leads.length} Total Leads
             </span>
           </div>
@@ -244,8 +246,8 @@ export default function AdminLeads() {
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={`relative pb-4 text-sm font-medium transition-colors ${activeTab === tab
-                        ? 'text-gray-900 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-gray-900'
-                        : 'text-gray-500 hover:text-gray-700'
+                      ? 'text-gray-900 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-gray-900'
+                      : 'text-gray-500 hover:text-gray-700'
                       }`}
                   >
                     {tab}
@@ -379,21 +381,21 @@ export default function AdminLeads() {
                     {/* Card Footer */}
                     <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
                       <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
-                          lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
-                            lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
-                              'bg-gray-50 text-gray-600 ring-gray-500/20'
+                        lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
+                          lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
+                            'bg-gray-50 text-gray-600 ring-gray-500/20'
                         }`}>
                         <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${lead.status === 'New' ? 'bg-blue-600' :
-                            lead.status === 'Qualified' ? 'bg-green-600' :
-                              lead.status === 'Closed Won' ? 'bg-purple-600' :
-                                'bg-gray-500'
+                          lead.status === 'Qualified' ? 'bg-green-600' :
+                            lead.status === 'Closed Won' ? 'bg-purple-600' :
+                              'bg-gray-500'
                           }`}></span>
                         {lead.status}
                       </span>
                       <div className="text-right">
                         <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Potential Value</p>
                         <p className="text-sm font-bold text-gray-900">
-                          ${lead.potentialValue?.toLocaleString() || '0'}
+                          {formatCurrency(lead.potentialValue || 0)}
                         </p>
                       </div>
                     </div>
@@ -449,14 +451,14 @@ export default function AdminLeads() {
                     {/* Status & Actions */}
                     <div className="flex items-center gap-8">
                       <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${lead.status === 'New' ? 'bg-blue-50 text-blue-700 ring-blue-600/20' :
-                          lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
-                            lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
-                              'bg-gray-50 text-gray-600 ring-gray-500/20'
+                        lead.status === 'Qualified' ? 'bg-green-50 text-green-700 ring-green-600/20' :
+                          lead.status === 'Closed Won' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' :
+                            'bg-gray-50 text-gray-600 ring-gray-500/20'
                         }`}>
                         <span className={`mr-1.5 h-1.5 w-1.5 rounded-full ${lead.status === 'New' ? 'bg-blue-600' :
-                            lead.status === 'Qualified' ? 'bg-green-600' :
-                              lead.status === 'Closed Won' ? 'bg-purple-600' :
-                                'bg-gray-500'
+                          lead.status === 'Qualified' ? 'bg-green-600' :
+                            lead.status === 'Closed Won' ? 'bg-purple-600' :
+                              'bg-gray-500'
                           }`}></span>
                         {lead.status}
                       </span>
@@ -464,7 +466,7 @@ export default function AdminLeads() {
                       <div className="text-right min-w-[100px]">
                         <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Value</p>
                         <p className="text-sm font-bold text-gray-900">
-                          ${lead.potentialValue?.toLocaleString() || '0'}
+                          {formatCurrency(lead.potentialValue || 0)}
                         </p>
                       </div>
 
