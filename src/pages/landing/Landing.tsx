@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import GoogleLogo from './assets/brand-logos/workspace-logo.png';
-import BrevoLogo from './assets/brand-logos/brevo-logo.png';
-import MetaLogo from './assets/brand-logos/meta-logo.png';
-import TikTokLogo from './assets/brand-logos/tiktok-logo.png';
-import XLogo from './assets/brand-logos/x-logo.png';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import GoogleLogo from '../../assets/brand-logos/workspace-logo.png';
+import BrevoLogo from '../../assets/brand-logos/brevo-logo.png';
+import MetaLogo from '../../assets/brand-logos/meta-logo.png';
+import TikTokLogo from '../../assets/brand-logos/tiktok-logo.png';
+import XLogo from '../../assets/brand-logos/x-logo.png';
+
 
 export default function Landing() {
   return (

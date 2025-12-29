@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import Mascot from '../assets/aline-mascot.png';
-import Logo from '../assets/aline-logo.svg';
+import Mascot from '../../assets/aline-mascot.png';
+import Logo from '../../assets/aline-logo.svg';
 import { useToast } from '../../context/ToastContext';
 
 export default function Register() {
