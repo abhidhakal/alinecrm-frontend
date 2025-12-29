@@ -38,7 +38,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               </p>
             </div>
 
-            <div className="bg-[#EAF3FF] rounded-[20px] p-6 space-y-4">
+            <div className="bg-[#EAF3FF] rounded-[16px] p-6 space-y-4">
               <div className="space-y-1">
                 <p className="text-xs font-bold text-gray-800 uppercase tracking-wider">Category</p>
                 <p className="text-2xl font-bold text-gray-900">{task.category || "General"}</p>

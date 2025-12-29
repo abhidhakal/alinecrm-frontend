@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import AdminSidebar from "../../components/AdminSidebar";
+import Sidebar from "../../components/Sidebar";
 import TasksHeader from "../../components/TasksHeader";
 import TaskModal from "../../components/TaskModal";
 import AddTaskModal from "../../components/AddTaskModal";
@@ -198,7 +198,7 @@ export default function AdminTasks() {
 
   return (
     <div className="flex min-h-screen w-full bg-white relative font-sans">
-      <AdminSidebar />
+      <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
         <TasksHeader
           onRefresh={fetchTasks}

@@ -57,9 +57,7 @@ export default function Sidebar() {
   const roleDisplay = user?.role === 'admin' ? 'Admin' : user?.role === 'superadmin' ? 'Super Admin' : 'User';
   const institutionName = user?.institutionName;
 
-  const userDetails = institutionName
-    ? `${institutionName}, ${roleDisplay}`
-    : roleDisplay;
+  const userDetails =`${institutionName}, ${roleDisplay}`;
 
   const userInitials = userName
     .split(' ')
@@ -198,12 +196,21 @@ export default function Sidebar() {
 
         {/* 3. Navigation */}
         <nav className="flex flex-1 flex-col gap-1.5 overflow-y-auto">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
+          {(() => {
+            const usersItem = {
+              name: 'Users',
+              icon: '/icons/account-icon.svg',
+              activeIcon: '/icons/account-icon.svg',
+              path: '/users'
+            };
+            const effectiveNavItems = isAdmin ? [navItems[0], usersItem, ...navItems.slice(1)] : navItems;
+            return effectiveNavItems.map((item) => {
+            const linkPath = isAdmin ? `/admin${item.path}` : item.path;
+            const isActive = location.pathname === linkPath;
             return (
               <div key={item.name} className="relative group">
                 <Link
-                  to={item.path}
+                  to={linkPath}
                   className={`flex items-center rounded-xl py-3 text-sm font-medium transition-all duration-200 ${isExpanded ? 'gap-3 px-4' : 'justify-center px-3'
                     } ${isActive
                       ? 'bg-gray-100 text-gray-900 font-semibold'
@@ -227,35 +234,12 @@ export default function Sidebar() {
                 )}
               </div>
             );
-          })}
+            });
+          })()}
         </nav>
 
         {/* 4. Footer & Sign Out */}
         <div className="mt-auto flex flex-col gap-4 pt-6 pb-4">
-          {/* Admin Panel Button - Only for Admins */}
-          {isAdmin && (
-            <div className="relative group">
-              <Link to="/admin/dashboard" className={`group flex w-full items-center rounded-2xl bg-black p-2 text-white shadow-lg shadow-gray-200 transition-all hover:bg-gray-900 active:scale-[0.98] ${isExpanded ? 'gap-3' : 'justify-center'
-                }`}>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 flex-shrink-0">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-                {isExpanded && <span className="text-sm font-bold">Admin Panel</span>}
-              </Link>
-
-              {/* Tooltip */}
-              {!isExpanded && (
-                <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
-                  Admin Panel
-                  <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Mindfulness Button */}
           <div className="relative group">
             <Link to="/mindfulness" className={`group flex w-full items-center rounded-2xl bg-[#1A1A1A] p-2 text-white shadow-lg shadow-gray-200 transition-all hover:bg-black hover:shadow-xl active:scale-[0.98] ${isExpanded ? 'gap-3' : 'justify-center'

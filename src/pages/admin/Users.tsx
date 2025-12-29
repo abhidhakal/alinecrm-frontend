@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import AdminSidebar from "../../components/AdminSidebar";
+import Sidebar from "../../components/Sidebar";
 import UsersHeader from "../../components/UsersHeader";
 import AddUserModal from "../../components/AddUserModal";
 import EditUserModal from "../../components/EditUserModal";
@@ -87,7 +87,7 @@ export default function Users() {
 
   return (
     <div className="flex min-h-screen w-full bg-white font-sans">
-      <AdminSidebar />
+      <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'
         }`}>
         <UsersHeader

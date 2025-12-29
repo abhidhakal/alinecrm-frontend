@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import AdminSidebar from "../../components/AdminSidebar";
+import Sidebar from "../../components/Sidebar";
 import { useSidebar } from "../../context/SidebarContext";
 import LeadsHeader from "../../components/LeadsHeader";
 import AddLeadModal from "../../components/AddLeadModal";
@@ -106,7 +106,7 @@ export default function AdminLeads() {
 
   return (
     <div className="flex min-h-screen w-full bg-white">
-      <AdminSidebar />
+      <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
 
         <LeadsHeader
@@ -230,7 +230,7 @@ export default function AdminLeads() {
                 onClick={() => setIsAddModalOpen(true)}
                 className="flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-[16px] font-medium text-white hover:bg-gray-800 transition-colors"
               >
-                <img src="/icons/target-icon.svg" alt="Add" className="h-6 w-6" />
+                <img src="/icons/add-icon.svg" alt="Add" className="h-6 w-6 filter invert brightness-0" />
                 Add Lead
               </button>
             </div>

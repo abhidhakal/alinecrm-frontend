@@ -218,7 +218,7 @@ export default function Tasks() {
           </button>
         </div>
 
-        <main className="flex-1 mx-6 mb-10 overflow-x-auto bg-[#f5f5f5] p-6 relative scrollbar-hide rounded-[20px]">
+        <main className="flex-1 mx-6 mb-10 overflow-x-auto bg-[#f5f5f5] p-6 relative scrollbar-hide rounded-[16px]">
           <div className="flex gap-10 items-start justify-center">
             {renderColumn(TaskStatus.TODO, "To-Do")}
             {renderColumn(TaskStatus.IN_PROGRESS, "In Progress")}
@@ -227,7 +227,7 @@ export default function Tasks() {
 
           <div className="absolute bottom-5 left-5">
             <button
-              className="flex items-center gap-3 px-8 py-3.5 bg-white rounded-[20px] shadow-lg hover:shadow-xl transition-all hover:bg-gray-50 group border border-gray-100"
+              className="flex items-center gap-3 px-8 py-3.5 bg-white rounded-[16px] shadow-lg hover:shadow-xl transition-all hover:bg-gray-50 group border border-gray-100"
               onDragOver={onDragOver}
               onDrop={async (e) => {
                 const taskIdString = e.dataTransfer.getData("taskId");

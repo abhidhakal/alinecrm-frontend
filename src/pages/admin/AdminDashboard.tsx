@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import AdminSidebar from "../../components/AdminSidebar";
+import Sidebar from "../../components/Sidebar";
 import DashboardHeader from "../../components/DashboardHeader";
 import { useSidebar } from "../../context/SidebarContext";
 import { useCurrency } from "../../context/CurrencyContext";
@@ -16,7 +16,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen w-full bg-white font-sans">
-      <AdminSidebar />
+      <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'
         }`}>
         <DashboardHeader onRefresh={handleRefresh} lastUpdated={lastUpdated} />

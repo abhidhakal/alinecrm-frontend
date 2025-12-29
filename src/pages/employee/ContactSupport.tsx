@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import Sidebar from "../../components/Sidebar";
-import AdminSidebar from "../../components/AdminSidebar";
 import { useSidebar } from "../../context/SidebarContext";
-import { useAuth } from "../../context/AuthContext";
+
 
 type Tab = 'support' | 'feedback' | 'business';
-
 export default function ContactSupport() {
   const { isExpanded } = useSidebar();
-  const { isAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('support');
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
 
@@ -20,7 +17,7 @@ export default function ContactSupport() {
 
   return (
     <div className="flex min-h-screen w-full bg-white font-sans text-gray-900 mt-4">
-      {isAdmin ? <AdminSidebar /> : <Sidebar />}
+      <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
 
         <header className="flex h-16 items-center border-b border-gray-100 bg-white px-8">
@@ -171,3 +168,4 @@ export default function ContactSupport() {
     </div>
   );
 }
+
