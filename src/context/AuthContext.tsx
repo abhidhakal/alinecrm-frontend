@@ -16,6 +16,8 @@ export interface User {
   role: RoleType;
   profilePicture?: string;
   currency?: string;
+  institutionId?: number;
+  institutionName?: string;
 }
 
 interface AuthContextType {

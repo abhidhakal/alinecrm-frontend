@@ -51,38 +51,35 @@ export default function Mindfulness() {
     <div className={`flex min-h-screen w-full font-sans transition-colors duration-500 ${zenMode ? 'bg-black' : 'bg-white'}`}>
       {!zenMode && <Sidebar />}
       <div
-        className={`flex flex-1 flex-col transition-all duration-300 ${
-          zenMode 
-            ? "ml-0 max-w-full" 
+        className={`flex flex-1 flex-col transition-all duration-300 ${zenMode
+            ? "ml-0 max-w-full"
             : isExpanded
               ? "ml-[280px] max-w-[calc(100vw-280px)]"
               : "ml-[110px] max-w-[calc(100vw-110px)]"
-        }`}
+          }`}
       >
         {/* Header */}
         <header className="flex items-center justify-between px-8 py-6">
           <div className="flex items-center gap-3">
             <h1 className={`text-3xl font-bold font-cursive transition-colors ${zenMode ? 'text-gray-100' : 'text-gray-900'}`}>Mindfulness</h1>
           </div>
-          
+
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => setZenMode(!zenMode)}
-              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium shadow-sm transition-all ${
-                zenMode 
-                  ? 'border-white/20 bg-white/10 text-gray-200 hover:bg-white/20' 
+              className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium shadow-sm transition-all ${zenMode
+                  ? 'border-white/20 bg-white/10 text-gray-200 hover:bg-white/20'
                   : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-              }`}
+                }`}
             >
               <img src="/icons/target-icon.svg" alt="Zen Mode" className={`h-4 w-4 ${zenMode ? '' : 'filter invert-0 brightness-0'}`} />
               {zenMode ? 'Exit Zen' : 'Zen Mode'}
             </button>
 
-            <button className={`rounded-full border border-dotted px-6 py-2 text-sm font-medium shadow-sm transition-colors ${
-              zenMode
+            <button className={`rounded-full border border-dotted px-6 py-2 text-sm font-medium shadow-sm transition-colors ${zenMode
                 ? 'border-gray-600 bg-transparent text-gray-400 hover:bg-white/5 hover:text-gray-200'
                 : 'border-foreground bg-white text-gray-600 hover:bg-gray-50'
-            }`}>
+              }`}>
               Forget everything for a moment
             </button>
           </div>
@@ -96,11 +93,10 @@ export default function Mindfulness() {
               <SoundMixer zenMode={zenMode} />
 
               {/* Games */}
-              <div className={`rounded-2xl border p-6 shadow-sm transition-colors duration-500 ${
-                zenMode 
-                  ? 'border-white/10 bg-white/5 backdrop-blur-sm' 
+              <div className={`rounded-2xl border p-6 shadow-sm transition-colors duration-500 ${zenMode
+                  ? 'border-white/10 bg-white/5 backdrop-blur-sm'
                   : 'border-gray-100 bg-white'
-              }`}>
+                }`}>
                 <div className="mb-4">
                   <h2 className={`text-lg font-semibold transition-colors ${zenMode ? 'text-gray-100' : 'text-gray-900'}`}>
                     Play some refreshing games
@@ -130,11 +126,10 @@ export default function Mindfulness() {
             {/* Right Column */}
             <div className="flex flex-col gap-6">
               {/* Playlist */}
-              <div className={`rounded-2xl border p-6 shadow-sm transition-colors duration-500 ${
-                zenMode 
-                  ? 'border-white/10 bg-white/5 backdrop-blur-sm' 
+              <div className={`rounded-2xl border p-6 shadow-sm transition-colors duration-500 ${zenMode
+                  ? 'border-white/10 bg-white/5 backdrop-blur-sm'
                   : 'border-gray-100 bg-white'
-              }`}>
+                }`}>
                 <h2 className={`mb-4 text-lg font-semibold transition-colors ${zenMode ? 'text-gray-100' : 'text-gray-900'}`}>
                   <span className="italic">Aline</span> your thoughts with this
                   calming playlist
@@ -143,9 +138,8 @@ export default function Mindfulness() {
                   {PLAYLIST.map((item, index) => (
                     <div
                       key={index}
-                      className={`flex items-center gap-4 rounded-xl p-3 transition-colors ${
-                        zenMode ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-50 hover:bg-gray-100'
-                      }`}
+                      className={`flex items-center gap-4 rounded-xl p-3 transition-colors ${zenMode ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-50 hover:bg-gray-100'
+                        }`}
                     >
                       <div
                         className={`h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg ${item.thumbnail}`}
@@ -170,11 +164,10 @@ export default function Mindfulness() {
               </div>
 
               {/* Thoughts */}
-              <div className={`rounded-2xl border p-6 shadow-sm transition-colors duration-500 ${
-                zenMode 
-                  ? 'border-white/10 bg-white/5 backdrop-blur-sm' 
+              <div className={`rounded-2xl border p-6 shadow-sm transition-colors duration-500 ${zenMode
+                  ? 'border-white/10 bg-white/5 backdrop-blur-sm'
                   : 'border-gray-100 bg-white'
-              }`} style={{ maxHeight: '270px', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                }`} style={{ maxHeight: '270px', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
                 <h2 className={`mb-3 text-lg font-semibold transition-colors ${zenMode ? 'text-gray-100' : 'text-gray-900'}`}>
                   What's on your mind?
                 </h2>
@@ -182,15 +175,14 @@ export default function Mindfulness() {
                   value={thought}
                   onChange={(e) => setThought(e.target.value)}
                   placeholder="Write out your thoughts...or motivation for the day..."
-                  className={`resize-none rounded-xl border p-3 transition-all focus:outline-none focus:ring-0 ${
-                    zenMode 
-                      ? 'border-white/10 bg-black/20 text-gray-200 placeholder-gray-500 focus:border-gray-500' 
+                  className={`resize-none rounded-xl border p-3 transition-all focus:outline-none focus:ring-0 ${zenMode
+                      ? 'border-white/10 bg-black/20 text-gray-200 placeholder-gray-500 focus:border-gray-500'
                       : 'border-gray-200 bg-white text-gray-700 placeholder-gray-400 focus:border-gray-900'
-                  }`}
+                    }`}
                   style={{ minHeight: '60px', maxHeight: '80px', overflow: 'auto' }}
                 />
                 <div className="mt-3 flex items-center justify-between">
-                  <label className={`flex items-center gap-2 text-sm ${zenMode ? 'text-gray-400' : 'text-gray-600'}`}> 
+                  <label className={`flex items-center gap-2 text-sm ${zenMode ? 'text-gray-400' : 'text-gray-600'}`}>
                     <input
                       type="checkbox"
                       checked={isPinned}

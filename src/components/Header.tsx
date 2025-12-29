@@ -2,32 +2,40 @@ import { Link } from 'react-router-dom';
 
 export default function Header() {
   return (
-    <header className="w-full h-[70px] flex items-center justify-between px-10 sticky top-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 h-[70px]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
 
-      {/* Left: Logo + Brand */}
-      <Link to="/" className="flex items-center gap-3">
-        <img
-          src="/aline-logo.svg"
-          alt="AlineCRM Logo"
-          className="w-10 h-10 rounded-full object-cover"
-        />
-        <span className="text-foreground text-xl font-semibold">
-          AlineCRM
-        </span>
-      </Link>
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <img src="/aline-logo.svg" alt="AlineCRM" className="w-8 h-8 object-contain rounded-full" />
+          <span className="text-gray-900 font-bold text-xl tracking-tight">
+            AlineCRM
+          </span>
+        </Link>
 
-      {/* Center: Nav Links */}
-      <nav className="flex gap-10 text-foreground text-base font-normal">
-        <Link to="/product" className="hover:opacity-80">Product</Link>
-        <Link to="/features" className="hover:opacity-80">Features</Link>
-        <Link to="/pricing" className="hover:opacity-80">Pricing</Link>
-        <Link to="/about" className="hover:opacity-80">About Us</Link>
-      </nav>
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8">
+          {['Product', 'Features', 'Pricing', 'About'].map((item) => (
+            <Link
+              key={item}
+              to={`/${item.toLowerCase()}`}
+              className="text-sm font-medium text-gray-600 hover:text-blue-900 transition-colors"
+            >
+              {item}
+            </Link>
+          ))}
+        </nav>
 
-      {/* Right: CTA */}
-      <button className="bg-[#121212] text-white px-7 py-2.5 rounded-xl text-[15px] font-medium hover:opacity-90">
-        Book a Call
-      </button>
+        {/* CTA */}
+        <div className="flex items-center gap-4">
+          <Link to="/login" className="hidden md:block text-sm font-semibold text-gray-600 hover:text-blue-900 transition-colors">
+            Log in
+          </Link>
+          <Link to="/register" className="bg-black hover:bg-[#082a3f] text-white px-5 py-2.5 rounded-md text-sm font-medium transition-all shadow-sm">
+            Book a Demo
+          </Link>
+        </div>
+      </div>
     </header>
   );
 }

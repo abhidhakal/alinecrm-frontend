@@ -48,13 +48,19 @@ export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isExpanded, setIsExpanded } = useSidebar();
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const userName = user.name || 'John Doe';
+  const userName = user?.name || 'John Doe';
+  const roleDisplay = user?.role === 'admin' ? 'Admin' : user?.role === 'superadmin' ? 'Super Admin' : 'User';
+  const institutionName = user?.institutionName;
+
+  const userDetails = institutionName
+    ? `${institutionName}, ${roleDisplay}`
+    : roleDisplay;
+
   const userInitials = userName
     .split(' ')
     .map((n: string) => n[0])
@@ -119,7 +125,7 @@ export default function Sidebar() {
           >
             <div className={`flex items-center ${isExpanded ? 'gap-3' : 'justify-center'}`}>
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 border border-gray-200 text-sm font-bold text-foreground flex-shrink-0 shadow-sm overflow-hidden">
-                {user.profilePicture ? (
+                {user?.profilePicture ? (
                   <img src={user.profilePicture} alt={userName} className="h-full w-full object-cover" />
                 ) : (
                   userInitials
@@ -128,7 +134,7 @@ export default function Sidebar() {
               {isExpanded && (
                 <div className="flex flex-col overflow-hidden">
                   <span className="text-sm font-bold text-foreground truncate max-w-[120px] leading-tight">{userName}</span>
-                  <span className="text-[10px] font-medium text-gray-500 truncate">View Profile</span>
+                  <span className="text-[10px] font-medium text-gray-500 truncate" title={userDetails}>{userDetails}</span>
                 </div>
               )}
             </div>

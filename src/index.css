@@ -1,73 +1,108 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Brand Colors */
-  --primary: #0B3954;
-  --secondary: #65889F;
-  --tertiary: #BFD7EA;
-
-  /* Content Colors */
-  /* Main text */
-  --text-primary: #2B2B2B;
-  /* Muted text */
-  --text-secondary: #434343;
-
-
-  /* Layout Colors */
-  --border-primary: #E6E6E6;
+  /* Brand Core */
+  --primary: #0f172a; /* Deep Slate/Navy - More premium than basic blue */
+  --primary-rgb: 15, 23, 42;
+  --primary-light: #334155;
+  --accent: #0ea5e9; /* Electric Blue for subtle highlights/CTAs */
+  
+  /* Neutral Palette */
   --background: #ffffff;
-  --foreground: var(--text-primary);
+  --surface: #f8fafc; /* Very light slate for sections */
+  --surface-hover: #f1f5f9;
+  
+  /* Text */
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-inverted: #ffffff;
+
+  /* Borders & Dividers */
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  
+  /* Semantic */
+  --foreground: var(--text-main);
+  --muted: var(--text-muted);
 }
 
 html {
   scroll-behavior: smooth;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', system-ui, sans-serif;
-  line-height: 1.6;
-
-  margin: 0;
-  padding: 0;
+  background-color: var(--background);
+  color: var(--text-main);
+  overflow-x: hidden;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
+/* Custom Utilities - The Secret Sauce */
 @layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Premium Glass Effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
   }
 
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  /* Technical Grid Background */
+  .bg-grid {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, rgba(226, 232, 240, 0.5) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(226, 232, 240, 0.5) 1px, transparent 1px);
+    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
   }
 
-  .hero-gradient {
-    background: linear-gradient(to bottom, #ffffff 0%, #BFD7EA 35%, #65889F 80%, #0B3954 100%);
+  /* Soft Gradient Blobs */
+  .blob-blue {
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(255,255,255,0) 70%);
+  }
+  
+  .blob-purple {
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(255,255,255,0) 70%);
+  }
+
+  .container-width {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
 
-input,
-button,
-textarea,
-select {
-  font-family: 'Inter', system-ui, sans-serif;
+/* Animations */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import Mascot from '../assets/aline-mascot.png';
 import Logo from '../assets/aline-logo.svg';
@@ -28,12 +28,9 @@ export default function Login() {
                 password
             });
 
-            // Store token and user data using AuthContext
             login(response.data.access_token, response.data.user);
-
             showToast('Login successful!', 'success');
 
-            // Redirect based on role
             const userRole = response.data.user.role;
             if (userRole === 'admin' || userRole === 'superadmin') {
                 navigate('/admin/dashboard');
@@ -49,111 +46,140 @@ export default function Login() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-[#F5F5F5]">
-            <div className="relative flex w-full max-w-[1200px] items-center justify-between rounded-[40px] bg-white p-12 shadow-sm md:flex-row flex-col gap-10">
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+            {/* Background Decorative Element */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-40">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100 rounded-full blur-[120px]"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-100 rounded-full blur-[120px]"></div>
+            </div>
 
-                {/* Left Side - Mascot */}
-                <div className="flex w-full md:w-1/2 items-center justify-center">
-                    <img
-                        src={Mascot}
-                        alt="Aline Mascot"
-                        className="max-w-[450px] w-full object-contain"
-                    />
+            <div className="relative flex w-full max-w-[1100px] flex-col md:flex-row items-stretch rounded-[3rem] bg-white shadow-premium border border-slate-100 overflow-hidden animate-fade-in-up">
+
+                {/* Left Side - Visuals */}
+                <div className="flex w-full md:w-1/2 items-center justify-center bg-[#f8fafc] p-12 border-r border-slate-100">
+                    <div className="relative w-full max-w-[400px]">
+                        <img
+                            src={Mascot}
+                            alt="Aline Mascot"
+                            className="w-full relative z-10 drop-shadow-2xl"
+                        />
+                        <div className="absolute inset-0 bg-blue-500/5 rounded-full blur-3xl transform scale-125"></div>
+                    </div>
                 </div>
 
                 {/* Right Side - Login Form */}
-                <div className="flex w-full md:w-[45%] flex-col gap-8 pr-12">
-                    {/* Logo */}
-                    <div className="flex items-center gap-3">
-                        <img src={Logo} alt="AlineCRM" className="h-10 w-10 rounded-full" />
-                        <span className="text-2xl font-bold text-black">AlineCRM</span>
-                    </div>
-
-                    <div className="flex flex-col gap-6">
-                        {/* Email Input */}
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm font-semibold text-foreground">Enter your email</label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="johndoe@gmail.com"
-                                className="w-full rounded-lg bg-gray-100 px-4 py-3 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-gray-200"
-                            />
-                        </div>
-
-                        {/* Password Input */}
-                        <div className="flex flex-col gap-2">
-                            <label className="text-sm font-semibold text-foreground">Enter your password</label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="********"
-                                    className="w-full rounded-lg bg-gray-100 px-4 py-3 pr-12 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-gray-200"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
-                                >
-                                    <img
-                                        src={showPassword ? "/icons/visibility-off.svg" : "/icons/visibility-on.svg"}
-                                        alt={showPassword ? "Hide password" : "Show password"}
-                                        className="h-5 w-5"
-                                    />
-                                </button>
+                <div className="flex w-full md:w-1/2 flex-col justify-center p-12 lg:p-16">
+                    <div className="flex flex-col gap-10">
+                        {/* Brand Section */}
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-white border border-slate-100 rounded-full flex items-center justify-center shadow-sm">
+                                <img src={Logo} alt="AlineCRM" className="h-8 w-8 rounded-full" />
                             </div>
+                            <span className="text-2xl font-bold tracking-tight text-primary">AlineCRM</span>
                         </div>
 
-                        {/* Remember Me */}
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                id="remember"
-                                className="h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
-                            />
-                            <label htmlFor="remember" className="text-sm text-gray-600 select-none cursor-pointer">Remember Me</label>
+                        {/* Title Section */}
+                        <div className="space-y-2">
+                            <h1 className="text-3xl font-bold text-slate-900 leading-tight">Welcome Back</h1>
+                            <p className="text-slate-500 font-medium">Log in to your workspace to continue.</p>
                         </div>
 
-                        {/* Login Button */}
-                        <button
-                            onClick={handleLogin}
-                            disabled={loading}
-                            className="w-full rounded-lg bg-[#2b2b2b] py-3.5 text-base font-bold text-white transition hover:bg-black disabled:opacity-50"
-                        >
-                            {loading ? 'Logging in...' : 'Login'}
-                        </button>
+                        {/* Form Section */}
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-slate-700 ml-1">Email address</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <img src="/icons/mail-icon.svg" className="h-5 w-5 opacity-40 transition-opacity group-focus-within:opacity-100" alt="" />
+                                    </div>
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="name@company.com"
+                                        className="block w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                                    />
+                                </div>
+                            </div>
 
-                        {/* Divider */}
-                        <div className="relative flex items-center justify-center">
-                            <div className="absolute w-full border-t border-border"></div>
-                            <span className="relative bg-white px-2 text-sm text-muted">or</span>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between ml-1">
+                                    <label className="text-sm font-semibold text-slate-700">Password</label>
+                                    <button className="text-xs font-bold text-primary hover:underline">Forgot password?</button>
+                                </div>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <img src="/icons/settings-icon.svg" className="h-5 w-5 opacity-40 transition-opacity group-focus-within:opacity-100" alt="" />
+                                    </div>
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        className="block w-full pl-12 pr-12 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center group/btn"
+                                    >
+                                        <img
+                                            src={showPassword ? "/icons/visibility-off.svg" : "/icons/visibility-on.svg"}
+                                            className="h-5 w-5 opacity-40 group-hover/btn:opacity-90 transition-opacity"
+                                            alt=""
+                                        />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center ml-1">
+                                <input
+                                    id="remember-me"
+                                    name="remember-me"
+                                    type="checkbox"
+                                    className="h-4 w-4 text-primary focus:ring-primary border-slate-300 rounded-md transition-all"
+                                />
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-600 font-medium select-none cursor-pointer">
+                                    Stay logged in for 30 days
+                                </label>
+                            </div>
+
+                            <button
+                                onClick={handleLogin}
+                                disabled={loading}
+                                className="w-full flex items-center justify-center gap-2 group bg-primary text-white py-4 px-6 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
+                            >
+                                {loading ? 'Checking credentials...' : 'Sign In'}
+                                <img src="/icons/arrow-right.svg" className="h-5 w-5 invert transition-transform group-hover:translate-x-1" alt="" />
+                            </button>
                         </div>
 
-                        {/* Mail link option */}
-                        <button className="flex items-center justify-center gap-2 text-sm font-medium text-foreground hover:text-black">
-                            <img src="/icons/mail-icon.svg" alt="" />
-                            Mail me a login link
-                        </button>
+                        {/* Footer Section */}
+                        <div className="pt-4 space-y-4">
+                            <div className="relative flex items-center justify-center py-2">
+                                <div className="absolute w-full border-t border-slate-100"></div>
+                                <span className="relative bg-white px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">or login with</span>
+                            </div>
+
+                            <button className="w-full py-4 px-4 rounded-2xl border border-slate-200 text-sm font-bold text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-3">
+                                <img src="/icons/mail-icon.svg" className="w-5 h-5 opacity-50" alt="" />
+                                Magic Login Link
+                            </button>
+
+                            <p className="text-center text-sm font-medium text-slate-500 pt-2">
+                                New to Aline? <Link to="/register" className="text-primary font-bold hover:underline ml-1">Create an account</Link>
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                {/* Return to HomePage */}
+                {/* Navigation helpers */}
                 <button
                     onClick={() => navigate('/')}
-                    className="absolute bottom-12 right-44 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
+                    className="absolute bottom-8 right-12 flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors"
                 >
-                    <img src="/icons/chevron-left.svg" alt="Back" className="h-4 w-4" />
-                    Return to HomePage
-                </button>
-
-                <button
-                    onClick={() => navigate('/')}
-                    className="absolute bottom-12 right-12 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-black transition-colors"
-                >
-                    Click to Sign Up
+                    <img src="/icons/chevron-left.svg" className="h-4 w-4 opacity-40" alt="" />
+                    Back to website
                 </button>
             </div>
         </div>

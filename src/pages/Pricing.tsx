@@ -1,107 +1,137 @@
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { useCurrency } from '../context/CurrencyContext';
+import { Check, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const tiers = [
   {
     name: 'Starter',
     id: 'tier-starter',
-    href: '#',
     priceMonthly: 15,
-    description: 'The essentials to provide your best work for clients.',
-    features: ['5 users', 'Up to 1,000 subscribers', 'Basic analytics', '48-hour support response time'],
+    description: 'The essentials for small teams and solo entrepreneurs.',
+    features: ['5 users included', 'Up to 1,000 subscribers', 'Basic pipeline tracking', 'Email support', 'Real-time dashboard'],
     featured: false,
+    cta: 'Get Started'
   },
   {
     name: 'Professional',
     id: 'tier-professional',
-    href: '#',
     priceMonthly: 49,
-    description: 'A plan that scales with your rapidly growing business.',
-    features: ['25 users', 'Up to 10,000 subscribers', 'Advanced analytics', '24-hour support response time', 'Marketing automations'],
+    description: 'Advanced tools for rapidly growing sales teams.',
+    features: ['25 users included', 'Up to 10,000 subscribers', 'Advanced analytics', 'Marketing automations', 'Priority email support', 'Template builder access'],
     featured: true,
+    cta: 'Start Free Trial'
   },
   {
     name: 'Enterprise',
     id: 'tier-enterprise',
-    href: '#',
     priceMonthly: 99,
-    description: 'Dedicated support and infrastructure for your company.',
-    features: ['Unlimited users', 'Unlimited subscribers', 'Custom reporting', '1-hour, dedicated support response time', 'SSO'],
+    description: 'Dedicated infrastructure for your expanding enterprise.',
+    features: ['Unlimited users', 'Unlimited subscribers', 'Custom reporting', 'SSO & Advanced security', 'Dedicated account manager', '24/7 Phone & Email support'],
     featured: false,
+    cta: 'Contact Sales'
   },
 ];
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
 
 export default function Pricing() {
   const { formatCurrency } = useCurrency();
 
   return (
-    <div className="flex w-full flex-col min-h-screen bg-white font-sans text-gray-900">
+    <div className="flex w-full flex-col min-h-screen bg-white font-sans selection:bg-[#0B3954]/10">
       <Header />
-      <div className="py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl text-center">
-            <h2 className="text-base font-semibold leading-7 text-indigo-600">Pricing</h2>
-            <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-              Pricing plans for teams of all sizes
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 md:pt-48 md:pb-32 bg-slate-50 border-b border-slate-100">
+        <div className="container-width mx-auto px-6 text-center">
+          <div className="max-w-3xl mx-auto">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-8 animate-fade-in-up">
+              Simple, <span className="text-[#0B3954]">transparent</span> pricing.
+            </h1>
+            <p className="text-xl text-slate-500 leading-relaxed animate-fade-in-up delay-100">
+              Choose the plan that fits your current scale. No hidden fees, no complex contracts. Start growing with AlineCRM today.
             </p>
           </div>
-          <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
-            Choose an affordable plan that's packed with the best features for engaging your audience, creating customer loyalty, and driving sales.
-          </p>
-          <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 gap-x-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        </div>
+      </section>
+
+      {/* Pricing Grid */}
+      <section className="py-24 bg-white relative">
+        <div className="container-width mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
             {tiers.map((tier) => (
               <div
                 key={tier.id}
-                className={classNames(
-                  tier.featured ? 'ring-2 ring-indigo-600 shadow-xl' : 'ring-1 ring-gray-200',
-                  'rounded-3xl p-8 xl:p-10 transition-all hover:scale-[1.02]'
-                )}
+                className={`relative flex flex-col p-8 rounded-[2.5rem] transition-all duration-300 ${tier.featured
+                    ? 'bg-[#0B3954] text-white shadow-2xl scale-105 z-10'
+                    : 'bg-white border border-slate-200 text-slate-900 hover:border-slate-300 shadow-sm'
+                  }`}
               >
-                <div className="flex items-center justify-between gap-x-4">
-                  <h3
-                    id={tier.id}
-                    className={classNames(
-                      tier.featured ? 'text-indigo-600' : 'text-gray-900',
-                      'text-lg font-bold leading-8'
-                    )}
-                  >
-                    {tier.name}
-                  </h3>
+                {tier.featured && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-[#0B3954] border-[#0B3954] border text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+                    MOST POPULAR
+                  </div>
+                )}
+
+                <div className="mb-8">
+                  <h3 className={`text-2xl font-bold mb-2 ${tier.featured ? 'text-white' : 'text-slate-900'}`}>{tier.name}</h3>
+                  <p className={`text-sm leading-relaxed ${tier.featured ? 'text-slate-300' : 'text-slate-500'}`}>{tier.description}</p>
                 </div>
-                <p className="mt-4 text-sm leading-6 text-gray-600">{tier.description}</p>
-                <p className="mt-6 flex items-baseline gap-x-1">
-                  <span className="text-4xl font-bold tracking-tight text-gray-900">{formatCurrency(tier.priceMonthly)}</span>
-                  <span className="text-sm font-semibold leading-6 text-gray-600">/month</span>
-                </p>
-                <a
-                  href={tier.href}
-                  aria-describedby={tier.id}
-                  className={classNames(
-                    tier.featured
-                      ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-500'
-                      : 'text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300',
-                    'mt-6 block rounded-xl px-3 py-2 text-center text-sm font-bold leading-6 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-                  )}
+
+                <div className="mb-8">
+                  <div className="flex items-baseline gap-1">
+                    <span className={`text-5xl font-bold tracking-tight ${tier.featured ? 'text-white' : 'text-slate-900'}`}>{formatCurrency(tier.priceMonthly)}</span>
+                    <span className={`text-sm font-semibold ${tier.featured ? 'text-slate-400' : 'text-slate-500'}`}>/month</span>
+                  </div>
+                </div>
+
+                <Link
+                  to="/login"
+                  className={`flex items-center justify-center gap-2 py-4 px-6 rounded-2xl font-bold transition-all mb-10 ${tier.featured
+                      ? 'bg-white text-[#0B3954] hover:bg-slate-50'
+                      : 'bg-[#0B3954] text-white hover:bg-slate-800'
+                    }`}
                 >
-                  Buy plan
-                </a>
-                <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-600">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex gap-x-3">
-                      <span className="text-indigo-600 font-bold">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
+                  {tier.cta} <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <div className="space-y-4">
+                  <p className={`text-sm font-bold uppercase tracking-wider ${tier.featured ? 'text-slate-300' : 'text-slate-400'}`}>What's included</p>
+                  <ul className="space-y-4">
+                    {tier.features.map((feature) => (
+                      <li key={feature} className="flex gap-3 text-sm items-start">
+                        <Check className={`w-5 h-5 shrink-0 ${tier.featured ? 'text-white' : 'text-[#0B3954]'}`} />
+                        <span className={tier.featured ? 'text-slate-200' : 'text-slate-600'}>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* FAQ Section (Simple) */}
+      <section className="py-24 bg-slate-50 border-t border-slate-100">
+        <div className="container-width mx-auto px-6 max-w-4xl">
+          <h2 className="text-3xl font-bold text-slate-900 mb-12 text-center">Frequently Asked Questions</h2>
+          <div className="space-y-8">
+            {[
+              { q: "Can I change plans anytime?", a: "Yes, you can upgrade or downgrade your plan at any time from your billing dashboard." },
+              { q: "Do you offer a free trial?", a: "Every professional plan comes with a 14-day free trial. No credit card required to start." },
+              { q: "What happens after my trial ends?", a: "You can choose to subscribe to any of our plans or your account will be limited until you provide billing information." },
+            ].map((faq, i) => (
+              <div key={i} className="bg-white p-8 rounded-3xl border border-slate-200">
+                <h4 className="font-bold text-slate-900 mb-3 text-lg">{faq.q}</h4>
+                <p className="text-slate-500 leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 }

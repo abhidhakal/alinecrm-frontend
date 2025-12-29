@@ -5,6 +5,7 @@ import Features from './pages/Features';
 import Pricing from './pages/Pricing';
 import About from './pages/About';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Profile from './pages/employee/Profile';
 
 import { ToastProvider } from './context/ToastContext';
@@ -43,6 +44,7 @@ export default function App() {
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
                 {/* User Routes */}
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

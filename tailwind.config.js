@@ -5,21 +5,26 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        cursive: ['Dancing Script', 'cursive'],
       },
       colors: {
-        // Brand Colors
-        primary: 'var(--primary)',
-        secondary: 'var(--secondary)',
-        tertiary: 'var(--tertiary)',
-
-        // Layout & Content Colors
+        primary: {
+          DEFAULT: 'var(--primary)',
+          light: 'var(--primary-light)',
+        },
         background: 'var(--background)',
-        foreground: 'var(--foreground)', // Maps to text-primary
-        muted: 'var(--text-secondary)',  // Maps to text-secondary
-        border: 'var(--border-primary)', // Maps to border-primary
-        button: 'var(--foreground)',
+        surface: 'var(--surface)',
+        accent: 'var(--accent)',
+        muted: 'var(--muted)',
+        border: 'var(--border)',
       },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      boxShadow: {
+        'premium': '0 20px 40px -10px rgba(0, 0, 0, 0.05)',
+        'glow': '0 0 20px rgba(14, 165, 233, 0.15)',
+      }
     },
   },
   plugins: [],
