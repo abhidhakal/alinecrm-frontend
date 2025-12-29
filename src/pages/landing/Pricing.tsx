@@ -1,6 +1,6 @@
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import { useCurrency } from '../context/CurrencyContext';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import { useCurrency } from '../../context/CurrencyContext';
 import { Check, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

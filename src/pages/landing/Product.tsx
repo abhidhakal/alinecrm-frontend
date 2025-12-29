@@ -1,5 +1,5 @@
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
 import { ArrowRight, Zap, Shield, Sparkles, Layout } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

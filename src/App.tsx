@@ -1,17 +1,16 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Landing from './Landing';
-import Product from './pages/Product';
-import Features from './pages/Features';
-import Pricing from './pages/Pricing';
-import About from './pages/About';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Profile from './pages/employee/Profile';
-
 import { ToastProvider } from './context/ToastContext';
 import { SidebarProvider } from './context/SidebarContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute';
+import Landing from './pages/landing/Landing';
+import Product from './pages/landing/Product';
+import Features from './pages/landing/Features';
+import Pricing from './pages/landing/Pricing';
+import About from './pages/landing/About';
+import Login from './pages/landing/Login';
+import Register from './pages/landing/Register';
+import Profile from './pages/employee/Profile';
 import Dashboard from './pages/employee/Dashboard';
 import Contacts from './pages/employee/Contacts';
 import Leads from './pages/employee/Leads';
