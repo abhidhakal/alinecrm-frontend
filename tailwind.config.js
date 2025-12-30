@@ -16,6 +16,12 @@ export default {
         accent: 'var(--accent)',
         muted: 'var(--muted)',
         border: 'var(--border)',
+        foreground: 'var(--foreground)',
+        text: {
+          main: 'var(--text-main)',
+          muted: 'var(--text-muted)',
+          inverted: 'var(--text-inverted)',
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.6s ease-out forwards',

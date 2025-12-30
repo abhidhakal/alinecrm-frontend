@@ -45,6 +45,10 @@ export default function Login() {
         }
     };
 
+    const handleGoogleSignIn = () => {
+        showToast('Google Sign-In coming soon!', 'info');
+    };
+
     return (
         <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
             {/* Background Decorative Element */}
@@ -53,11 +57,11 @@ export default function Login() {
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-100 rounded-full blur-[120px]"></div>
             </div>
 
-            <div className="relative flex w-full max-w-[1100px] flex-col md:flex-row items-stretch rounded-[3rem] bg-white shadow-premium border border-slate-100 overflow-hidden animate-fade-in-up">
+            <div className="relative flex w-full max-w-[1200px] flex-col md:flex-row items-stretch rounded-[2.5rem] bg-white shadow-premium border border-slate-100 overflow-hidden animate-fade-in-up">
 
                 {/* Left Side - Visuals */}
-                <div className="flex w-full md:w-1/2 items-center justify-center bg-[#f8fafc] p-12 border-r border-slate-100">
-                    <div className="relative w-full max-w-[400px]">
+                <div className="flex w-full md:w-[45%] items-center justify-center bg-[#f8fafc] p-10 border-r border-slate-100">
+                    <div className="relative w-full max-w-[320px]">
                         <img
                             src={Mascot}
                             alt="Aline Mascot"
@@ -68,8 +72,8 @@ export default function Login() {
                 </div>
 
                 {/* Right Side - Login Form */}
-                <div className="flex w-full md:w-1/2 flex-col justify-center p-12 lg:p-16">
-                    <div className="flex flex-col gap-10">
+                <div className="flex w-full md:w-[55%] flex-col justify-center p-8 lg:p-16">
+                    <div className="flex flex-col gap-8 max-w-sm mx-auto w-full">
                         {/* Brand Section */}
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-white border border-slate-100 rounded-full flex items-center justify-center shadow-sm">
@@ -79,14 +83,14 @@ export default function Login() {
                         </div>
 
                         {/* Title Section */}
-                        <div className="space-y-2">
-                            <h1 className="text-3xl font-bold text-slate-900 leading-tight">Welcome Back</h1>
+                        <div className="space-y-1">
+                            <h1 className="text-2xl font-bold text-slate-900 leading-tight">Welcome Back</h1>
                             <p className="text-slate-500 font-medium">Log in to your workspace to continue.</p>
                         </div>
 
                         {/* Form Section */}
-                        <div className="space-y-6">
-                            <div className="space-y-2">
+                        <div className="space-y-5">
+                            <div className="space-y-1.5">
                                 <label className="text-sm font-semibold text-slate-700 ml-1">Email address</label>
                                 <div className="relative group">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -97,12 +101,12 @@ export default function Login() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="name@company.com"
-                                        className="block w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                                        className="block w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
                                     />
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                                 <div className="flex items-center justify-between ml-1">
                                     <label className="text-sm font-semibold text-slate-700">Password</label>
                                     <button className="text-xs font-bold text-primary hover:underline">Forgot password?</button>
@@ -116,7 +120,7 @@ export default function Login() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="••••••••"
-                                        className="block w-full pl-12 pr-12 py-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                                        className="block w-full pl-12 pr-12 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
                                     />
                                     <button
                                         type="button"
@@ -147,7 +151,7 @@ export default function Login() {
                             <button
                                 onClick={handleLogin}
                                 disabled={loading}
-                                className="w-full flex items-center justify-center gap-2 group bg-primary text-white py-4 px-6 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
+                                className="w-full flex items-center justify-center gap-2 group bg-primary text-white py-3.5 px-6 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
                             >
                                 {loading ? 'Checking credentials...' : 'Sign In'}
                                 <img src="/icons/arrow-right.svg" className="h-5 w-5 invert transition-transform group-hover:translate-x-1" alt="" />
@@ -158,13 +162,24 @@ export default function Login() {
                         <div className="pt-4 space-y-4">
                             <div className="relative flex items-center justify-center py-2">
                                 <div className="absolute w-full border-t border-slate-100"></div>
-                                <span className="relative bg-white px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">or login with</span>
+                                <span className="relative bg-white px-4 text-xs font-bold text-slate-400 uppercase tracking-widest">or</span>
                             </div>
 
-                            <button className="w-full py-4 px-4 rounded-2xl border border-slate-200 text-sm font-bold text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-3">
-                                <img src="/icons/mail-icon.svg" className="w-5 h-5 opacity-50" alt="" />
-                                Magic Login Link
-                            </button>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    onClick={handleGoogleSignIn}
+                                    className="w-full py-3.5 px-4 rounded-2xl border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
+                                    Google
+                                </button>
+                                <button
+                                    className="w-full py-3.5 px-4 rounded-2xl border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <img src="/icons/mail-icon.svg" className="w-5 h-5 opacity-50" alt="" />
+                                    Magic Link
+                                </button>
+                            </div>
 
                             <p className="text-center text-sm font-medium text-slate-500 pt-2">
                                 New to Aline? <Link to="/register" className="text-primary font-bold hover:underline ml-1">Create an account</Link>
