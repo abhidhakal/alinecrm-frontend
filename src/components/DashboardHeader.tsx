@@ -3,16 +3,17 @@ import { useRelativeTime } from '../hooks/useRelativeTime';
 interface DashboardHeaderProps {
   onRefresh?: () => void;
   lastUpdated?: Date | null;
+  title?: string;
 }
 
-export default function DashboardHeader({ onRefresh, lastUpdated = null }: DashboardHeaderProps) {
+export default function DashboardHeader({ onRefresh, lastUpdated = null, title = "Dashboard" }: DashboardHeaderProps) {
   const relativeTime = useRelativeTime(lastUpdated);
-  
+
   return (
     <header className="sticky top-0 z-30 flex w-full flex-col gap-4 border-b border-gray-100 bg-white/95 backdrop-blur-sm px-8 pt-8 pb-4">
       <div className="flex w-full items-center justify-between">
         {/* Left: Title */}
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">{title}</h1>
 
         {/* Right: Actions */}
         <div className="flex items-center gap-3">
@@ -56,7 +57,7 @@ export default function DashboardHeader({ onRefresh, lastUpdated = null }: Dashb
             Add New
           </button>
 
-          <button 
+          <button
             onClick={onRefresh}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-all hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 hover:rotate-90 duration-500"
           >

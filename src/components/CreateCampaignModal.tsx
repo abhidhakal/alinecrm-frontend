@@ -40,7 +40,7 @@ export default function CreateCampaignModal({
 <html>
 <head>
 <style>
-  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+  body { font-family: 'Inter', system-ui, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
   .header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #eee; }
   .content { padding: 30px 0; }
   .button { display: inline-block; padding: 12px 24px; background-color: #000; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 20px; }
@@ -508,7 +508,7 @@ export default function CreateCampaignModal({
                 {/* Estimate */}
                 <div className="mt-4 rounded-xl bg-gray-50 p-6 flex items-center justify-between border border-gray-200 shadow-inner">
                   <div className="text-sm font-semibold text-gray-600">Total Reach Potential</div>
-                  <div className="text-3xl font-black text-black">
+                  <div className="text-3xl font-bold text-black">
                     {estimating ? (
                       <span className="text-gray-400 text-sm animate-pulse">Calculating...</span>
                     ) : (

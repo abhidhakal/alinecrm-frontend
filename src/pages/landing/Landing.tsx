@@ -64,7 +64,7 @@ export default function Landing() {
           <p className="text-sm font-semibold text-slate-500 mb-8 uppercase tracking-widest">
             Powerful integrations, all in one place
           </p>
-          <div className="flex flex-wrap justify-center gap-12 md:gap-20 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+          <div className="flex flex-wrap justify-center gap-12 md:gap-20 transition-all duration-500">
             {[GoogleLogo, BrevoLogo, MetaLogo, TikTokLogo, XLogo].map((logo, index) => (
               <img key={index} src={logo} alt="Integration Partner" className="h-8 md:h-10 object-contain hover:scale-110 transition-transform duration-300" />
             ))}
@@ -77,7 +77,7 @@ export default function Landing() {
         <div className="container-width mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="text-3xl md:text-5xl font-bold text-primary mb-6 tracking-tight text-slate-900">
-              Everything you need to <span className="text-[#0B3954] underline decoration-4 decoration-[#0B3954]/20 underline-offset-4">scale</span>
+              Everything you need to <span className="text-[#0B3954] underline decoration-4 decoration-[#0B3954] underline-offset-4">scale</span>
             </h2>
             <p className="text-lg text-slate-500">AlineCRM replaces your messy spreadsheet with a powerful, joyous sales engine.</p>
           </div>
@@ -88,49 +88,56 @@ export default function Landing() {
                 icon: "/icons/analytics-icon.svg",
                 title: "Pipeline Management",
                 desc: "Visualize your entire sales funnel. Drag-and-drop deals and never let a lead go cold again.",
-                cols: "md:col-span-2"
+                cols: "md:col-span-2",
+                bgClass: "bg-blue-50/50 border-blue-100/50 hover:border-blue-200"
               },
               {
                 icon: "/icons/contact-icon.svg",
                 title: "Contact Hub",
-                desc: "Your entire network in one searchable, organized database with rich history."
+                desc: "Your entire network in one searchable, organized database with rich history.",
+                bgClass: "bg-purple-50/50 border-purple-100/50 hover:border-purple-200"
               },
               {
                 icon: "/icons/check-icon-large.svg",
                 title: "Smart Tasks",
-                desc: "Automated follow-ups and daily tasks so your team knows exactly what to do."
+                desc: "Automated follow-ups and daily tasks so your team knows exactly what to do.",
+                bgClass: "bg-emerald-50/50 border-emerald-100/50 hover:border-emerald-200"
               },
               {
                 icon: "/icons/dashboard.svg",
                 title: "Analytics Dashboard",
                 desc: "Real-time insights into revenue, conversion rates, and team performance.",
-                cols: "md:col-span-2"
+                cols: "md:col-span-2",
+                bgClass: "bg-rose-50/50 border-rose-100/50 hover:border-rose-200"
               },
               {
                 icon: "/icons/column-view-icon.svg",
                 title: "Template Builder",
-                desc: "Create reusable email templates to speed up your outreach campaigns."
+                desc: "Create reusable email templates to speed up your outreach campaigns.",
+                bgClass: "bg-amber-50/50 border-amber-100/50 hover:border-amber-200"
               },
               {
                 icon: "/icons/mindfulness-icon.svg",
                 title: "Zen Mode",
-                desc: "Built-in mindfulness games and ambient sounds to keep your sales team focused."
+                desc: "Built-in mindfulness games and ambient sounds to keep your sales team focused.",
+                bgClass: "bg-cyan-50/50 border-cyan-100/50 hover:border-cyan-200"
               },
               {
                 icon: "/icons/mail-icon.svg",
                 title: "Email Campaigns",
-                desc: "Built-in email marketing automation. Create, schedule, and track campaigns directly from your dashboard."
+                desc: "Built-in email marketing automation. Create, schedule, and track campaigns directly from your dashboard.",
+                bgClass: "bg-indigo-50/50 border-indigo-100/50 hover:border-indigo-200"
               }
             ].map((feature, i) => (
-              <div key={i} className={`group relative p-8 rounded-3xl border border-slate-100 bg-white shadow-lg shadow-slate-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${feature.cols || ''}`}>
+              <div key={i} className={`group relative p-8 rounded-3xl border shadow-lg shadow-slate-200/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${feature.cols || ''} ${feature.bgClass || 'bg-white border-slate-100'}`}>
                 <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                   <img src={feature.icon} className="w-8 h-8" alt="" />
                 </div>
-                <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-6 group-hover:bg-white group-hover:scale-110 transition-all shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-white border border-white/50 flex items-center justify-center mb-6 group-hover:scale-110 transition-all shadow-sm">
                   <img src={feature.icon} className="w-8 h-8" alt="" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
-                <p className="text-slate-500 leading-relaxed text-balance">
+                <p className="text-slate-600 leading-relaxed text-balance">
                   {feature.desc}
                 </p>
               </div>

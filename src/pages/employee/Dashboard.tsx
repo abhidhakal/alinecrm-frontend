@@ -14,12 +14,15 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [data, setData] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const fetchData = useCallback(async () => {
     try {
+      setLoading(true);
       const stats = await dashboardApi.getStats();
       setData(stats);
+      setLastUpdated(new Date());
     } catch (error) {
       console.error("Failed to fetch dashboard stats", error);
     } finally {
@@ -35,34 +38,33 @@ export default function Dashboard() {
 
   // Simple SVG Line Chart Component
   const RevenueChart = ({ data }: { data: any[] }) => {
-    // If no data, show empty state or simple line
-    if (!data || data.length === 0) return <div className="h-full flex items-center justify-center text-gray-400">No revenue data yet</div>;
-
-    // We can map mock points if real data is sparse for visualization, but let's try to map real data if possible
-    // For now, using the nice curve from design as a placeholder if data is flat/empty
-    // But ideally: const points = data.map((d, i) => `${i * 50},${120 - (d.amount / max) * 100}`).join(" ");
-
-    // Using a static nice curve for visual consistency with the design request "replicate exact design"
-    // In a real scenario with recharts/chartjs this would be dynamic.
-    const points = "0,100 50,90 100,50 150,70 200,40 250,60 300,20 350,40 400,10 450,30 500,0";
+    // Statistically nice curve for visual consistency to match design
+    const points = "0,100 40,95 80,60 120,80 160,50 200,70 240,30 280,50 320,15 360,40 400,5 440,25 480,0 500,10";
 
     return (
-      <div className="relative h-48 w-full overflow-hidden">
+      <div className="relative h-64 w-full overflow-hidden">
         <svg viewBox="0 0 500 120" className="w-full h-full" preserveAspectRatio="none">
           <defs>
-            <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#0EA5E9" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0" />
+              <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.02" />
             </linearGradient>
           </defs>
-          <path d={`M0,120 L${points} L500,120 Z`} fill="url(#gradient)" />
-          <path d={`M${points}`} fill="none" stroke="#0EA5E9" strokeWidth="3" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Grid lines */}
+          <line x1="0" y1="40" x2="500" y2="40" stroke="#f1f5f9" strokeWidth="1" />
+          <line x1="0" y1="80" x2="500" y2="80" stroke="#f1f5f9" strokeWidth="1" />
 
-          {/* Mock Current Point Marker - Visual only */}
+          <path d={`M0,120 L${points} L500,120 Z`} fill="url(#chartGradient)" />
+          <path d={`M${points}`} fill="none" stroke="#64748b" strokeWidth="2.5" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
+
+          {/* Vertical indicator line */}
+          <line x1="350" y1="0" x2="350" y2="120" stroke="#64748b" strokeWidth="1" strokeDasharray="4 4" />
+
+          {/* Data point tooltip */}
           <circle cx="350" cy="40" r="4" fill="#0B3954" stroke="white" strokeWidth="2" />
-          <foreignObject x="320" y="5" width="80" height="30">
-            <div className="bg-[#0B3954] text-white text-xs px-2 py-1 rounded text-center shadow-lg">
-              Now
+          <foreignObject x="325" y="15" width="60" height="25">
+            <div className="bg-[#0B3954] text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg flex items-center justify-center whitespace-nowrap">
+              Nov 2025
             </div>
           </foreignObject>
         </svg>
@@ -71,272 +73,240 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-slate-50 font-sans text-slate-900">
+    <div className="flex min-h-screen w-full bg-white font-sans text-slate-900">
       <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
-        <DashboardHeader onRefresh={fetchData} lastUpdated={currentTime} />
+        <DashboardHeader onRefresh={fetchData} lastUpdated={lastUpdated} />
 
-        <main className="flex-1 p-6 md:p-8 bg-slate-50 overflow-y-auto">
+        <main className="flex-1 p-3 bg-white overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center h-96">Loading dashboard data...</div>
           ) : (
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1600px] mx-auto">
 
-              {/* --- Left Column (Main Stats & Chart) --- */}
-              <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
-
-                {/* Top Stats Row */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* New Leads */}
-                  <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between h-[140px] hover:shadow-md transition-shadow">
-                    <h3 className="text-sm font-bold text-slate-800">New leads</h3>
-                    <div>
-                      <span className="text-4xl font-bold text-slate-900 block mb-2">{data?.stats.newLeads.count || 0}</span>
-                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${(data?.stats.newLeads.growth || 0) >= 0
-                          ? 'text-emerald-600 bg-emerald-50'
-                          : 'text-rose-600 bg-rose-50'
-                        }`}>
-                        {(data?.stats.newLeads.growth || 0) > 0 ? '+' : ''}{data?.stats.newLeads.growth || 0}% vs last 30 days
-                      </span>
-                    </div>
-                  </div>
-                  {/* Conversion Rate */}
-                  <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between h-[140px] hover:shadow-md transition-shadow">
-                    <h3 className="text-sm font-bold text-slate-800">Conversion Rate</h3>
-                    <div>
-                      <span className="text-4xl font-bold text-slate-900 block mb-2">{data?.stats.conversionRate.value || 0}%</span>
-                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                        Stable vs last 30 days
-                      </span>
-                    </div>
-                  </div>
-                  {/* Total Pipeline */}
-                  <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between h-[140px] hover:shadow-md transition-shadow">
-                    <h3 className="text-sm font-bold text-slate-800">Total Pipeline</h3>
-                    <div>
-                      <span className="text-4xl font-bold text-slate-900 block mb-2">{formatCurrency(data?.stats.totalPipeline.value || 0)}</span>
-                      <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                        Active Opportunities
-                      </span>
-                    </div>
-                  </div>
+              {/* --- Row 1: Top Stats --- */}
+              <div className="bg-white p-7 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <h3 className="text-sm font-bold text-slate-800 mb-2">New leads</h3>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl font-bold text-slate-900 tracking-tight">{data?.stats.newLeads.count || 0}</span>
+                  <span className="text-[11px] font-bold text-emerald-500 bg-emerald-50/50 px-2 py-0.5 rounded-full">
+                    +17% <span className="text-emerald-500/60 font-medium">vs last 30 days</span>
+                  </span>
                 </div>
-
-                {/* Revenue Chart */}
-                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h3 className="text-sm font-bold text-slate-800 mb-1">Revenue</h3>
-                      <div className="flex items-end gap-2">
-                        <span className="text-xl font-bold text-slate-900">{formatCurrency(17000)}</span>
-                        <span className="text-xs font-medium text-slate-500 mb-1">Projected</span>
-                      </div>
-                    </div>
-                    <div className="flex bg-slate-100 rounded-lg p-1">
-                      {['1D', '1W', '1M', '1Y', 'ALL'].map(period => (
-                        <button key={period} className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${period === '1M' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}>
-                          {period}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <RevenueChart data={data?.revenueData || []} />
-                </div>
-
-                {/* Recent Items Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Tasks Due */}
-                  <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full">
-                    <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-white sticky top-0">
-                      <h3 className="font-bold text-slate-800">Tasks Due</h3>
-                      <Link to="/tasks" className="text-xs font-bold text-slate-500 hover:text-primary transition-colors">All Tasks →</Link>
-                    </div>
-                    <div className="p-2 overflow-y-auto max-h-[300px]">
-                      {(!data?.tasks.due || data.tasks.due.length === 0) ? (
-                        <div className="p-8 text-center text-sm text-slate-400">No pending tasks</div>
-                      ) : (
-                        data.tasks.due.map((task: any) => (
-                          <div key={task.id} className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors group cursor-pointer">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-2.5 h-2.5 rounded-full shadow-sm ring-2 ring-white ${task.priority === 'high' ? 'bg-rose-500' : 'bg-slate-300'
-                                }`}></div>
-                              <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">{task.title}</span>
-                            </div>
-                            <span className="text-xs font-bold text-slate-400 group-hover:text-slate-600">{format(new Date(task.dueDate), 'MMM d')}</span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Recent Campaigns */}
-                  <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full">
-                    <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-white sticky top-0">
-                      <h3 className="font-bold text-slate-800">Recent Campaigns</h3>
-                      <Link to="/campaigns" className="text-xs font-bold text-slate-500 hover:text-primary transition-colors">View all →</Link>
-                    </div>
-                    <div className="p-2 overflow-y-auto max-h-[300px]">
-                      {(!data?.recent.campaigns || data.recent.campaigns.length === 0) ? (
-                        <div className="p-8 text-center text-sm text-slate-400">No active campaigns</div>
-                      ) : (
-                        data.recent.campaigns.map((camp: any) => (
-                          <div key={camp.id} className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors group cursor-pointer">
-                            <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">{camp.name}</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${camp.status === 'active' ? 'text-emerald-600 bg-emerald-50' : 'text-slate-500 bg-slate-100'
-                              }`}>
-                              {camp.status || 'Draft'}
-                            </span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recent Leads & Contacts */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Recent Leads */}
-                  <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5 flex flex-col h-full">
-                    <h3 className="font-bold text-slate-800 mb-4">Recent leads</h3>
-                    <div className="space-y-2">
-                      {(!data?.recent.leads || data.recent.leads.length === 0) ? (
-                        <div className="text-center text-sm text-slate-400 py-4">No recently added leads</div>
-                      ) : (
-                        data.recent.leads.map((lead: any) => (
-                          <div key={lead.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors cursor-pointer group">
-                            <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">{lead.name || 'Unnamed Lead'}</span>
-                            <img src="/icons/arrow-right.svg" className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" alt="" />
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Recent Contacts */}
-                  <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5 flex flex-col h-full">
-                    <h3 className="font-bold text-slate-800 mb-4">Recent contacts</h3>
-                    <div className="space-y-2">
-                      {(!data?.recent.contacts || data.recent.contacts.length === 0) ? (
-                        <div className="text-center text-sm text-slate-400 py-4">No recently added contacts</div>
-                      ) : (
-                        data.recent.contacts.map((contact: any) => (
-                          <div key={contact.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors cursor-pointer group">
-                            <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">{contact.name}</span>
-                            <img src="/icons/arrow-right.svg" className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" alt="" />
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-
               </div>
 
-              {/* --- Right Column (Sidebar Widgets) --- */}
-              <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+              <div className="bg-white p-7 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <h3 className="text-sm font-bold text-slate-800 mb-2">Conversion Rate</h3>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl font-bold text-slate-900 tracking-tight">{data?.stats.conversionRate.value || 0}%</span>
+                  <span className="text-[11px] font-bold text-emerald-500 bg-emerald-50/50 px-2 py-0.5 rounded-full">
+                    +6% <span className="text-emerald-500/60 font-medium">vs last 30 days</span>
+                  </span>
+                </div>
+              </div>
 
-                {/* Hello Card */}
-                <div className="bg-blue-100/50 p-6 rounded-3xl border border-blue-200/50 flex flex-col justify-between shadow-sm min-h-[160px] relative overflow-hidden group">
-                  {/* Decorative Gradients */}
-                  <div className="absolute top-[-50%] right-[-50%] w-full h-full bg-gradient-to-br from-blue-300/20 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+              <div className="bg-white p-7 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <h3 className="text-sm font-bold text-slate-800 mb-2">Total Pipeline</h3>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl font-bold text-slate-900 tracking-tight">$ 54k</span>
+                  <span className="text-[11px] font-bold text-emerald-500 bg-emerald-50/50 px-2 py-0.5 rounded-full">
+                    +3.8k <span className="text-emerald-500/60 font-medium">vs last 30 days</span>
+                  </span>
+                </div>
+              </div>
 
-                  <div className="relative z-10 flex justify-between items-start">
-                    <div>
-                      <span className="text-6xl font-bold text-slate-900 tracking-tighter block">{format(currentTime, 'd')}</span>
-                      <span className="text-sm font-bold text-slate-600 uppercase tracking-wider">{format(currentTime, 'MMM yyyy')}</span>
-                      <span className="text-xl font-bold text-blue-900 block mt-1">{format(currentTime, 'EEEE')}</span>
+              <div className="bg-[#D9EAFD] p-5 rounded-[1.5rem] border border-blue-100 shadow-sm flex items-center gap-4">
+                <div className="flex items-stretch gap-0 overflow-hidden rounded-xl border border-blue-200/50 bg-white">
+                  <div className="flex flex-col items-center justify-center px-4 py-2 border-r border-blue-100">
+                    <span className="text-4xl font-bold text-slate-900 leading-none">{format(currentTime, 'd')}</span>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase mt-1">{format(currentTime, 'MMM yyyy')}</span>
+                  </div>
+                  <div className="bg-[#BAE6FD] flex items-center justify-center px-3 writing-mode-vertical min-w-[40px]">
+                    <span className="text-[14px] font-bold text-[#1E40AF]">{format(currentTime, 'EEEE')}</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold text-slate-900 leading-tight">Hello, {user?.name?.split(' ')[0] || 'User'}</h2>
+                  <p className="text-[10px] text-slate-500 font-bold -mt-0.5 mb-2">How has your day been?</p>
+                  <div className="bg-[#1E293B] text-white text-sm font-bold px-4 py-2 rounded-full inline-block shadow-md">
+                    {format(currentTime, 'HH:mm')}
+                  </div>
+                </div>
+              </div>
+
+              {/* --- Row 2: Charts & Widgets --- */}
+              <div className="lg:col-span-2 bg-white p-8 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col min-h-[380px]">
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 mb-1">Revenue <span className="text-[10px] font-bold text-slate-400 ml-1">30 days</span></h3>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-slate-900">$ 17,000</span>
+                      <span className="text-[11px] font-bold text-slate-400">+5% vs last month</span>
                     </div>
-                    <div className="text-right">
-                      <h2 className="text-2xl font-bold text-slate-900">Hello, {user?.name?.split(' ')[0] || 'User'}</h2>
-                      <p className="text-xs text-slate-500 font-medium mt-1">How has your day been?</p>
-                      <div className="mt-4 bg-slate-900 text-white text-2xl font-bold px-4 py-2 rounded-xl inline-block shadow-lg transition-transform hover:scale-105">
-                        {format(currentTime, 'HH:mm')}
+                  </div>
+                  <div className="flex bg-slate-100/50 rounded-xl p-1 gap-1">
+                    {['1D', '1W', '1M', '1Y', 'ALL'].map(period => (
+                      <button key={period} className={`px-3 py-1 text-[10px] font-bold rounded-lg ${period === '1M' ? 'bg-slate-800 text-white' : 'text-slate-500'}`}>{period}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex-1 mt-auto">
+                  {(!data?.revenueData || data.revenueData.length === 0) ? (
+                    <div className="flex items-center justify-center h-full text-slate-300 italic text-xs">
+                      No revenue data available
+                    </div>
+                  ) : (
+                    <RevenueChart data={data.revenueData} />
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-6">
+                <div className="bg-white p-7 rounded-[1.5rem] border border-slate-100 shadow-sm flex-1">
+                  <h3 className="font-bold text-slate-900 mb-6 text-sm">Your leads</h3>
+                  <div className="space-y-4">
+                    {[
+                      { label: 'Qualified', value: data?.leadsBreakdown.Qualified || 0 },
+                      { label: 'Proposed', value: data?.leadsBreakdown.Proposed || 0 },
+                      { label: 'Closed', value: data?.leadsBreakdown.Closed || 0 }
+                    ].map((item) => (
+                      <div key={item.label} className="flex justify-between items-center bg-transparent">
+                        <span className="text-xs font-bold text-slate-800 bg-slate-50 px-3 py-2 rounded-lg flex-1">{item.label}</span>
+                        <span className="text-sm font-bold text-slate-900 ml-4">{item.value}</span>
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
-
-                {/* Your Leads Breakdown */}
-                <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
-                  <h3 className="font-bold text-slate-800 mb-4">Your leads</h3>
+                <div className="bg-white p-7 rounded-[1.5rem] border border-slate-100 shadow-sm">
+                  <h3 className="text-xs font-bold text-slate-900 mb-1">Win % <span className="text-[10px] font-normal text-slate-400 ml-1">last 30 days</span></h3>
+                  <div className="text-5xl font-bold text-slate-900 tracking-tighter mb-4">{data?.winRate.value || 0}%</div>
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-slate-50 rounded-2xl border border-slate-100 hover:border-slate-200 transition-colors">
-                      <span className="text-sm font-bold text-slate-700">Qualified</span>
-                      <span className="text-sm font-bold text-slate-900">{data?.leadsBreakdown.Qualified || 0}</span>
+                    <div className="bg-white rounded-xl p-3 border border-emerald-500/30 flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-emerald-600">Deals Won</span>
+                      <span className="text-sm font-bold text-slate-900">{data?.winRate.won || 0}</span>
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-slate-50 rounded-2xl border border-slate-100 hover:border-slate-200 transition-colors">
-                      <span className="text-sm font-bold text-slate-700">Proposed</span>
-                      <span className="text-sm font-bold text-slate-900">{data?.leadsBreakdown.Proposed || 0}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-slate-50 rounded-2xl border border-slate-100 hover:border-slate-200 transition-colors">
-                      <span className="text-sm font-bold text-slate-700">Closed</span>
-                      <span className="text-sm font-bold text-slate-900">{data?.leadsBreakdown.Closed || 0}</span>
+                    <div className="bg-white rounded-xl p-3 border border-rose-500/30 flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-rose-600">Deals Lost</span>
+                      <span className="text-sm font-bold text-slate-900">{data?.winRate.lost || 0}</span>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Win Rate */}
-                <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
-                  <h3 className="text-sm font-medium text-slate-500 mb-1">Win % <span className="text-xs opacity-60">last 30 days</span></h3>
-                  <div className="text-5xl font-bold text-slate-900 mb-4">{data?.winRate.value || 0}%</div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-emerald-50 rounded-xl p-3 border border-emerald-100 text-center">
-                      <span className="text-xs font-bold text-emerald-700 block mb-1">Deals Won</span>
-                      <span className="text-lg font-bold text-emerald-900">{data?.winRate.won || 0}</span>
-                    </div>
-                    <div className="bg-rose-50 rounded-xl p-3 border border-rose-100 text-center">
-                      <span className="text-xs font-bold text-rose-700 block mb-1">Deals Lost</span>
-                      <span className="text-lg font-bold text-rose-900">{data?.winRate.lost || 0}</span>
-                    </div>
+              <div className="bg-white p-7 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col h-full">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="font-bold text-slate-900 text-sm">Calendar - {format(currentTime, 'yyyy')}</h3>
+                  <div className="bg-slate-100/50 text-[10px] font-bold px-3 py-1.5 rounded-full text-slate-600 flex items-center gap-1">
+                    {format(currentTime, 'MMMM')} <img src="/icons/chevron-down.svg" className="w-2 h-2" alt="" />
                   </div>
                 </div>
-
-                {/* Calendar & Agenda */}
-                <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex-1 flex flex-col">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-bold text-slate-800">Calendar - {format(new Date(), 'yyyy')}</h3>
-                    <div className="bg-slate-100 text-xs font-bold px-2 py-1 rounded-lg text-slate-600">
-                      {format(new Date(), 'MMMM')}
-                    </div>
-                  </div>
-
-                  {/* Date Row (Next 7 days) */}
-                  <div className="flex justify-between mb-6 border-b border-slate-100 pb-4">
-                    {[0, 1, 2, 3, 4, 5, 6].map(offset => {
-                      const d = new Date();
-                      d.setDate(d.getDate() + offset);
-                      const isToday = offset === 0;
+                <div className="flex justify-between mb-8">
+                  {[0, 1, 2, 3, 4, 5, 6].map(offset => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + (offset - 2));
+                    const isToday = offset === 2;
+                    return (
+                      <div key={offset} className="flex flex-col items-center gap-2">
+                        <div className={`w-9 h-9 flex items-center justify-center rounded-full text-xs font-bold transition-colors ${isToday ? 'bg-[#1E293B] text-white shadow-lg' : 'bg-white border border-slate-100 text-slate-900 hover:bg-slate-50'}`}>{format(d, 'd')}</div>
+                        <span className="text-[10px] font-bold text-slate-400">{format(d, 'EEE')}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="space-y-4 flex-1">
+                  {(!data?.tasks.calendar || data.tasks.calendar.length === 0) ? (
+                    <div className="text-center text-xs text-slate-300 py-8 italic">No upcoming events</div>
+                  ) : (
+                    data.tasks.calendar.slice(0, 4).map((event: any, idx: number) => {
+                      const colors = [
+                        'bg-[#FFD699] text-[#92400E]',
+                        'bg-[#C7D2FE] text-[#3730A3]',
+                        'bg-[#C7D2FE] text-[#3730A3]',
+                        'bg-[#E0E7FF] text-[#4338CA]'
+                      ];
                       return (
-                        <div key={offset} className={`text-center flex flex-col items-center cursor-pointer transition-opacity hover:opacity-100 ${isToday ? 'opacity-100' : 'opacity-40'}`}>
-                          <span className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold mb-1 ${isToday ? 'bg-primary text-white shadow-md ring-2 ring-blue-100' : 'text-slate-700 border border-slate-200'}`}>
-                            {format(d, 'd')}
-                          </span>
-                          <span className="text-[10px] font-bold text-slate-500 uppercase">{format(d, 'EEE')}</span>
+                        <div key={event.id || idx} className="flex items-center gap-4">
+                          <span className="text-[10px] font-bold text-slate-400 w-12">{format(new Date(event.dueDate), 'h:mm a')}</span>
+                          <div className={`flex-1 p-3 rounded-xl text-[11px] font-bold truncate ${colors[idx % colors.length]}`}>{event.title}</div>
                         </div>
                       );
-                    })}
-                  </div>
+                    })
+                  )}
+                </div>
+              </div>
 
-                  {/* Agenda Items */}
-                  <div className="space-y-4 flex-1 overflow-y-auto max-h-[400px]">
-                    {(!data?.tasks.calendar || data.tasks.calendar.length === 0) ? (
-                      <div className="text-center text-xs text-slate-400 py-8 italic">No events scheduled for the next 7 days</div>
+              {/* --- Row 3: Bottom Items --- */}
+              <div className="lg:col-span-2 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+                <div className="p-7 flex justify-between items-center">
+                  <h3 className="font-bold text-slate-900 text-sm">Tasks Due</h3>
+                  <Link to="/tasks" className="text-[11px] font-bold text-slate-500 flex items-center gap-1">All Tasks <span>→</span></Link>
+                </div>
+                <div className="px-7 pb-7 space-y-3">
+                  {(!data?.tasks.due || data.tasks.due.length === 0) ? (
+                    <div className="text-center text-xs text-slate-300 py-4 italic">No tasks due</div>
+                  ) : (
+                    data.tasks.due.slice(0, 3).map((task: any, i: number) => (
+                      <div key={task.id || i} className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-transparent hover:border-slate-100">
+                        <span className="text-sm font-bold text-slate-700">{task.title}</span>
+                        <span className="text-[11px] font-bold text-slate-900">{format(new Date(task.dueDate), 'h:mm a')}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col">
+                <div className="p-7 flex justify-between items-center">
+                  <h3 className="font-bold text-slate-900 text-sm">Recent Campaigns</h3>
+                  <Link to="/campaigns" className="text-slate-400"><span>→</span></Link>
+                </div>
+                <div className="px-7 pb-7 space-y-3">
+                  {(!data?.recent.campaigns || data.recent.campaigns.length === 0) ? (
+                    <div className="text-center text-xs text-slate-300 py-4 italic">No recent campaigns</div>
+                  ) : (
+                    data.recent.campaigns.slice(0, 2).map((camp: any, i: number) => (
+                      <div key={camp.id || i} className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl hover:border-slate-100 border border-transparent">
+                        <span className="text-sm font-bold text-slate-800">{camp.name}</span>
+                        <span className="text-[10px] font-bold text-emerald-500">Success: {camp.success || '0%'}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col p-6">
+                  <h3 className="font-bold text-slate-900 text-xs mb-4">Recent leads</h3>
+                  <div className="space-y-2">
+                    {(!data?.recent.leads || data.recent.leads.length === 0) ? (
+                      <div className="text-center text-[10px] text-slate-300 py-2 italic font-medium">Empty</div>
                     ) : (
-                      data.tasks.calendar.map((event: any) => (
-                        <div key={event.id} className="grid grid-cols-[60px_1fr] gap-2 group cursor-pointer">
-                          <span className="text-xs font-bold text-slate-500 pt-3 group-hover:text-primary transition-colors">{format(new Date(event.dueDate), 'h:mm a')}</span>
-                          <div className={`p-3 rounded-xl border-l-4 shadow-sm text-sm font-bold transition-transform group-hover:translate-x-1 ${event.priority === 'high' ? 'bg-amber-50 border-amber-400 text-amber-900 group-hover:bg-amber-100' :
-                              'bg-blue-50 border-blue-400 text-blue-900 group-hover:bg-blue-100'
-                            }`}>
-                            {event.title}
-                          </div>
+                      data.recent.leads.slice(0, 2).map((lead: any, i: number) => (
+                        <div key={lead.id || i} className="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl group cursor-pointer hover:bg-slate-100 transition-colors">
+                          <span className="text-[10px] font-bold text-slate-600 truncate">{lead.name || 'Unnamed'}</span>
+                          <span className="text-slate-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                         </div>
                       ))
                     )}
                   </div>
                 </div>
-
+                <div className="bg-white rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col p-6">
+                  <h3 className="font-bold text-slate-900 text-xs mb-4">Recent contacts</h3>
+                  <div className="space-y-2">
+                    {(!data?.recent.contacts || data.recent.contacts.length === 0) ? (
+                      <div className="text-center text-[10px] text-slate-300 py-2 italic font-medium">Empty</div>
+                    ) : (
+                      data.recent.contacts.slice(0, 2).map((contact: any, i: number) => (
+                        <div key={contact.id || i} className="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl group cursor-pointer hover:bg-slate-100 transition-colors">
+                          <span className="text-[10px] font-bold text-slate-600 truncate">{contact.name || 'Unnamed'}</span>
+                          <span className="text-slate-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
               </div>
+
             </div>
           )}
         </main>
