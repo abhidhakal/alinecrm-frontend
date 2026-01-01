@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { useSidebar } from '../../context/SidebarContext';
 import { useAuth } from '../../context/AuthContext';
-import { usersApi } from '../../api/users';
-import { uploadApi } from '../../api/upload';
+import { usersApi } from '../../api/users.api';
+import { uploadApi } from '../../api/clients/upload.client';
 import { useToast } from '../../context/ToastContext';
 
 type Tab = 'general' | 'security';
@@ -117,8 +117,8 @@ export default function Profile() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as Tab)}
                   className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl transition-all ${activeTab === tab.id
-                      ? 'bg-black text-white'
-                      : 'text-gray-600 hover:bg-gray-50'
+                    ? 'bg-black text-white'
+                    : 'text-gray-600 hover:bg-gray-50'
                     }`}
                 >
                   <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

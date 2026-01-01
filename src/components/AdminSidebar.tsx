@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../assets/aline-logo.svg';
 import { useSidebar } from '../context/SidebarContext';
 import { useAuth } from '../context/AuthContext';
-import LogoutConfirmationModal from './LogoutConfirmationModal';
+import LogoutConfirmationModal from "../features/auth/components/LogoutConfirmationModal";
 
 const adminNavItems = [
   {

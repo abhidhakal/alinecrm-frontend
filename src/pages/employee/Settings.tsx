@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { useSidebar } from '../../context/SidebarContext';
-import { useAuth } from '../../context/AuthContext';
 import { useCurrency } from '../../context/CurrencyContext';
 import { useToast } from '../../context/ToastContext';
 
@@ -9,7 +8,6 @@ type Tab = 'preferences' | 'notifications';
 
 export default function Settings() {
   const { isExpanded } = useSidebar();
-  const { isAdmin } = useAuth();
   const { currency, setCurrency, availableCurrencies } = useCurrency();
   const { showToast } = useToast();
 

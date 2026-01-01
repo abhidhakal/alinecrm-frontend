@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../assets/aline-logo.svg';
 import { useSidebar } from '../context/SidebarContext';
 import { useAuth } from '../context/AuthContext';
-import LogoutConfirmationModal from './LogoutConfirmationModal';
+import LogoutConfirmationModal from "../features/auth/components/LogoutConfirmationModal";
 
 const navItems = [
   {
@@ -57,7 +57,7 @@ export default function Sidebar() {
   const roleDisplay = user?.role === 'admin' ? 'Admin' : user?.role === 'superadmin' ? 'Super Admin' : 'User';
   const institutionName = user?.institutionName;
 
-  const userDetails =`${institutionName}, ${roleDisplay}`;
+  const userDetails = `${institutionName}, ${roleDisplay}`;
 
   const userInitials = userName
     .split(' ')
@@ -205,35 +205,35 @@ export default function Sidebar() {
             };
             const effectiveNavItems = isAdmin ? [navItems[0], usersItem, ...navItems.slice(1)] : navItems;
             return effectiveNavItems.map((item) => {
-            const linkPath = isAdmin ? `/admin${item.path}` : item.path;
-            const isActive = location.pathname === linkPath;
-            return (
-              <div key={item.name} className="relative group">
-                <Link
-                  to={linkPath}
-                  className={`flex items-center rounded-xl py-3 text-sm font-medium transition-all duration-200 ${isExpanded ? 'gap-3 px-4' : 'justify-center px-3'
-                    } ${isActive
-                      ? 'bg-gray-100 text-gray-900 font-semibold'
-                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                >
-                  <img
-                    src={isActive ? item.activeIcon : item.icon}
-                    alt={item.name}
-                    className="w-5 h-5 transition-transform duration-200 flex-shrink-0"
-                  />
-                  {isExpanded && item.name}
-                </Link>
+              const linkPath = isAdmin ? `/admin${item.path}` : item.path;
+              const isActive = location.pathname === linkPath;
+              return (
+                <div key={item.name} className="relative group">
+                  <Link
+                    to={linkPath}
+                    className={`flex items-center rounded-xl py-3 text-sm font-medium transition-all duration-200 ${isExpanded ? 'gap-3 px-4' : 'justify-center px-3'
+                      } ${isActive
+                        ? 'bg-gray-100 text-gray-900 font-semibold'
+                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                      }`}
+                  >
+                    <img
+                      src={isActive ? item.activeIcon : item.icon}
+                      alt={item.name}
+                      className="w-5 h-5 transition-transform duration-200 flex-shrink-0"
+                    />
+                    {isExpanded && item.name}
+                  </Link>
 
-                {/* Tooltip for collapsed state */}
-                {!isExpanded && (
-                  <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
-                    {item.name}
-                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
-                  </div>
-                )}
-              </div>
-            );
+                  {/* Tooltip for collapsed state */}
+                  {!isExpanded && (
+                    <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-gray-900 text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+                      {item.name}
+                      <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
+                    </div>
+                  )}
+                </div>
+              );
             });
           })()}
         </nav>

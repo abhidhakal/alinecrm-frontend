@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { usersApi } from '../api/users';
+import { usersApi } from '../api/users.api';
 
 type Currency = {
   code: string;

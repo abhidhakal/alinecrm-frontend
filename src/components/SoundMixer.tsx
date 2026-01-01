@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Howl } from 'howler';
+import { Howl, Howler } from 'howler';
 
 const SOUNDS_CONFIG = [
   {
@@ -91,8 +91,8 @@ export default function SoundMixer({ zenMode = false }: SoundMixerProps) {
           volume: initialVolume, 
           preload: true,
           // html5: true, // Commented out to use Web Audio API for better mixing and gapless looping
-          onplayerror: (id, error) => {
-            // Fallback: try to unlock audio context
+          onplayerror: () => {
+            // Fallback: try to unlock audio context when autoplay is blocked
             Howler.ctx?.resume();
           }
         }),
