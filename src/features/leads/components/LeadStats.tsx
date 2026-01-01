@@ -18,45 +18,45 @@ export const LeadStats = ({ leads }: LeadStatsProps) => {
 
   return (
     <div className="grid grid-cols-12 gap-6">
-      <div className="col-span-3 flex flex-col justify-center rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
-        <div className="flex items-center gap-5">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-900 text-white">
+      <div className="col-span-3 flex flex-col justify-center rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm transition-all hover:shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-900 text-white">
             <img src="/icons/add-icon-filled.svg" alt="New" className="h-8 w-8 invert brightness-0" />
           </div>
           <div>
             <p className="text-base font-medium text-gray-500">New Leads</p>
-            <p className="text-4xl font-bold text-gray-900">{stats.new}</p>
+            <p className="text-4xl font-bold text-gray-900 leading-tight">{stats.new}</p>
           </div>
         </div>
       </div>
 
-      <div className="col-span-3 flex flex-col justify-center rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
-        <div className="flex items-center gap-5">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-900 text-white">
-            <img src="/icons/call-icon-filled.svg" alt="Contacted" className="h-8 w-8 invert brightness-0" />
+      <div className="col-span-3 flex flex-col justify-center rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm transition-all hover:shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-900 text-white">
+            <img src="/icons/call-icon-filled.svg" alt="Contacted" className="h-9 w-9 invert brightness-0" />
           </div>
           <div>
             <p className="text-base font-medium text-gray-500">Contacted</p>
-            <p className="text-4xl font-bold text-gray-900">{stats.contacted}</p>
+            <p className="text-4xl font-bold text-gray-900 leading-tight">{stats.contacted}</p>
           </div>
         </div>
       </div>
 
-      <div className="col-span-3 flex flex-col justify-center rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
-        <div className="flex items-center gap-5">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-50">
-            <span className="text-2xl font-bold text-purple-600">%</span>
+      <div className="col-span-3 flex flex-col justify-center rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm transition-all hover:shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-purple-50">
+            <span className="text-3xl font-bold text-purple-600">%</span>
           </div>
           <div>
             <p className="text-base font-medium text-gray-500">Win Rate</p>
-            <p className="text-4xl font-bold text-gray-900">{stats.winRate}%</p>
+            <p className="text-4xl font-bold text-gray-900 leading-tight">{stats.winRate}%</p>
           </div>
         </div>
       </div>
 
-      <div className="col-span-3 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
-        <p className="mb-4 text-sm font-medium text-gray-500">Pipeline Status</p>
-        <div className="space-y-3">
+      <div className="col-span-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm transition-all hover:shadow-md">
+        <p className="mb-3 text-sm font-medium text-gray-500">Status</p>
+        <div className="space-y-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-green-500"></div>

@@ -48,6 +48,9 @@ body {
 
 /* Custom Utilities - The Secret Sauce */
 @layer utilities {
+  .chart-gradient-bg {
+    background: linear-gradient(180deg, #ffffff 0%, #CFE1EF 75%, #BFD7EA 100%);
+  }
   .text-balance {
     text-wrap: balance;
   }

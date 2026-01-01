@@ -1,14 +1,39 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Logo from '../../assets/aline-logo.svg';
 import { useToast } from '../../context/ToastContext';
 import { useCurrency } from '../../context/CurrencyContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Register() {
   const [currentStep, setCurrentStep] = useState(1);
   const { showToast } = useToast();
   const { availableCurrencies } = useCurrency();
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const token = searchParams.get('token');
+    const userDataStr = searchParams.get('user');
+
+    if (token && userDataStr) {
+      try {
+        const user = JSON.parse(userDataStr);
+        login(token, user);
+        showToast('Registration successful!', 'success');
+        
+        if (user.role === 'admin' || user.role === 'superadmin') {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/dashboard');
+        }
+      } catch (e) {
+        console.error('Failed to parse user data from URL', e);
+      }
+    }
+  }, [searchParams, login, navigate, showToast]);
 
   // Step 1: Account
   const [email, setEmail] = useState('');
@@ -69,7 +94,7 @@ export default function Register() {
   const handleRegister = async () => {
     setLoading(true);
     try {
-      await axios.post('http://localhost:3000/auth/register', {
+      await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, {
         name,
         email,
         password,
@@ -97,7 +122,8 @@ export default function Register() {
   };
 
   const handleGoogleSignIn = () => {
-    showToast('Google Sign-In coming soon!', 'info');
+    // Redirect to backend Google OAuth endpoint
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
 
   return (

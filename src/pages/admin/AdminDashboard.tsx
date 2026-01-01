@@ -7,6 +7,7 @@ import { useGetDashboardStats } from "../../api/dashboard.api";
 import HeroSection from "../../features/dashboard/components/HeroSection";
 import RevenueTrendChart from "../../features/dashboard/components/RevenueTrendChart";
 import CalendarCard from "../../features/dashboard/components/CalendarCard";
+import { format } from "date-fns";
 
 export default function AdminDashboard() {
   const { isExpanded } = useSidebar();
@@ -16,6 +17,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (data) setLastUpdated(new Date());
   }, [data]);
+
+  const tasksDue = data?.tasks.due || [];
+  const recentCampaigns = data?.recent.campaigns || [];
+  const recentLeads = data?.recent.leads || [];
+  const recentContacts = data?.recent.contacts || [];
 
   return (
     <div className="flex min-h-screen w-full bg-white font-sans text-slate-900">
@@ -47,21 +53,10 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Revenue Chart */}
                 <div className="lg:col-span-5 bg-white p-8 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col min-h-[380px]">
-                  <div className="flex items-start justify-between mb-6">
-                    <div>
-                      <h3 className="text-sm font-bold text-slate-900 mb-1">Total Revenue <span className="text-[10px] font-bold text-slate-400 ml-1">30 days</span></h3>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-bold text-slate-900">$ 17,000</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex-1 mt-auto">
-                    {(!data?.revenueData || data.revenueData.length === 0) ? (
-                      <div className="flex items-center justify-center h-full text-slate-300 italic text-xs">No global revenue data</div>
-                    ) : (
-                      <RevenueTrendChart data={data?.revenueData} />
-                    )}
-                  </div>
+                  <RevenueTrendChart 
+                    data={data?.revenueData} 
+                    totalValue="$ 17,000"
+                  />
                 </div>
 
                 {/* Status Breakdown & Win Rate */}
@@ -87,6 +82,172 @@ export default function AdminDashboard() {
                 {/* Calendar Column - shared CalendarCard */}
                 <div className="lg:col-span-4">
                   <CalendarCard events={data?.tasks.calendar || []} />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-5 bg-white p-7 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900">Tasks Due</h3>
+                      <p className="text-[11px] text-slate-500 mt-1">Your next few upcoming tasks</p>
+                    </div>
+                    <span className="text-[11px] font-semibold text-slate-500 bg-slate-50 px-3 py-1 rounded-full">
+                      {Math.min(tasksDue.length, 3)} task{Math.min(tasksDue.length, 3) === 1 ? "" : "s"}
+                    </span>
+                  </div>
+
+                  {tasksDue.length === 0 ? (
+                    <p className="mt-2 text-xs text-slate-400 italic">No upcoming tasks due.</p>
+                  ) : (
+                    <ul className="space-y-3">
+                      {tasksDue.slice(0, 3).map((task: any) => (
+                        <li
+                          key={task.id}
+                          className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-xs font-semibold text-slate-900 line-clamp-1">{task.title}</span>
+                            {task.category && (
+                              <span className="text-[10px] font-medium text-slate-500 mt-0.5">{task.category}</span>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <span className="block text-[11px] font-semibold text-slate-700">
+                              {task.dueDate ? format(new Date(task.dueDate), "MMM d") : "No date"}
+                            </span>
+                            <span className="block text-[10px] text-slate-400 mt-0.5">Due date</span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <button
+                    type="button"
+                    className="mt-5 inline-flex items-center self-start text-[11px] font-semibold text-slate-700 hover:text-slate-900"
+                  >
+                    View all tasks
+                    <span className="ml-1">→</span>
+                  </button>
+                </div>
+
+                <div className="lg:col-span-3 bg-white p-7 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-slate-900">Recent Campaigns</h3>
+                    <span className="text-[10px] font-medium text-slate-500">Last {Math.min(recentCampaigns.length || 0, 3)}</span>
+                  </div>
+                  {recentCampaigns.length === 0 ? (
+                    <p className="mt-2 text-xs text-slate-400 italic">No campaigns yet.</p>
+                  ) : (
+                    <ul className="space-y-3">
+                      {recentCampaigns.slice(0, 3).map((campaign: any) => (
+                        <li
+                          key={campaign.id}
+                          className="flex items-start justify-between px-3 py-2 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-colors"
+                        >
+                          <div className="flex-1 pr-2">
+                            <span className="block text-xs font-semibold text-slate-900 line-clamp-1">{campaign.title}</span>
+                            {campaign.createdAt && (
+                              <span className="block text-[10px] text-slate-500 mt-0.5">
+                                Started {format(new Date(campaign.createdAt), "MMM d")}
+                              </span>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className="lg:col-span-4 bg-white p-7 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-slate-900">Recent Leads & Contacts</h3>
+                    <span className="text-[10px] font-medium text-slate-500">
+                      Leads {Math.min(recentLeads.length || 0, 3)} · Contacts {Math.min(recentContacts.length || 0, 3)}
+                    </span>
+                  </div>
+
+                  {recentLeads.length === 0 && recentContacts.length === 0 ? (
+                    <p className="mt-2 text-xs text-slate-400 italic">No leads or contacts yet.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[11px] font-semibold text-slate-700">Leads</span>
+                          <span className="text-[10px] text-slate-400">Showing {Math.min(recentLeads.length, 3)}</span>
+                        </div>
+                        {recentLeads.length === 0 ? (
+                          <p className="text-[11px] text-slate-400 italic">No leads yet.</p>
+                        ) : (
+                          <ul className="mt-1.5 divide-y divide-slate-100 border border-slate-100 rounded-lg overflow-hidden bg-white">
+                            {recentLeads.slice(0, 3).map((lead: any) => (
+                              <li
+                                key={lead.id}
+                                className="px-3 py-2.5 text-xs hover:bg-slate-50 transition-colors"
+                              >
+                                <span className="flex items-center gap-1.5 font-semibold text-slate-900 line-clamp-1">
+                                  <span>{lead.name}</span>
+                                  {lead.companyName && (
+                                    <>
+                                      <span className="text-slate-400">-</span>
+                                      <span className="text-slate-700">{lead.companyName}</span>
+                                    </>
+                                  )}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[11px] font-semibold text-slate-700">Contacts</span>
+                          <span className="text-[10px] text-slate-400">Showing {Math.min(recentContacts.length, 3)}</span>
+                        </div>
+                        {recentContacts.length === 0 ? (
+                          <p className="text-[11px] text-slate-400 italic">No contacts yet.</p>
+                        ) : (
+                          <ul className="mt-1.5 divide-y divide-slate-100 border border-slate-100 rounded-lg overflow-hidden bg-white">
+                            {recentContacts.slice(0, 3).map((contact: any) => {
+                              const priority = contact.priority as string | undefined;
+                              const priorityColor =
+                                priority === "High"
+                                  ? "text-rose-600"
+                                  : priority === "Medium"
+                                  ? "text-amber-600"
+                                  : priority === "Low"
+                                  ? "text-emerald-600"
+                                  : "text-slate-500";
+                              return (
+                                <li
+                                  key={contact.id}
+                                  className="px-3 py-2.5 text-xs hover:bg-slate-50 transition-colors"
+                                >
+                                  <span className="flex items-center gap-1.5 font-semibold text-slate-900 line-clamp-1">
+                                    <span>{contact.name}</span>
+                                    {contact.companyName && (
+                                      <>
+                                        <span className="text-slate-400">-</span>
+                                        <span className="text-slate-700">{contact.companyName}</span>
+                                      </>
+                                    )}
+                                    {priority && (
+                                      <>
+                                        <span className="text-slate-400">-</span>
+                                        <span className={priorityColor}>{priority}</span>
+                                      </>
+                                    )}
+                                  </span>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

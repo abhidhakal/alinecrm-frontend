@@ -31,7 +31,7 @@ export default function HeroSection({ userName, role }: HeroSectionProps) {
             </span>
           </div>
         </div>
-        <div className="px-4 py-2 text-center">
+        <div className="px-4 pb-4 text-center">
           <span className="text-md font-extrabold text-[#0B3954] tracking-wider">
             {format(currentTime, 'EEEE')}
           </span>

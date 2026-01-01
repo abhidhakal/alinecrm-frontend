@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Mascot from '../../assets/aline-mascot.png';
 import Logo from '../../assets/aline-logo.svg';
@@ -14,6 +14,28 @@ export default function Login() {
     const { showToast } = useToast();
     const { login } = useAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        const token = searchParams.get('token');
+        const userDataStr = searchParams.get('user');
+
+        if (token && userDataStr) {
+            try {
+                const user = JSON.parse(userDataStr);
+                login(token, user);
+                showToast('Login successful!', 'success');
+                
+                if (user.role === 'admin' || user.role === 'superadmin') {
+                    navigate('/admin/dashboard');
+                } else {
+                    navigate('/dashboard');
+                }
+            } catch (e) {
+                console.error('Failed to parse user data from URL', e);
+            }
+        }
+    }, [searchParams, login, navigate, showToast]);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -23,7 +45,7 @@ export default function Login() {
 
         setLoading(true);
         try {
-            const response = await axios.post('http://localhost:3000/auth/login', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, {
                 email,
                 password
             });
@@ -46,7 +68,26 @@ export default function Login() {
     };
 
     const handleGoogleSignIn = () => {
-        showToast('Google Sign-In coming soon!', 'info');
+        // Redirect to backend Google OAuth endpoint
+        window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+    };
+
+    const handleMagicLink = async () => {
+        if (!email) {
+            showToast('Please enter your email address first', 'error');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}/auth/magic-link`, { email });
+            showToast('Magic link sent! Check your email.', 'success');
+        } catch (error: any) {
+            const message = error.response?.data?.message || 'Failed to send magic link.';
+            showToast(Array.isArray(message) ? message[0] : message, 'error');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -174,7 +215,9 @@ export default function Login() {
                                     Google
                                 </button>
                                 <button
-                                    className="w-full py-3.5 px-4 rounded-2xl border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2"
+                                    onClick={handleMagicLink}
+                                    disabled={loading}
+                                    className="w-full py-3.5 px-4 rounded-2xl border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                                 >
                                     <img src="/icons/mail-icon.svg" className="w-5 h-5 opacity-50" alt="" />
                                     Magic Link
