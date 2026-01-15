@@ -66,7 +66,7 @@ export default function Landing() {
           </p>
           <div className="flex flex-wrap justify-center gap-12 md:gap-20 transition-all duration-500">
             {[GoogleLogo, BrevoLogo, MetaLogo, TikTokLogo, XLogo].map((logo, index) => (
-              <img key={index} src={logo} alt="Integration Partner" className="h-8 md:h-10 object-contain hover:scale-110 transition-transform duration-300" />
+              <img key={index} src={logo} alt="Integration Partner" className="h-8 md:h-10 object-contain hover:scale-110 loading-lazy transition-transform duration-300" />
             ))}
           </div>
         </div>

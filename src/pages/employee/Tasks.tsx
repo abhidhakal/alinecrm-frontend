@@ -88,7 +88,7 @@ export default function Tasks() {
             </button>
             <button
               onClick={() => openAddModal()}
-              className="flex items-center gap-2 rounded-xl bg-foreground px-5 py-2.5 text-sm font-semibold text-white.shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
+              className="flex items-center gap-2 rounded-xl bg-foreground px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
             >
               <img src="/icons/plus-icon.svg" alt="Add" className="h-5 w-5 invert brightness-0 filter" />
               Add Task
