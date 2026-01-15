@@ -25,7 +25,7 @@ export default function Login() {
                 const user = JSON.parse(userDataStr);
                 login(token, user);
                 showToast('Login successful!', 'success');
-                
+
                 if (user.role === 'admin' || user.role === 'superadmin') {
                     navigate('/admin/dashboard');
                 } else {

@@ -18,6 +18,7 @@ export interface User {
   currency?: string;
   institutionId?: number;
   institutionName?: string;
+  isGoogleCalendarConnected?: boolean;
 }
 
 interface AuthContextType {

@@ -23,7 +23,7 @@ export default function Register() {
         const user = JSON.parse(userDataStr);
         login(token, user);
         showToast('Registration successful!', 'success');
-        
+
         if (user.role === 'admin' || user.role === 'superadmin') {
           navigate('/admin/dashboard');
         } else {

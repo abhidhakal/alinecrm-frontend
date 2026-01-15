@@ -4,6 +4,7 @@ import DashboardHeader from "../../features/dashboard/components/DashboardHeader
 import { useSidebar } from "../../context/SidebarContext";
 import { useAuth } from "../../context/AuthContext";
 import { useGetDashboardStats } from "../../api/dashboard.api";
+import { institutionsApi } from "../../api/institutions.api";
 import HeroSection from "../../features/dashboard/components/HeroSection";
 import RevenueTrendChart from "../../features/dashboard/components/RevenueTrendChart";
 import CalendarCard from "../../features/dashboard/components/CalendarCard";
@@ -14,14 +15,30 @@ export default function AdminDashboard() {
   const { user } = useAuth();
   const { data, isLoading, refetch } = useGetDashboardStats();
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [weekendDays, setWeekendDays] = useState<number[]>([0, 6]);
+
   useEffect(() => {
     if (data) setLastUpdated(new Date());
   }, [data]);
+
+  // Fetch institution settings for weekend days
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const settings = await institutionsApi.getSettings();
+        setWeekendDays(settings.weekendDays || [0, 6]);
+      } catch (error) {
+        console.error('Failed to fetch institution settings:', error);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const tasksDue = data?.tasks.due || [];
   const recentCampaigns = data?.recent.campaigns || [];
   const recentLeads = data?.recent.leads || [];
   const recentContacts = data?.recent.contacts || [];
+
 
   return (
     <div className="flex min-h-screen w-full bg-white font-sans text-slate-900">
@@ -53,8 +70,8 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Revenue Chart */}
                 <div className="lg:col-span-5 bg-white p-8 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-col min-h-[380px]">
-                  <RevenueTrendChart 
-                    data={data?.revenueData} 
+                  <RevenueTrendChart
+                    data={data?.revenueData}
                     totalValue="$ 17,000"
                   />
                 </div>
@@ -81,7 +98,10 @@ export default function AdminDashboard() {
 
                 {/* Calendar Column - shared CalendarCard */}
                 <div className="lg:col-span-4">
-                  <CalendarCard events={data?.tasks.calendar || []} />
+                  <CalendarCard
+                    events={data?.tasks.calendar || []}
+                    weekendDays={weekendDays}
+                  />
                 </div>
               </div>
 
@@ -101,25 +121,65 @@ export default function AdminDashboard() {
                     <p className="mt-2 text-xs text-slate-400 italic">No upcoming tasks due.</p>
                   ) : (
                     <ul className="space-y-3">
-                      {tasksDue.slice(0, 3).map((task: any) => (
-                        <li
-                          key={task.id}
-                          className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-colors"
-                        >
-                          <div className="flex flex-col">
-                            <span className="text-xs font-semibold text-slate-900 line-clamp-1">{task.title}</span>
-                            {task.category && (
-                              <span className="text-[10px] font-medium text-slate-500 mt-0.5">{task.category}</span>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <span className="block text-[11px] font-semibold text-slate-700">
-                              {task.dueDate ? format(new Date(task.dueDate), "MMM d") : "No date"}
-                            </span>
-                            <span className="block text-[10px] text-slate-400 mt-0.5">Due date</span>
-                          </div>
-                        </li>
-                      ))}
+                      {tasksDue.slice(0, 3).map((task: any) => {
+                        // Calculate relative due date
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+                        if (dueDate) dueDate.setHours(0, 0, 0, 0);
+
+                        const diffDays = dueDate ? Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)) : null;
+
+                        let dueLabel = 'No date';
+                        let dueColor = 'text-slate-500';
+                        let dueBgColor = 'bg-slate-50';
+
+                        if (diffDays !== null) {
+                          if (diffDays < 0) {
+                            dueLabel = `${Math.abs(diffDays)} day${Math.abs(diffDays) > 1 ? 's' : ''} overdue`;
+                            dueColor = 'text-rose-600';
+                            dueBgColor = 'bg-rose-50';
+                          } else if (diffDays === 0) {
+                            dueLabel = 'Due today';
+                            dueColor = 'text-amber-600';
+                            dueBgColor = 'bg-amber-50';
+                          } else if (diffDays === 1) {
+                            dueLabel = 'Due tomorrow';
+                            dueColor = 'text-blue-600';
+                            dueBgColor = 'bg-blue-50';
+                          } else if (diffDays <= 7) {
+                            dueLabel = `Due in ${diffDays} days`;
+                            dueColor = 'text-emerald-600';
+                            dueBgColor = 'bg-emerald-50';
+                          } else {
+                            dueLabel = format(dueDate!, 'MMM d');
+                            dueColor = 'text-slate-600';
+                            dueBgColor = 'bg-slate-50';
+                          }
+                        }
+
+                        return (
+                          <li
+                            key={task.id}
+                            className={`flex items-center justify-between px-3 py-2.5 rounded-xl border transition-colors ${diffDays !== null && diffDays < 0
+                              ? 'border-rose-200 bg-rose-50/30 hover:bg-rose-50'
+                              : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50'
+                              }`}
+                          >
+                            <div className="flex flex-col">
+                              <span className="text-xs font-semibold text-slate-900 line-clamp-1">{task.title}</span>
+                              {task.category && (
+                                <span className="text-[10px] font-medium text-slate-500 mt-0.5">{task.category}</span>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full ${dueColor} ${dueBgColor}`}>
+                                {dueLabel}
+                              </span>
+                            </div>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
 
@@ -216,10 +276,10 @@ export default function AdminDashboard() {
                                 priority === "High"
                                   ? "text-rose-600"
                                   : priority === "Medium"
-                                  ? "text-amber-600"
-                                  : priority === "Low"
-                                  ? "text-emerald-600"
-                                  : "text-slate-500";
+                                    ? "text-amber-600"
+                                    : priority === "Low"
+                                      ? "text-emerald-600"
+                                      : "text-slate-500";
                               return (
                                 <li
                                   key={contact.id}
