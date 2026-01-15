@@ -12,8 +12,8 @@ interface LeadsHeaderProps {
 export default function LeadsHeader({
   onRefresh,
   lastUpdated = null,
-  searchQuery = '',
-  onSearchChange
+  searchQuery: _searchQuery = '',
+  onSearchChange: _onSearchChange
 }: LeadsHeaderProps) {
   const relativeTime = useRelativeTime(lastUpdated);
 

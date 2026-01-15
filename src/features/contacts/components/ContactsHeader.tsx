@@ -12,8 +12,8 @@ interface ContactsHeaderProps {
 export default function ContactsHeader({
   onRefresh,
   lastUpdated = null,
-  searchQuery = '',
-  onSearchChange
+  searchQuery: _searchQuery = '',
+  onSearchChange: _onSearchChange
 }: ContactsHeaderProps) {
   const relativeTime = useRelativeTime(lastUpdated);
 

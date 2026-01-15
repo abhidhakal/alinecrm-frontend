@@ -12,8 +12,8 @@ interface UsersHeaderProps {
 export default function UsersHeader({
   onRefresh,
   lastUpdated = null,
-  searchQuery = '',
-  onSearchChange
+  searchQuery: _searchQuery = '',
+  onSearchChange: _onSearchChange
 }: UsersHeaderProps) {
   const relativeTime = useRelativeTime(lastUpdated);
 

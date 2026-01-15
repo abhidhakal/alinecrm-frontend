@@ -13,8 +13,8 @@ interface TasksHeaderProps {
 export default function TasksHeader({
   onRefresh,
   lastUpdated = null,
-  searchQuery = '',
-  onSearchChange,
+  searchQuery: _searchQuery = '',
+  onSearchChange: _onSearchChange,
   title = "Tasks"
 }: TasksHeaderProps) {
   const relativeTime = useRelativeTime(lastUpdated);

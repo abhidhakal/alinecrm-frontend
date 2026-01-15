@@ -47,17 +47,6 @@ export default function Settings() {
     }
   }, [location, showToast, navigate, user, updateUser]);
 
-  const handleGoogleConnect = async () => {
-    try {
-      setConnectLoading(true);
-      const { url } = await googleCalendarApi.getConnectUrl();
-      window.location.href = url;
-    } catch (error) {
-      showToast('Failed to initiate connection', 'error');
-      setConnectLoading(false);
-    }
-  };
-
   const handleGoogleDisconnect = async () => {
     try {
       setConnectLoading(true);

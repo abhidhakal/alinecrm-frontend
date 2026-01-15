@@ -12,8 +12,8 @@ interface AnnouncementsHeaderProps {
 export default function AnnouncementsHeader({
   onRefresh,
   lastUpdated = null,
-  searchQuery = '',
-  onSearchChange
+  searchQuery: _searchQuery = '',
+  onSearchChange: _onSearchChange
 }: AnnouncementsHeaderProps) {
   const relativeTime = useRelativeTime(lastUpdated);
 

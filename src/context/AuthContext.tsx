@@ -9,8 +9,13 @@ export const Role = {
 
 export type RoleType = typeof Role[keyof typeof Role];
 
+export interface DashboardConfig {
+  layout?: string[];
+  hiddenCards?: string[];
+}
+
 export interface User {
-  dashboardConfig: DashboardConfig;
+  dashboardConfig?: DashboardConfig;
   id: number;
   name: string;
   email: string;
