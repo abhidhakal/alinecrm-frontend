@@ -22,7 +22,6 @@
     "react-grid-layout": "^2.2.2",
     "react-hook-form": "^7.69.0",
     "react-router-dom": "^7.10.1",
-    "react-tetris": "^0.4.0",
     "recharts": "^3.6.0"
   },
   "devDependencies": {
