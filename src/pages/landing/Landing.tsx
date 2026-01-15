@@ -55,7 +55,7 @@ export default function Landing() {
 
           <div className="relative mx-auto max-w-6xl w-full mt-16 animate-fade-in-up delay-300">
             <img
-              src="/images/dashboard.png"
+              src="/images/dashboard-ss.png"
               alt="AlineCRM Dashboard"
               loading="eager"
               fetchPriority="high"
