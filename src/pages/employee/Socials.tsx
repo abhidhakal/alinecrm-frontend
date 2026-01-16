@@ -118,7 +118,7 @@ export default function Socials() {
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-[#FAFAFA] relative font-sans">
+    <div className="flex min-h-screen w-full bg-white relative font-sans">
       <Sidebar />
       <div className={`flex flex-1 flex-col transition-all duration-300 ${isExpanded ? 'ml-[280px] max-w-[calc(100vw-280px)]' : 'ml-[110px] max-w-[calc(100vw-110px)]'}`}>
         <SocialsHeader onRefresh={handleRefresh} lastUpdated={lastUpdated} />
@@ -316,6 +316,28 @@ export default function Socials() {
                 </div>
               </div>
 
+              <div className="bg-blue-600 rounded-[20px] p-6 text-white overflow-hidden relative group">
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 bg-white/20 rounded-lg">
+                      <AlertCircle size={14} className="text-white" />
+                    </div>
+                    <h4 className="text-sm font-bold">How Posting Works</h4>
+                  </div>
+                  <p className="text-xs font-medium text-white/90 leading-relaxed mb-4">
+                    <strong>No login required!</strong> This tool uses your active browser sessions.
+                  </p>
+                  <ul className="text-[11px] font-medium text-white/80 space-y-2 list-disc pl-4">
+                    <li>We open a <strong>new tab</strong> for each platform.</li>
+                    <li>You must be logged into Twitter/ LinkedIn on your browser.</li>
+                    <li>We pre-fill the text, you just hit "Post".</li>
+                  </ul>
+                </div>
+                <div className="absolute -bottom-4 -right-4 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                  <Share2 size={100} />
+                </div>
+              </div>
+
               {/* Pro Tip */}
               <div className="bg-foreground rounded-[20px] p-6 text-white overflow-hidden relative group">
                 <div className="relative z-10">
@@ -344,18 +366,25 @@ export default function Socials() {
             <div className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-semibold text-gray-400 ml-1">Platform</label>
-                <select
-                  value={newPlatform}
-                  onChange={(e) => setNewPlatform(e.target.value)}
-                  className="w-full h-12 bg-gray-50/50 rounded-2xl px-5 border border-gray-100 font-semibold outline-none focus:border-gray-300 focus:bg-white transition-all"
-                >
-                  <option>Twitter</option>
-                  <option>Facebook</option>
-                  <option>LinkedIn</option>
-                  <option>Instagram</option>
-                  <option>TikTok</option>
-                  <option>YouTube</option>
-                </select>
+                <div className="relative">
+                  <select
+                    value={newPlatform}
+                    onChange={(e) => setNewPlatform(e.target.value)}
+                    className="w-full h-12 appearance-none bg-gray-50/50 rounded-2xl px-5 pr-12 border border-gray-100 font-semibold outline-none focus:border-gray-300 focus:bg-white transition-all"
+                  >
+                    <option>Twitter</option>
+                    <option>Facebook</option>
+                    <option>LinkedIn</option>
+                    <option>Instagram</option>
+                    <option>TikTok</option>
+                    <option>YouTube</option>
+                  </select>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-semibold text-gray-400 ml-1">Profile Handle / UID</label>

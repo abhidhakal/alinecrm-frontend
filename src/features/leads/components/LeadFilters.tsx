@@ -9,6 +9,7 @@ interface LeadFiltersProps {
     qualified: number;
     working: number;
     proposed: number;
+    won: number;
   };
 }
 
@@ -28,7 +29,8 @@ export const LeadFilters = ({
           { id: 'New', label: 'New', count: stats.new },
           { id: 'Qualified', label: 'Qualified', count: stats.qualified },
           { id: 'Working', label: 'Working', count: stats.working },
-          { id: 'Proposed', label: 'Proposed', count: stats.proposed }
+          { id: 'Proposed', label: 'Proposed', count: stats.proposed },
+          { id: 'Won', label: 'Won', count: stats.won }
         ].map((tab) => (
           <button
             key={tab.id}
@@ -47,10 +49,7 @@ export const LeadFilters = ({
       </div>
 
       <div className="flex items-center gap-3">
-        <button className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
-          <img src="/icons/filter-list-on.svg" alt="Filter" className="h-4 w-4" />
-          Filter
-        </button>
+
         <button className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
           <img src="/icons/export-icn.svg" alt="Export" className="h-4 w-4" />
           Export Data

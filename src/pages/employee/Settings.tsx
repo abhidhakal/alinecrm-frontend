@@ -211,16 +211,23 @@ export default function Settings() {
                           <p className="text-xs text-gray-500">Affects all pipeline and revenue metrics.</p>
                         </div>
                       </div>
-                      <select
-                        disabled={loading}
-                        value={currency.code}
-                        onChange={(e) => handleCurrencyChange(e.target.value)}
-                        className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold outline-none focus:border-black transition-all cursor-pointer disabled:opacity-50"
-                      >
-                        {availableCurrencies.map(c => (
-                          <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <select
+                          disabled={loading}
+                          value={currency.code}
+                          onChange={(e) => handleCurrencyChange(e.target.value)}
+                          className="appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 pr-10 text-sm font-semibold outline-none focus:border-black transition-all cursor-pointer disabled:opacity-50"
+                        >
+                          {availableCurrencies.map(c => (
+                            <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -235,10 +242,17 @@ export default function Settings() {
                           <p className="text-xs text-gray-500">Default language for the CRM interface.</p>
                         </div>
                       </div>
-                      <select className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold outline-none focus:border-black transition-all">
-                        <option>English (US)</option>
-                        <option disabled>Nepali (Coming Soon)</option>
-                      </select>
+                      <div className="relative">
+                        <select className="appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 pr-10 text-sm font-semibold outline-none focus:border-black transition-all">
+                          <option>English (US)</option>
+                          <option disabled>Nepali (Coming Soon)</option>
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -375,11 +389,7 @@ export default function Settings() {
                   <div className="rounded-2xl border border-gray-100 p-6 space-y-6">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-green-500 text-white">
-                          <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19.5 22.5H4.5C3.12 22.5 2 21.38 2 20V6c0-1.38 1.12-2.5 2.5-2.5h3V2h2v1.5h5V2h2v1.5h3c1.38 0 2.5 1.12 2.5 2.5v14c0 1.38-1.12 2.5-2.5 2.5zM4.5 5C4.22 5 4 5.22 4 5.5V20c0 .28.22.5.5.5h15c.28 0 .5-.22.5-.5V5.5c0-.28-.22-.5-.5-.5h-15zm1 5h2v2h-2v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-8 4h2v2h-2v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
-                          </svg>
-                        </div>
+
                         <div>
                           <h4 className="font-bold text-sm">Google Calendar</h4>
                           <p className="text-xs text-gray-500">
@@ -412,23 +422,16 @@ export default function Settings() {
                           </div>
                         ) : (
                           <button
-                            onClick={handleGoogleConnect}
-                            disabled={connectLoading}
-                            className="rounded-xl bg-black px-5 py-2.5 text-xs font-bold text-white transition-all hover:bg-gray-900 disabled:opacity-50 flex items-center gap-2"
+                            disabled
+                            className="rounded-xl bg-gray-100 px-5 py-2.5 text-xs font-bold text-gray-400 cursor-not-allowed flex items-center gap-2"
                           >
-                            {connectLoading ? (
-                              'Connecting...'
-                            ) : (
-                              <>
-                                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                                </svg>
-                                Connect Google Calendar
-                              </>
-                            )}
+                            <svg className="h-4 w-4 grayscale opacity-50" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                            </svg>
+                            Google Calendar (Coming Soon)
                           </button>
                         )}
                       </div>

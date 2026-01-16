@@ -9,6 +9,8 @@ export const useGetAllContacts = () => {
       const response = await API.get<Contact[]>("/contacts");
       return response.data;
     },
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 };
 

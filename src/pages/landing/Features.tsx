@@ -52,7 +52,7 @@ export default function Features() {
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-48 md:pb-32 bg-white overflow-hidden">
-        <div className="container-width mx-auto px-6">
+        <div className="container-width">
           <div className="max-w-3xl">
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-8 animate-fade-in-up">
               Features built for the <span className="text-[#0B3954]">modern</span> sales team.
@@ -66,7 +66,7 @@ export default function Features() {
 
       {/* Main Features Grid */}
       <section className="py-24 bg-slate-50 border-y border-slate-100">
-        <div className="container-width mx-auto px-6">
+        <div className="container-width">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featureList.map((feature, i) => (
               <div key={i} className="group p-8 rounded-3xl border border-slate-200 bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
@@ -85,11 +85,11 @@ export default function Features() {
 
       {/* Deep Dive Section */}
       <section className="py-24 bg-white">
-        <div className="container-width mx-auto px-6">
+        <div className="container-width">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div className="order-2 lg:order-1">
               <img
-                src="/images/Dashboard.png"
+                src="/images/dashboard.png"
                 alt="AlineCRM Dashboard"
                 className="rounded-2xl border border-slate-200 shadow-2xl"
               />
@@ -122,7 +122,6 @@ export default function Features() {
                     <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900 mb-1">Custom Reporting</h4>
                     <h4 className="font-bold text-slate-900 mb-1">Custom Reporting</h4>
                     <p className="text-slate-500">Build the reports you actually need, not just the ones legacy CRMs give you.</p>
                   </div>

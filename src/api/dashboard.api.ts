@@ -9,5 +9,9 @@ export const useGetDashboardStats = () => {
       const response = await API.get<DashboardStats>("/dashboard");
       return response.data;
     },
+    staleTime: 0, // Data is always stale, triggers refetch
+    gcTime: 0, // Don't cache in garbage collection
+    refetchOnMount: 'always', // Always refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 };

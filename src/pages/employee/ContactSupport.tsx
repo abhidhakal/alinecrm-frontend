@@ -37,8 +37,8 @@ export default function ContactSupport() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as Tab)}
                   className={`flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl transition-all ${activeTab === tab.id
-                      ? 'bg-black text-white'
-                      : 'text-gray-600 hover:bg-gray-50'
+                    ? 'bg-black text-white'
+                    : 'text-gray-600 hover:bg-gray-50'
                     }`}
                 >
                   <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,20 +89,34 @@ export default function ContactSupport() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <label className="text-sm font-bold text-gray-700">Topic</label>
-                        <select className="w-full rounded-xl border border-gray-200 p-3 text-sm outline-none focus:border-black transition-all bg-gray-50/50">
-                          <option>General Support</option>
-                          <option>Billing Issues</option>
-                          <option>Technical Bug</option>
-                          <option>Feature Request</option>
-                        </select>
+                        <div className="relative">
+                          <select className="w-full appearance-none rounded-xl border border-gray-200 p-3 pr-10 text-sm outline-none focus:border-black transition-all bg-gray-50/50 font-medium">
+                            <option>General Support</option>
+                            <option>Billing Issues</option>
+                            <option>Technical Bug</option>
+                            <option>Feature Request</option>
+                          </select>
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-bold text-gray-700">Urgency</label>
-                        <select className="w-full rounded-xl border border-gray-200 p-3 text-sm outline-none focus:border-black transition-all bg-gray-50/50">
-                          <option>Low</option>
-                          <option>Medium</option>
-                          <option>High (Urgent)</option>
-                        </select>
+                        <div className="relative">
+                          <select className="w-full appearance-none rounded-xl border border-gray-200 p-3 pr-10 text-sm outline-none focus:border-black transition-all bg-gray-50/50 font-medium">
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High (Urgent)</option>
+                          </select>
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                        </div>
                       </div>
                     </div>
 

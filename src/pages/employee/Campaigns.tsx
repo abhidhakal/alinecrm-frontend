@@ -8,6 +8,7 @@ import type { Campaign, EmailTemplate } from '../../types/campaign.types';
 import CreateCampaignModal from '../../features/campaigns/components/CreateCampaignModal';
 import CreateTemplateModal from '../../features/campaigns/components/CreateTemplateModal';
 import CampaignSettingsModal from '../../features/campaigns/components/CampaignSettingsModal';
+import TemplatePreviewModal from '../../features/campaigns/components/TemplatePreviewModal';
 
 export default function Campaigns() {
   const { isExpanded } = useSidebar();
@@ -25,6 +26,8 @@ export default function Campaigns() {
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
+  const [previewTemplate, setPreviewTemplate] = useState<EmailTemplate | null>(null);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
@@ -123,9 +126,18 @@ export default function Campaigns() {
             {isLoading ? (
               <div className="flex h-64 items-center justify-center text-gray-400">Loading campaigns...</div>
             ) : filteredCampaigns.length === 0 ? (
-              <div className="flex h-64 flex-col items-center justify-center text-gray-500">
-                <p className="text-lg font-medium text-gray-900">No campaigns found</p>
-                <p className="text-sm">Create a new campaign to get started</p>
+              <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-100 bg-gray-50/30 text-gray-500">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                  <img src="/icons/ohno.svg" alt="" className="h-8 w-8 opacity-40" />
+                </div>
+                <p className="text-lg font-medium text-gray-900">No campaigns yet</p>
+                <p className="mb-6 text-sm">Create your first campaign to get started with email marketing.</p>
+                <button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-black/90 transition-all active:scale-95"
+                >
+                  Create Campaign
+                </button>
               </div>
             ) : (
               filteredCampaigns.map((campaign) => (
@@ -144,7 +156,7 @@ export default function Campaigns() {
           <div className="mt-16 mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Email Templates</h2>
+                <h2 className="text-xl font-bold text-gray-900">Your Templates</h2>
                 <p className="text-sm text-gray-500">Reusable designs for your campaigns</p>
               </div>
               <button onClick={() => setIsTemplateModalOpen(true)} className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50">
@@ -156,12 +168,12 @@ export default function Campaigns() {
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {isLoadingTemplates ? (
                 <div className="col-span-full flex h-32 items-center justify-center text-gray-400 text-sm">Loading templates...</div>
-              ) : templates.length === 0 ? (
+              ) : templates.filter(t => t.institutionId !== null).length === 0 ? (
                 <div className="col-span-full flex h-48 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-100 bg-gray-50/30 text-gray-500">
-                  <p className="font-medium text-gray-900">No templates yet</p>
+                  <p className="font-medium text-gray-900">No custom templates yet</p>
                 </div>
               ) : (
-                templates.map((template) => (
+                templates.filter(t => t.institutionId !== null).map((template) => (
                   <div key={template.id} className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:border-gray-200">
                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-gray-400 group-hover:bg-black group-hover:text-white transition-colors">
                       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,10 +185,13 @@ export default function Campaigns() {
                     <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
                       <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Edited {new Date(template.updatedAt).toLocaleDateString()}</span>
                       <div className="flex gap-2">
-                        <button onClick={() => { setEditingTemplate(template); setIsTemplateModalOpen(true); }} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                        <button onClick={() => { setPreviewTemplate(template); setIsPreviewModalOpen(true); }} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-colors" title="Preview">
+                          <img src="/icons/visibility-on.svg" alt="Preview" className="h-4 w-4" />
+                        </button>
+                        <button onClick={() => { setEditingTemplate(template); setIsTemplateModalOpen(true); }} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-50 hover:text-gray-900 transition-colors" title="Edit">
                           <img src="/icons/edit-icon.svg" alt="Edit" className="h-4 w-4" />
                         </button>
-                        <button onClick={() => handleDeleteTemplate(template.id)} className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors">
+                        <button onClick={() => handleDeleteTemplate(template.id)} className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors" title="Delete">
                           <img src="/icons/delete-icon.svg" alt="Delete" className="h-4 w-4" />
                         </button>
                       </div>
@@ -184,6 +199,35 @@ export default function Campaigns() {
                   </div>
                 ))
               )}
+            </div>
+          </div>
+
+          <div className="mt-12 mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Default Templates</h2>
+              <p className="text-sm text-gray-500">Pre-made templates ready to use</p>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {isLoadingTemplates ? (
+                <div className="col-span-full flex h-32 items-center justify-center text-gray-400 text-sm">Loading templates...</div>
+              ) : templates.filter(t => t.institutionId === null).map((template) => (
+                <div key={template.id} className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-gray-50/10 p-5 shadow-sm transition-all hover:bg-gray-50/30">
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-400 transition-colors">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <h3 className="mb-1 font-bold text-gray-900">{template.name}</h3>
+                  <p className="mb-4 text-xs text-gray-500 line-clamp-2">{template.description || 'No description provided'}</p>
+                  <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Fixed Design</span>
+                    <button onClick={() => { setPreviewTemplate(template); setIsPreviewModalOpen(true); }} className="rounded-lg p-1.5 text-gray-400 hover:bg-white hover:text-gray-900 transition-colors" title="Preview">
+                      <img src="/icons/visibility-on.svg" alt="Preview" className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </main>
@@ -205,6 +249,12 @@ export default function Campaigns() {
         <CampaignSettingsModal
           isOpen={isSettingsModalOpen}
           onClose={() => setIsSettingsModalOpen(false)}
+        />
+
+        <TemplatePreviewModal
+          isOpen={isPreviewModalOpen}
+          onClose={() => { setIsPreviewModalOpen(false); setPreviewTemplate(null); }}
+          template={previewTemplate}
         />
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import Mascot from '../../assets/aline-mascot.png';
+import Mascot from '../../assets/aline-mascot-wave.png';
 import Logo from '../../assets/aline-logo.svg';
 import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
@@ -15,6 +15,18 @@ export default function Login() {
     const { login } = useAuth();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const { isAuthenticated, user: authUser } = useAuth();
+
+    useEffect(() => {
+        if (isAuthenticated && authUser) {
+            const userRole = authUser.role;
+            if (userRole === 'admin' || userRole === 'superadmin') {
+                navigate('/admin/dashboard');
+            } else {
+                navigate('/dashboard');
+            }
+        }
+    }, [isAuthenticated, authUser, navigate]);
 
     useEffect(() => {
         const token = searchParams.get('token');
@@ -101,14 +113,14 @@ export default function Login() {
             <div className="relative flex w-full max-w-[1200px] flex-col md:flex-row items-stretch rounded-[2.5rem] bg-white shadow-premium border border-slate-100 overflow-hidden animate-fade-in-up">
 
                 {/* Left Side - Visuals */}
-                <div className="flex w-full md:w-[45%] items-center justify-center bg-[#f8fafc] p-10 border-r border-slate-100">
-                    <div className="relative w-full max-w-[320px]">
+                <div className="flex w-full md:w-[45%] items-center justify-center bg-[#f8fafc] p-4 lg:p-8 border-r border-slate-100">
+                    <div className="relative w-full max-w-[550px]">
                         <img
                             src={Mascot}
                             alt="Aline Mascot"
                             className="w-full relative z-10 drop-shadow-2xl"
                         />
-                        <div className="absolute inset-0 bg-blue-500/5 rounded-full blur-3xl transform scale-125"></div>
+                        <div className="absolute inset-0 bg-blue-500/5 rounded-full blur-3xl transform scale-150"></div>
                     </div>
                 </div>
 
@@ -192,7 +204,7 @@ export default function Login() {
                             <button
                                 onClick={handleLogin}
                                 disabled={loading}
-                                className="w-full flex items-center justify-center gap-2 group bg-primary text-white py-3.5 px-6 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
+                                className="w-full flex items-center justify-center gap-2 group bg-black text-white py-3.5 px-6 rounded-2xl font-bold hover:bg-black/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
                             >
                                 {loading ? 'Checking credentials...' : 'Sign In'}
                                 <img src="/icons/arrow-right.svg" className="h-5 w-5 invert transition-transform group-hover:translate-x-1" alt="" />

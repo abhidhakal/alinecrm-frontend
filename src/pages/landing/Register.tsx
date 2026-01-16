@@ -13,6 +13,18 @@ export default function Register() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { isAuthenticated, user: authUser } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated && authUser) {
+      const userRole = authUser.role;
+      if (userRole === 'admin' || userRole === 'superadmin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [isAuthenticated, authUser, navigate]);
 
   useEffect(() => {
     const token = searchParams.get('token');
@@ -155,7 +167,7 @@ export default function Register() {
                 {[1, 2, 3].map((step) => (
                   <div
                     key={step}
-                    className={`h-2 flex-1 rounded-full transition-all duration-300 ${step <= currentStep ? 'bg-primary' : 'bg-slate-200'
+                    className={`h-2 flex-1 rounded-full transition-all duration-300 ${step <= currentStep ? 'bg-black' : 'bg-slate-200'
                       }`}
                   ></div>
                 ))}
@@ -179,7 +191,7 @@ export default function Register() {
 
               <Link
                 to="/login"
-                className="inline-flex items-center justify-center gap-2 w-full bg-primary text-white py-4 px-6 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-primary/20"
+                className="inline-flex items-center justify-center gap-2 w-full bg-black text-white py-4 px-6 rounded-2xl font-bold hover:bg-black/90 transition-all shadow-xl shadow-primary/20"
               >
                 Go to Login
                 <img src="/icons/arrow-right.svg" className="h-5 w-5 invert" alt="" />
@@ -266,7 +278,7 @@ export default function Register() {
 
               <button
                 onClick={handleNext}
-                className="w-full flex items-center justify-center gap-2 group bg-primary text-white py-4 px-6 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-primary/20 mt-4"
+                className="w-full flex items-center justify-center gap-2 group bg-black text-white py-4 px-6 rounded-2xl font-bold hover:bg-black/90 transition-all shadow-xl shadow-primary/20 mt-4"
               >
                 Continue
                 <img src="/icons/arrow-right.svg" className="h-5 w-5 invert transition-transform group-hover:translate-x-1" alt="" />
@@ -343,35 +355,49 @@ export default function Register() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Industry</label>
-                  <select
-                    value={industry}
-                    onChange={(e) => setIndustry(e.target.value)}
-                    className="block w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
-                  >
-                    <option value="">Select...</option>
-                    <option value="technology">Technology</option>
-                    <option value="finance">Finance</option>
-                    <option value="healthcare">Healthcare</option>
-                    <option value="retail">Retail</option>
-                    <option value="manufacturing">Manufacturing</option>
-                    <option value="other">Other</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={industry}
+                      onChange={(e) => setIndustry(e.target.value)}
+                      className="block w-full appearance-none px-4 py-3.5 pr-10 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                    >
+                      <option value="">Select...</option>
+                      <option value="technology">Technology</option>
+                      <option value="finance">Finance</option>
+                      <option value="healthcare">Healthcare</option>
+                      <option value="retail">Retail</option>
+                      <option value="manufacturing">Manufacturing</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Team Size</label>
-                  <select
-                    value={teamSize}
-                    onChange={(e) => setTeamSize(e.target.value)}
-                    className="block w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
-                  >
-                    <option value="">Select...</option>
-                    <option value="1-10">1-10</option>
-                    <option value="11-50">11-50</option>
-                    <option value="51-200">51-200</option>
-                    <option value="201-500">201-500</option>
-                    <option value="500+">500+</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={teamSize}
+                      onChange={(e) => setTeamSize(e.target.value)}
+                      className="block w-full appearance-none px-4 py-3.5 pr-10 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                    >
+                      <option value="">Select...</option>
+                      <option value="1-10">1-10</option>
+                      <option value="11-50">11-50</option>
+                      <option value="51-200">51-200</option>
+                      <option value="201-500">201-500</option>
+                      <option value="500+">500+</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -385,7 +411,7 @@ export default function Register() {
                 </button>
                 <button
                   onClick={handleNext}
-                  className="flex-1 flex items-center justify-center gap-2 group bg-primary text-white py-4 px-6 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-primary/20"
+                  className="flex-1 flex items-center justify-center gap-2 group bg-black text-white py-4 px-6 rounded-2xl font-bold hover:bg-black/90 transition-all shadow-xl shadow-primary/20"
                 >
                   Continue
                   <img src="/icons/arrow-right.svg" className="h-5 w-5 invert transition-transform group-hover:translate-x-1" alt="" />
@@ -405,61 +431,89 @@ export default function Register() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Currency</label>
-                  <select
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                    className="block w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
-                  >
-                    {availableCurrencies.map(c => (
-                      <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={currency}
+                      onChange={(e) => setCurrency(e.target.value)}
+                      className="block w-full appearance-none px-4 py-3.5 pr-10 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                    >
+                      {availableCurrencies.map(c => (
+                        <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Timezone</label>
-                  <select
-                    value={timezone}
-                    onChange={(e) => setTimezone(e.target.value)}
-                    className="block w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
-                  >
-                    <option value="UTC">UTC</option>
-                    <option value="America/New_York">Eastern Time</option>
-                    <option value="America/Chicago">Central Time</option>
-                    <option value="America/Los_Angeles">Pacific Time</option>
-                    <option value="Europe/London">London</option>
-                    <option value="Asia/Kolkata">India</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={timezone}
+                      onChange={(e) => setTimezone(e.target.value)}
+                      className="block w-full appearance-none px-4 py-3.5 pr-10 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                    >
+                      <option value="UTC">UTC</option>
+                      <option value="America/New_York">Eastern Time</option>
+                      <option value="America/Chicago">Central Time</option>
+                      <option value="America/Los_Angeles">Pacific Time</option>
+                      <option value="Europe/London">London</option>
+                      <option value="Asia/Kolkata">India</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Date Format</label>
-                  <select
-                    value={dateFormat}
-                    onChange={(e) => setDateFormat(e.target.value)}
-                    className="block w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
-                  >
-                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={dateFormat}
+                      onChange={(e) => setDateFormat(e.target.value)}
+                      className="block w-full appearance-none px-4 py-3.5 pr-10 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                    >
+                      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Language</label>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                    className="block w-full px-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
-                  >
-                    <option value="English">English</option>
-                    <option value="Spanish">Spanish</option>
-                    <option value="French">French</option>
-                    <option value="German">German</option>
-                    <option value="Chinese">Chinese</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={language}
+                      onChange={(e) => setLanguage(e.target.value)}
+                      className="block w-full appearance-none px-4 py-3.5 pr-10 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary focus:bg-white transition-all font-medium"
+                    >
+                      <option value="English">English</option>
+                      <option value="Spanish">Spanish</option>
+                      <option value="French">French</option>
+                      <option value="German">German</option>
+                      <option value="Chinese">Chinese</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -474,7 +528,7 @@ export default function Register() {
                 <button
                   onClick={handleRegister}
                   disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 group bg-primary text-white py-4 px-6 rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 group bg-black text-white py-4 px-6 rounded-2xl font-bold hover:bg-black/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
                 >
                   {loading ? 'Creating your workspace...' : 'Create Account'}
                   <img src="/icons/check-icon-small.svg" className="h-5 w-5 invert transition-transform group-hover:scale-110" alt="" />

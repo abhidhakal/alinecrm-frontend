@@ -6,7 +6,7 @@ const SOUNDS_CONFIG = [
     id: 'rain',
     title: 'Rain',
     icon: '/icons/ambient-sounds/rain.svg',
-    url: 'https://res.cloudinary.com/dqsp5bwo4/video/upload/v1766687922/calm-rain_jbbrli.mp3' 
+    url: 'https://res.cloudinary.com/dqsp5bwo4/video/upload/v1766687922/calm-rain_jbbrli.mp3'
   },
   {
     id: 'forest',
@@ -82,14 +82,14 @@ export default function SoundMixer({ zenMode = false }: SoundMixerProps) {
     SOUNDS_CONFIG.forEach((config) => {
       // Default Rain to 50% volume so it's not silent initially
       const initialVolume = config.id === 'rain' ? 0.5 : 0;
-      
+
       newSounds[config.id] = {
         howl: new Howl({
           src: [config.url],
           format: ['mp3'],
           loop: true,
-          volume: initialVolume, 
-          preload: true,
+          volume: initialVolume,
+          preload: false, // Lazy load: only download when played
           // html5: true, // Commented out to use Web Audio API for better mixing and gapless looping
           onplayerror: () => {
             // Fallback: try to unlock audio context when autoplay is blocked
@@ -138,7 +138,7 @@ export default function SoundMixer({ zenMode = false }: SoundMixerProps) {
 
   const handleVolumeChange = (id: string, newVolumeInt: number) => {
     const newVolume = newVolumeInt / 100;
-    
+
     setSounds(prev => {
       const sound = prev[id];
       if (!sound) {
@@ -153,7 +153,7 @@ export default function SoundMixer({ zenMode = false }: SoundMixerProps) {
         } else if (newVolume === 0) {
           sound.howl.fade(sound.howl.volume(), 0, 500);
           setTimeout(() => {
-             if (sound.howl.volume() === 0) sound.howl.pause();
+            if (sound.howl.volume() === 0) sound.howl.pause();
           }, 500);
         } else {
           sound.howl.volume(newVolume);
@@ -173,11 +173,10 @@ export default function SoundMixer({ zenMode = false }: SoundMixerProps) {
   if (!isLoaded) return <div className={`p-4 ${zenMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading audio engine...</div>;
 
   return (
-    <div className={`rounded-2xl border p-5 shadow-sm transition-colors duration-500 ${
-      zenMode 
-        ? 'border-white/10 bg-white/5 backdrop-blur-sm' 
+    <div className={`rounded-2xl border p-5 shadow-sm transition-colors duration-500 ${zenMode
+        ? 'border-white/10 bg-white/5 backdrop-blur-sm'
         : 'border-gray-200 bg-white'
-    }`}>
+      }`}>
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h2 className={`text-base font-semibold transition-colors ${zenMode ? 'text-gray-100' : 'text-gray-900'}`}>Ambient Mixer</h2>
@@ -185,27 +184,25 @@ export default function SoundMixer({ zenMode = false }: SoundMixerProps) {
         </div>
         <button
           onClick={togglePlay}
-          className={`flex h-10 w-10 items-center justify-center rounded-full transition-all ${
-            isPlaying 
+          className={`flex h-10 w-10 items-center justify-center rounded-full transition-all ${isPlaying
               ? (zenMode ? 'bg-white text-black hover:bg-gray-200' : 'bg-gray-900 text-white hover:bg-gray-800')
               : (zenMode ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-gray-100 text-gray-900 hover:bg-gray-200')
-          }`}
+            }`}
         >
           {isPlaying ? (
-            <img src="/icons/pause-icon.svg" alt="Pause" className={`h-4 w-4 ${zenMode ? '' : 'invert brightness-0 filter'}`} />
+            <img src="/icons/pause-icon.svg" alt="Pause" className={`h-8 w-8 ${zenMode ? '' : 'invert brightness-0 filter'}`} />
           ) : (
-            <img src="/icons/play-icon.svg" alt="Play" className={`h-4 w-4 ml-0.5 ${zenMode ? 'invert brightness-0 filter' : ''}`} />
+            <img src="/icons/play-icon.svg" alt="Play" className={`h-8 w-8 ml-0.5 ${zenMode ? 'invert brightness-0 filter' : ''}`} />
           )}
         </button>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
         {SOUNDS_CONFIG.map((config) => (
-          <div key={config.id} className={`flex flex-col items-center justify-center gap-2 rounded-xl p-4 transition-all hover:shadow-sm ${
-            zenMode 
-              ? 'bg-white/5 hover:bg-white/10' 
+          <div key={config.id} className={`flex flex-col items-center justify-center gap-2 rounded-xl p-4 transition-all hover:shadow-sm ${zenMode
+              ? 'bg-white/5 hover:bg-white/10'
               : 'bg-gray-50 hover:bg-gray-100'
-          }`}>
+            }`}>
             {config.icon.startsWith('/') ? (
               <img src={config.icon} alt={config.title} className={`h-8 w-8 ${zenMode ? 'invert brightness-0 filter' : ''}`} />
             ) : (

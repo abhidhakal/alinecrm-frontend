@@ -1,6 +1,6 @@
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import { Users, Globe, Clock, Heart } from 'lucide-react';
+import { Users, Globe, Clock, Heart, Target, Zap, Shield, Handshake } from 'lucide-react';
 
 export default function About() {
   return (
@@ -9,7 +9,7 @@ export default function About() {
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-48 md:pb-32 bg-slate-50 border-b border-slate-100">
-        <div className="container-width mx-auto px-6">
+        <div className="container-width">
           <div className="max-w-3xl">
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-8 animate-fade-in-up">
               We're building the <span className="text-[#0B3954]">future</span> of sales operations.
@@ -23,7 +23,7 @@ export default function About() {
 
       {/* Stats Section */}
       <section className="py-24 bg-white">
-        <div className="container-width mx-auto px-6">
+        <div className="container-width">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
             {[
               { label: "Offices Worldwide", value: "4", icon: <Globe className="w-6 h-6 text-blue-600" /> },
@@ -47,7 +47,7 @@ export default function About() {
 
       {/* Mission Section */}
       <section className="py-24 bg-slate-50">
-        <div className="container-width mx-auto px-6">
+        <div className="container-width">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-8 tracking-tight">
@@ -55,24 +55,26 @@ export default function About() {
               </h2>
               <div className="space-y-6 text-lg text-slate-600">
                 <p>
-                  We believe that technology should be an enabler, not a hurdle. Legacy systems are often bloated, slow, and confusing. AlineCRM is the antidote—designed with clarity and performance at its core.
+                  We believe that technology should be an enabler, not a hurdle. Legacy systems are often bloated, slow, and confusing. AlineCRM is the antidote - designed with clarity and performance at its core.
                 </p>
                 <p>
                   Whether you're a startup of 5 or an enterprise of 500, our tools are built to scale with you, providing the insights and automation you need to close more deals and build lasting relationships.
                 </p>
               </div>
             </div>
-            <div className="relative">
-              <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl">
-                <img
-                  src="https://images.unsplash.com/photo-1522071823991-b5ae7264040e?auto=format&fit=crop&q=80&w=2070"
-                  alt="Team collaboration"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-[#0B3954] rounded-full flex items-center justify-center p-8 text-white text-center font-bold text-lg leading-tight shadow-xl">
-                Est. 2024 Kathmandu
-              </div>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { icon: <Target className="w-6 h-6 text-blue-600" />, title: "Focus on Clarity", desc: "No clutter, just the tools you need." },
+                { icon: <Zap className="w-6 h-6 text-amber-500" />, title: "Built for Speed", desc: "Lightning-fast performance, always." },
+                { icon: <Shield className="w-6 h-6 text-emerald-600" />, title: "Privacy First", desc: "Your data stays yours. Period." },
+                { icon: <Handshake className="w-6 h-6 text-indigo-600" />, title: "Human Support", desc: "Real people, real help, real fast." },
+              ].map((item, i) => (
+                <div key={i} className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                  <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center mb-4">{item.icon}</div>
+                  <h3 className="font-bold text-slate-900 mb-1">{item.title}</h3>
+                  <p className="text-sm text-slate-500">{item.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

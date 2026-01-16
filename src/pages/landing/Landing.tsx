@@ -1,21 +1,26 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import GoogleLogo from '../../assets/brand-logos/workspace-logo.png';
-import BrevoLogo from '../../assets/brand-logos/brevo-logo.png';
-import MetaLogo from '../../assets/brand-logos/meta-logo.png';
-import TikTokLogo from '../../assets/brand-logos/tiktok-logo.png';
-import XLogo from '../../assets/brand-logos/x-logo.png';
+import GoogleLogo from '../../assets/brand-logos/google-workspace.svg';
+import BrevoLogo from '../../assets/brand-logos/brevo-logo.svg';
+import MetaLogo from '../../assets/brand-logos/meta-logo.svg';
+import TikTokLogo from '../../assets/brand-logos/tiktok-logo.svg';
+import XLogo from '../../assets/brand-logos/x-logo.svg';
 
 
 export default function Landing() {
+  // Warm up backend on Render free tier (cold start prevention)
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/health`).catch(() => { });
+  }, []);
   return (
     <div className="min-h-screen w-full bg-background selection:bg-accent/20">
       <Header />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-white">
-        <div className="container-width mx-auto px-6 relative z-10 flex flex-col items-center text-center">
+        <div className="container-width relative z-10 flex flex-col items-center text-center">
 
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600 mb-8 animate-fade-in-up">
             <span className="relative flex h-2 w-2">
@@ -33,25 +38,27 @@ export default function Landing() {
           </h1>
 
           <p className="max-w-2xl text-lg md:text-xl text-slate-500 mb-10 leading-relaxed animate-fade-in-up delay-200 mx-auto">
-            AlineCRM helps you streamline your sales process, track leads effortlessly, and optimize costs — all in one premium platform designed for growth.
+            AlineCRM helps you streamline your sales process, track leads effortlessly, and optimize costs - all in one premium platform designed for growth.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up delay-300">
             <Link to="/register" className="w-full sm:w-auto px-8 py-3.5 bg-[#0B3954] text-white text-base font-semibold rounded-lg shadow-lg shadow-blue-900/10 hover:shadow-xl hover:bg-[#082a3f] transition-all duration-300 flex items-center justify-center gap-2">
               Get Started <img src="/icons/arrow-right.svg" className="w-4 h-4 invert" alt="" />
             </Link>
-            <button className="w-full sm:w-auto px-8 py-3.5 bg-white text-slate-700 border border-slate-200 rounded-lg font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2 group">
+            <Link to="/demo" className="w-full sm:w-auto px-8 py-3.5 bg-white text-slate-700 border border-slate-200 rounded-lg font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2 group">
               <span className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <svg className="w-3 h-3 fill-slate-700" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
               </span>
               Watch Demo
-            </button>
+            </Link>
           </div>
 
           <div className="relative mx-auto max-w-6xl w-full mt-16 animate-fade-in-up delay-300">
             <img
-              src="/images/Dashboard.png"
+              src="/images/dashboard.png"
               alt="AlineCRM Dashboard"
+              loading="eager"
+              fetchPriority="high"
               className="w-full h-auto rounded-xl border border-slate-200 shadow-2xl"
             />
           </div>
@@ -60,13 +67,20 @@ export default function Landing() {
 
       {/* Integrations Section */}
       <section className="py-12 border-y border-slate-100 bg-surface/50">
-        <div className="container-width mx-auto px-6 text-center">
+        <div className="container-width text-center">
           <p className="text-sm font-semibold text-slate-500 mb-8 uppercase tracking-widest">
             Powerful integrations, all in one place
           </p>
           <div className="flex flex-wrap justify-center gap-12 md:gap-20 transition-all duration-500">
             {[GoogleLogo, BrevoLogo, MetaLogo, TikTokLogo, XLogo].map((logo, index) => (
-              <img key={index} src={logo} alt="Integration Partner" className="h-8 md:h-10 object-contain hover:scale-110 loading-lazy transition-transform duration-300" />
+              <img
+                key={index}
+                src={logo}
+                alt="Integration Partner"
+                loading="eager"
+                fetchPriority="high"
+                className="h-12 md:h-14 w-28 object-contain"
+              />
             ))}
           </div>
         </div>
@@ -74,7 +88,7 @@ export default function Landing() {
 
       {/* Features Grid (Bento Style) */}
       <section className="py-32 bg-white relative">
-        <div className="container-width mx-auto px-6">
+        <div className="container-width">
           <div className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="text-3xl md:text-5xl font-bold text-primary mb-6 tracking-tight text-slate-900">
               Everything you need to <span className="text-[#0B3954] underline decoration-4 decoration-[#0B3954] underline-offset-4">scale</span>
@@ -148,7 +162,7 @@ export default function Landing() {
 
       {/* Final CTA */}
       <section className="py-24 bg-white">
-        <div className="container-width mx-auto px-6">
+        <div className="container-width">
           <div className="relative rounded-[2.5rem] bg-[#0F172A] overflow-hidden px-6 py-20 text-center sm:px-16 md:px-24 lg:py-24 border border-slate-800 shadow-2xl">
             <div className="relative z-10 max-w-3xl mx-auto">
               <h2 className="text-4xl font-bold tracking-tight text-white md:text-5xl mb-6 text-balance">

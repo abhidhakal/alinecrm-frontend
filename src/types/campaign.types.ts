@@ -56,6 +56,7 @@ export interface EmailTemplate {
   suggestedTitle?: string;
   htmlContent: string;
   description?: string;
+  institutionId: number | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -120,6 +120,20 @@ export default function AdminCampaigns() {
           <div className="flex flex-col gap-4">
             {loadingCampaigns ? (
               <div className="py-20 text-center text-gray-500">Loading...</div>
+            ) : filteredCampaigns.length === 0 ? (
+              <div className="flex h-64 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-100 bg-gray-50/30 text-gray-500">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                  <img src="/icons/ohno.svg" alt="" className="h-8 w-8 opacity-40" />
+                </div>
+                <p className="text-lg font-medium text-gray-900">No campaigns yet</p>
+                <p className="mb-6 text-sm">Create your first campaign to get started with email marketing.</p>
+                <button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition-all active:scale-95"
+                >
+                  Create Campaign
+                </button>
+              </div>
             ) : filteredCampaigns.map((campaign) => (
               <CampaignCard
                 key={campaign.id}
@@ -138,7 +152,7 @@ export default function AdminCampaigns() {
           <div className="mt-16 mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Email Templates</h2>
+                <h2 className="text-xl font-bold text-gray-900">Your Templates</h2>
                 <p className="text-sm text-gray-500">Reusable designs for your campaigns</p>
               </div>
               <button onClick={() => setIsTemplateModalOpen(true)} className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold">
@@ -149,13 +163,39 @@ export default function AdminCampaigns() {
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {loadingTemplates ? (
                 <div className="py-10 text-center text-gray-400">Loading templates...</div>
-              ) : templates.map((template) => (
+              ) : templates.filter(t => t.institutionId !== null).length === 0 ? (
+                <div className="col-span-full py-10 text-center text-gray-400 border-2 border-dashed border-gray-100 rounded-2xl">
+                  No custom templates yet.
+                </div>
+              ) : templates.filter(t => t.institutionId !== null).map((template) => (
                 <div key={template.id} className="rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md bg-white">
                   <h3 className="font-bold text-gray-900">{template.name}</h3>
                   <p className="text-xs text-gray-500 mt-2 line-clamp-2">{template.description}</p>
                   <div className="mt-4 flex justify-between pt-4 border-t border-gray-50">
                     <button onClick={() => { setEditingTemplate(template); setIsTemplateModalOpen(true); }} className="text-sm font-medium text-blue-600">Edit</button>
                     <button onClick={() => handleDeleteTemplate(template.id)} className="text-sm font-medium text-red-600">Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-12 mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Default Templates</h2>
+              <p className="text-sm text-gray-500">Pre-made templates ready to use</p>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {loadingTemplates ? (
+                <div className="py-10 text-center text-gray-400">Loading templates...</div>
+              ) : templates.filter(t => t.institutionId === null).map((template) => (
+                <div key={template.id} className="rounded-2xl border border-gray-100 p-5 shadow-sm bg-gray-50/30 opacity-80">
+                  <h3 className="font-bold text-gray-900">{template.name}</h3>
+                  <p className="text-xs text-gray-500 mt-2 line-clamp-2">{template.description}</p>
+                  <div className="mt-4 flex justify-between pt-4 border-t border-gray-100">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Fixed Template</span>
+                    <span className="text-xs font-semibold text-slate-400">Read Only</span>
                   </div>
                 </div>
               ))}

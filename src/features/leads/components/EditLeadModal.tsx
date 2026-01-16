@@ -177,35 +177,49 @@ export default function EditLeadModal({ isOpen, onClose, onSubmit, lead }: EditL
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Status</label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
-              >
-                <option value="New">New</option>
-                <option value="Contacted">Contacted</option>
-                <option value="Qualified">Qualified</option>
-                <option value="Proposal">Proposal</option>
-                <option value="Negotiation">Negotiation</option>
-                <option value="Closed Won">Closed Won</option>
-                <option value="Closed Lost">Closed Lost</option>
-              </select>
+              <div className="relative">
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 pr-10 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100 font-semibold"
+                >
+                  <option value="New">New</option>
+                  <option value="Contacted">Contacted</option>
+                  <option value="Qualified">Qualified</option>
+                  <option value="Proposal">Proposal</option>
+                  <option value="Negotiation">Negotiation</option>
+                  <option value="Closed Won">Closed Won</option>
+                  <option value="Closed Lost">Closed Lost</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Lead Source</label>
-              <select
-                name="source"
-                value={formData.source}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
-              >
-                <option value="Organic">Organic</option>
-                <option value="Social Media">Social Media</option>
-                <option value="Referral">Referral</option>
-                <option value="Word of Mouth">Word of Mouth</option>
-                <option value="Contacts">Contacts</option>
-              </select>
+              <div className="relative">
+                <select
+                  name="source"
+                  value={formData.source}
+                  onChange={handleChange}
+                  className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 pr-10 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100 font-semibold"
+                >
+                  <option value="Organic">Organic</option>
+                  <option value="Social Media">Social Media</option>
+                  <option value="Referral">Referral</option>
+                  <option value="Word of Mouth">Word of Mouth</option>
+                  <option value="Contacts">Contacts</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Inquired For / Service</label>

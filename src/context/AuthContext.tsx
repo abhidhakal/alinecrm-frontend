@@ -10,6 +10,7 @@ export const Role = {
 export type RoleType = typeof Role[keyof typeof Role];
 
 export interface User {
+  dashboardConfig: DashboardConfig;
   id: number;
   name: string;
   email: string;

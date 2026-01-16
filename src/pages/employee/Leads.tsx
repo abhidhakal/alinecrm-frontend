@@ -26,7 +26,14 @@ export default function Leads() {
   const [activeDropdownId, setActiveDropdownId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('All');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
+    const saved = localStorage.getItem('leads-view-mode');
+    return (saved === 'grid' || saved === 'list') ? saved : 'grid';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('leads-view-mode', viewMode);
+  }, [viewMode]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -65,7 +72,8 @@ export default function Leads() {
     new: leads.filter(l => l.status === 'New').length,
     qualified: leads.filter(l => l.status === 'Qualified').length,
     working: leads.filter(l => ['Negotiation', 'Contacted'].includes(l.status)).length,
-    proposed: leads.filter(l => l.status === 'Proposal').length
+    proposed: leads.filter(l => l.status === 'Proposal').length,
+    won: leads.filter(l => l.status === 'Closed Won').length
   }), [leads]);
 
   const filteredLeads = useMemo(() => {
@@ -79,6 +87,7 @@ export default function Leads() {
       if (activeTab === 'Qualified') return lead.status === 'Qualified';
       if (activeTab === 'Working') return ['Negotiation', 'Contacted'].includes(lead.status);
       if (activeTab === 'Proposed') return lead.status === 'Proposal';
+      if (activeTab === 'Won') return lead.status === 'Closed Won';
       return true;
     });
   }, [leads, searchQuery, activeTab]);
@@ -116,7 +125,7 @@ export default function Leads() {
               onClick={() => setIsAddModalOpen(true)}
               className="flex items-center gap-2 rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
             >
-              <img src="/icons/plus-icon.svg" alt="Add" className="h-5 w-5 invert" />
+              <img src="/icons/plus-icon.svg" alt="Add" className="h-5 w-5 filter invert brightness-0" />
               Add Lead
             </button>
           </div>

@@ -1,28 +1,27 @@
 import { useState, useEffect } from 'react';
+import { formatDistanceToNow } from 'date-fns';
 
-export function formatRelativeTime(date: Date | null): string {
+export function formatRelativeTime(date: Date | string | null): string {
   if (!date) return 'Never';
 
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const d = typeof date === 'string' ? new Date(date) : date;
 
-  if (diffInSeconds < 30) return 'less than 30 seconds ago';
-  if (diffInSeconds < 60) return 'less than 1 minute ago';
-  if (diffInSeconds < 300) return 'less than 5 minutes ago';
+  // Handle invalid dates
+  if (isNaN(d.getTime())) return 'Unknown time';
 
-  return 'more than 5 minutes ago';
+  return formatDistanceToNow(d, { addSuffix: true });
 }
 
-export function useRelativeTime(date: Date | null): string {
+export function useRelativeTime(date: Date | string | null): string {
   const [relativeTime, setRelativeTime] = useState(() => formatRelativeTime(date));
 
   useEffect(() => {
     setRelativeTime(formatRelativeTime(date));
 
-    // Update every second for the first minute, then every minute
+    // Update every 30 seconds to keep it fresh
     const interval = setInterval(() => {
       setRelativeTime(formatRelativeTime(date));
-    }, 1000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [date]);

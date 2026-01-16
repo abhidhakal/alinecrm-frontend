@@ -10,6 +10,7 @@ interface DatePickerProps {
   placeholder?: string;
   className?: string;
   position?: 'top' | 'bottom';
+  align?: 'left' | 'right';
 }
 
 export default function DatePicker({
@@ -17,7 +18,8 @@ export default function DatePicker({
   setDate,
   placeholder = "Pick a date",
   className = "",
-  position = 'bottom'
+  position = 'bottom',
+  align = 'left'
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,7 +53,7 @@ export default function DatePicker({
       </button>
 
       {isOpen && (
-        <div className={`absolute left-0 z-[60] bg-white rounded-2xl shadow-2xl border border-gray-100 p-3 animate-in fade-in duration-200 ${popoverClasses}`}>
+        <div className={`absolute z-[60] bg-white rounded-2xl shadow-2xl border border-gray-100 p-3 animate-in fade-in duration-200 ${popoverClasses} ${align === 'right' ? 'right-0' : 'left-0'}`}>
           <style>{`
             .rdp {
               --rdp-cell-size: 28px;

@@ -124,16 +124,22 @@ export default function EditUserModal({ isOpen, onClose, onSubmit, user }: EditU
             <label className="block text-sm font-semibold text-foreground mb-2">
               Role <span className="text-red-500">*</span>
             </label>
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none bg-white"
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-              <option value="superadmin">Super Admin</option>
-            </select>
+            <div className="relative">
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full appearance-none px-4 py-3 pr-10 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-semibold"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
 
           <div className="flex gap-3 pt-4">

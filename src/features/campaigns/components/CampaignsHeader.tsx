@@ -1,4 +1,5 @@
 import { useRelativeTime } from '../../../hooks/useRelativeTime';
+import NotificationBell from '../../../components/NotificationBell';
 
 interface CampaignsHeaderProps {
   onRefresh?: () => void;
@@ -34,9 +35,7 @@ export default function CampaignsHeader({ onRefresh, lastUpdated = null }: Campa
         </div>
 
         {/* Notification Bell */}
-        <button className="group flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-all hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700">
-          <img src="/icons/notification-icon.svg" alt="Notifications" className="h-5 w-5 opacity-70 group-hover:opacity-100" />
-        </button>
+        <NotificationBell />
 
         {/* Refresh */}
         <button

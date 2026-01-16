@@ -3,6 +3,7 @@ import Sidebar from "../../components/Sidebar";
 import UsersHeader from "../../features/admin/components/UsersHeader";
 import AddUserModal from "../../features/admin/components/AddUserModal";
 import EditUserModal from "../../features/admin/components/EditUserModal";
+import AdminAnnouncementModal from "../../features/admin/components/AdminAnnouncementModal";
 import { useSidebar } from "../../context/SidebarContext";
 import { useGetAllUsers, useCreateUser, useUpdateUser, useDeleteUser } from "../../api/users.api";
 import { useToast } from "../../context/ToastContext";
@@ -21,6 +22,7 @@ export default function Users() {
   // Local UI State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -101,60 +103,97 @@ export default function Users() {
             </div>
           </div>
 
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 rounded-xl bg-black px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition-all"
-          >
-            <img src="/icons/plus-icon.svg" alt="Add" className="h-5 w-5 invert" />
-            Add User
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsAnnouncementModalOpen(true)}
+              className="group flex items-center gap-2 rounded-xl bg-black px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all active:translate-y-0"
+            >
+              <img src="/icons/campaign-icon.svg" alt="Broadcast" className="h-4 w-4 brightness-0 invert" />
+              Broadcast
+            </button>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="flex items-center gap-2 rounded-xl bg-black px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition-all"
+            >
+              <img src="/icons/plus-icon.svg" alt="Add" className="h-5 w-5 brightness-0 invert" />
+              Add User
+            </button>
+          </div>
         </div>
 
         <main className="flex-1 px-8 pb-8">
-          <div className="w-full bg-white rounded-lg pt-2 overflow-x-auto">
-            <table className="w-full border-collapse min-w-[800px]">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="py-4 px-6 text-left text-[14px] font-semibold text-foreground">Name</th>
-                  <th className="py-4 px-6 text-left text-[14px] font-semibold text-foreground">Email</th>
-                  <th className="py-4 px-6 text-left text-[14px] font-semibold text-foreground">Role</th>
-                  <th className="py-4 px-6 text-right text-[14px] font-semibold text-foreground">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr><td colSpan={4} className="py-20 text-center text-gray-500">Loading users...</td></tr>
-                ) : filteredUsers.length === 0 ? (
-                  <tr><td colSpan={4} className="py-20 text-center text-gray-500">No users found</td></tr>
-                ) : (
-                  filteredUsers.map((user) => (
-                    <tr key={user.id} className="group transition-colors border-b border-gray-50 hover:bg-gray-50/50">
-                      <td className="py-4 px-6 text-sm font-semibold text-foreground">{user.name}</td>
-                      <td className="py-4 px-6 text-sm font-medium text-foreground">{user.email}</td>
-                      <td className="py-4 px-6">
-                        <span className={`inline-flex items-center justify-center rounded-full px-4 py-1.5 text-xs font-bold
-                          ${user.role === 'superadmin' ? 'bg-red-50 text-red-600' :
-                            user.role === 'admin' ? 'bg-purple-50 text-purple-600' :
-                              'bg-green-50 text-green-600'
-                          }`}>
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex justify-end gap-2">
-                          <button onClick={() => openEditModal(user)} className="p-2 text-gray-400 hover:text-foreground">
-                            <img src="/icons/edit-icon.svg" alt="Edit" className="h-4 w-4" />
-                          </button>
-                          <button onClick={() => handleDeleteUser(user.id)} className="p-2 text-gray-400 hover:text-red-600">
-                            <img src="/icons/delete-icon.svg" alt="Delete" className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
+          <div className="flex flex-col gap-4">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+              </div>
+            ) : filteredUsers.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <img src="/icons/account-icon.svg" alt="No users" className="w-8 h-8 opacity-20" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">No users found</h3>
+                <p className="text-gray-500 text-sm mt-1">Try adjusting your search or add a new user.</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-gray-100 bg-gray-50/50">
+                      <th className="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">User Details</th>
+                      <th className="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider">Role</th>
+                      <th className="py-4 px-6 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {filteredUsers.map((user) => (
+                      <tr key={user.id} className="group hover:bg-gray-50/80 transition-colors">
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 border border-gray-200 ring-2 ring-white">
+                              {user.name.substring(0, 2).toUpperCase()}
+                            </div>
+                            <div>
+                              <div className="font-semibold text-gray-900">{user.name}</div>
+                              <div className="text-xs text-gray-500">{user.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${user.role === 'superadmin'
+                            ? 'bg-red-50 text-red-700 border-red-100'
+                            : user.role === 'admin'
+                              ? 'bg-purple-50 text-purple-700 border-purple-100'
+                              : 'bg-green-50 text-green-700 border-green-100'
+                            }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${user.role === 'superadmin' ? 'bg-red-500' : user.role === 'admin' ? 'bg-purple-500' : 'bg-green-500'}`}></span>
+                            {user.role === 'superadmin' ? 'Super Admin' : user.role === 'admin' ? 'Admin' : 'User'}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <div className="flex justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => openEditModal(user)}
+                              className="h-8 w-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-500 hover:text-gray-900 transition-all shadow-sm"
+                              title="Edit User"
+                            >
+                              <img src="/icons/edit-icon.svg" alt="Edit" className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="h-8 w-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 hover:border-red-200 hover:bg-red-50 text-gray-500 hover:text-red-600 transition-all shadow-sm"
+                              title="Delete User"
+                            >
+                              <img src="/icons/delete-icon.svg" alt="Delete" className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </main>
       </div>
@@ -173,6 +212,11 @@ export default function Users() {
         }}
         user={selectedUser}
         onSubmit={handleEditUser}
+      />
+
+      <AdminAnnouncementModal
+        isOpen={isAnnouncementModalOpen}
+        onClose={() => setIsAnnouncementModalOpen(false)}
       />
     </div>
   );

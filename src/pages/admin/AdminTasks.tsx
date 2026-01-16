@@ -75,7 +75,7 @@ export default function AdminTasks() {
           lastUpdated={new Date()}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          title="Admin Tasks"
+          title="All Tasks"
         />
 
         <section className="px-8">
@@ -85,28 +85,28 @@ export default function AdminTasks() {
           />
         </section>
 
-        <div className="px-10 pt-6 pb-2 flex items-center justify-between">
-          <p className="text-xs font-bold text-gray-500 opacity-60 tracking-tight">*drag and drop tasks from to-do till complete</p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => openAddModal()}
-              className="flex items-center gap-2 rounded-xl bg-white border border-border px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-gray-50 hover:shadow-md active:scale-[0.98]"
-            >
-              <img src="/icons/task-icon-filled.svg" alt="Add" className="h-5 w-5" />
-              Add Card
-            </button>
-            <button
-              onClick={() => openAddModal()}
-              className="flex items-center gap-2 rounded-xl bg-foreground px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
-            >
-              <img src="/icons/plus-icon.svg" alt="Add" className="h-5 w-5 invert brightness-0 filter" />
-              Add Task
-            </button>
+        <div className="px-8 pt-5 pb-3 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
+              <span className="text-sm text-gray-600">
+                <span className="font-bold text-gray-900">{tasks.filter(t => t.status === TASK_STATUS.COMPLETE).length}</span> of <span className="font-bold text-gray-900">{tasks.length}</span> tasks completed
+              </span>
+            </div>
+            <span className="text-xs text-gray-400">•</span>
+            <p className="text-xs text-gray-400">Drag and drop to update status</p>
           </div>
+          <button
+            onClick={() => openAddModal()}
+            className="flex items-center gap-2 rounded-xl bg-foreground px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md active:scale-[0.98]"
+          >
+            <img src="/icons/plus-icon.svg" alt="Add" className="h-5 w-5 invert brightness-0 filter" />
+            Add Task
+          </button>
         </div>
 
-        <main className="flex-1 mx-6 mb-10 overflow-x-auto bg-[#f5f5f5] p-6 relative scrollbar-hide rounded-[20px]">
-          <div className="flex gap-10 items-start justify-center">
+        <main className="flex-1 mx-6 mb-10 overflow-x-auto bg-[#f5f5f5] p-5 relative scrollbar-hide rounded-[20px]">
+          <div className="flex gap-6 items-start justify-center">
             {columns.map(col => (
               <TaskColumn
                 key={col.status}
@@ -137,7 +137,7 @@ export default function AdminTasks() {
               }}
             >
               <img src="/icons/delete-icon.svg" alt="trash" className="h-5 w-5 opacity-60 group-hover:opacity-100 transition-opacity" />
-              <span className="text-sm font-bold text-gray-700">Trash</span>
+              <span className="text-sm font-bold text-gray-700">Drop to delete</span>
             </button>
           </div>
         </main>

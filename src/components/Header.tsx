@@ -15,7 +15,7 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {['Product', 'Features', 'Pricing', 'About'].map((item) => (
+          {['Features', 'Pricing', 'About', 'Contact'].map((item) => (
             <Link
               key={item}
               to={`/${item.toLowerCase()}`}
@@ -31,7 +31,7 @@ export default function Header() {
           <Link to="/login" className="hidden md:block text-sm font-semibold text-gray-600 hover:text-blue-900 transition-colors">
             Log in
           </Link>
-          <Link to="/register" className="bg-black hover:bg-[#082a3f] text-white px-5 py-2.5 rounded-md text-sm font-medium transition-all shadow-sm">
+          <Link to="/demo" className="bg-black hover:bg-[#082a3f] text-white px-5 py-2.5 rounded-md text-sm font-medium transition-all shadow-sm">
             Book a Demo
           </Link>
         </div>

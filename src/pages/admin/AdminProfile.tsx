@@ -5,13 +5,16 @@ import { useAuth } from '../../context/AuthContext';
 import { useUpdateUser } from '../../api/users.api';
 import { uploadApi } from '../../api/clients/upload.client';
 import { useToast } from '../../context/ToastContext';
+import { usersApi } from '../../api/users.api';
+import { useNavigate } from 'react-router-dom';
 
 type Tab = 'general' | 'security';
 
 export default function Profile() {
   const { isExpanded } = useSidebar();
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const updateUserMutation = useUpdateUser();
 
   const [activeTab, setActiveTab] = useState<Tab>('general');
@@ -51,7 +54,7 @@ export default function Profile() {
           id: user.id,
           data: { profilePicture: imageUrl }
         });
-        updateUser(updated);
+        updateUser(updated as any);
         showToast('Profile picture updated', 'success');
       } catch (error: any) {
         showToast(error.response?.data?.message || 'Failed to upload image', 'error');
@@ -73,7 +76,7 @@ export default function Profile() {
           email: profileData.email,
         }
       });
-      updateUser(updated);
+      updateUser(updated as any);
       showToast('Profile updated successfully', 'success');
     } catch (error: any) {
       showToast(error.response?.data?.message || 'Failed to update profile', 'error');
@@ -101,6 +104,21 @@ export default function Profile() {
       showToast(error.response?.data?.message || 'Failed to change password', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+
+    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      try {
+        await usersApi.delete(user.id);
+        logout();
+        navigate('/login');
+        showToast('Account deleted successfully', 'success');
+      } catch (error: any) {
+        showToast(error.response?.data?.message || 'Failed to delete account', 'error');
+      }
     }
   };
 
@@ -223,6 +241,17 @@ export default function Profile() {
                       {loading ? 'Updating...' : 'Change Password'}
                     </button>
                   </form>
+
+                  <div className="pt-10 border-t border-gray-100">
+                    <h3 className="text-lg font-bold text-red-600">Danger Zone</h3>
+                    <p className="text-sm text-gray-500 mt-1">Deleting your account is permanent. All your CRM data will be lost.</p>
+                    <button
+                      onClick={handleDeleteAccount}
+                      className="mt-4 rounded-xl border border-red-200 bg-red-50 px-6 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition-all"
+                    >
+                      Delete My Account
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

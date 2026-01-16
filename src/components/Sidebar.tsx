@@ -42,13 +42,19 @@ const navItems = [
     activeIcon: '/icons/social-icon-filled.svg',
     path: '/social-media'
   },
+  {
+    name: 'Announcements',
+    icon: '/icons/campaign-icon.svg',
+    activeIcon: '/icons/campaign-icon-filled.svg',
+    path: '/announcements'
+  },
 ];
 
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isExpanded, setIsExpanded } = useSidebar();
-  const { isAdmin, user } = useAuth();
+  const { isAdmin, user, logout: authLogout } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -66,9 +72,8 @@ export default function Sidebar() {
     .toUpperCase().substring(0, 2);
 
   const handleLogout = () => {
-    // Clear all storage
-    localStorage.clear();
-    sessionStorage.clear();
+    // Stop event propagation if necessary, but here we just call the context logout
+    authLogout();
 
     // Close modals
     setIsLogoutModalOpen(false);
@@ -152,7 +157,7 @@ export default function Sidebar() {
 
               {/* Profile */}
               <Link
-                to="/profile"
+                to={isAdmin ? "/admin/profile" : "/profile"}
                 onClick={() => setIsProfileOpen(false)}
                 className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-left group"
               >
@@ -172,7 +177,7 @@ export default function Sidebar() {
 
               {/* Contact */}
               <Link
-                to="/contact"
+                to="/portal/help/secure-support"
                 onClick={() => setIsProfileOpen(false)}
                 className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-left group"
               >
@@ -242,7 +247,7 @@ export default function Sidebar() {
         <div className="mt-auto flex flex-col gap-4 pt-6 pb-4">
           {/* Mindfulness Button */}
           <div className="relative group">
-            <Link to="/mindfulness" className={`group flex w-full items-center rounded-2xl bg-[#1A1A1A] p-2 text-white shadow-lg shadow-gray-200 transition-all hover:bg-black hover:shadow-xl active:scale-[0.98] ${isExpanded ? 'gap-3' : 'justify-center'
+            <Link to={isAdmin ? "/admin/mindfulness" : "/mindfulness"} className={`group flex w-full items-center rounded-2xl bg-[#1A1A1A] p-2 text-white shadow-lg shadow-gray-200 transition-all hover:bg-black hover:shadow-xl active:scale-[0.98] ${isExpanded ? 'gap-3' : 'justify-center'
               }`}>
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 flex-shrink-0">
                 <img src="/icons/mindfulness-icon.svg" alt="Mindfulness" className="w-5 h-5 invert brightness-0 filter" />

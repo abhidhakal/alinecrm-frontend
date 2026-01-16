@@ -57,14 +57,14 @@ export default function Pricing() {
 
       {/* Pricing Grid */}
       <section className="py-24 bg-white relative">
-        <div className="container-width mx-auto px-6">
+        <div className="container-width">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
             {tiers.map((tier) => (
               <div
                 key={tier.id}
                 className={`relative flex flex-col p-8 rounded-[2.5rem] transition-all duration-300 ${tier.featured
-                    ? 'bg-[#0B3954] text-white shadow-2xl scale-105 z-10'
-                    : 'bg-white border border-slate-200 text-slate-900 hover:border-slate-300 shadow-sm'
+                  ? 'bg-[#0B3954] text-white shadow-2xl scale-105 z-10'
+                  : 'bg-white border border-slate-200 text-slate-900 hover:border-slate-300 shadow-sm'
                   }`}
               >
                 {tier.featured && (
@@ -88,8 +88,8 @@ export default function Pricing() {
                 <Link
                   to="/login"
                   className={`flex items-center justify-center gap-2 py-4 px-6 rounded-2xl font-bold transition-all mb-10 ${tier.featured
-                      ? 'bg-white text-[#0B3954] hover:bg-slate-50'
-                      : 'bg-[#0B3954] text-white hover:bg-slate-800'
+                    ? 'bg-white text-[#0B3954] hover:bg-slate-50'
+                    : 'bg-[#0B3954] text-white hover:bg-slate-800'
                     }`}
                 >
                   {tier.cta} <ArrowRight className="w-4 h-4" />

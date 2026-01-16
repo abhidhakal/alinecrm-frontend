@@ -144,26 +144,40 @@ export default function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModal
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Status</label>
-              <select
-                {...register('status')}
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
-              >
-                {Object.values(LEAD_STATUS).map(status => (
-                  <option key={status} value={status}>{status}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  {...register('status')}
+                  className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 pr-10 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100 font-semibold"
+                >
+                  {Object.values(LEAD_STATUS).map(status => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Lead Source</label>
-              <select
-                {...register('source')}
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100"
-              >
-                {Object.values(LEAD_SOURCE).map(source => (
-                  <option key={source} value={source}>{source}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  {...register('source')}
+                  className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 pr-10 outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100 font-semibold"
+                >
+                  {Object.values(LEAD_SOURCE).map(source => (
+                    <option key={source} value={source}>{source}</option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">

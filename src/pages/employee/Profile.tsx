@@ -47,7 +47,7 @@ export default function Profile() {
         setUploadingImage(true);
         const imageUrl = await uploadApi.uploadProfilePicture(file);
         const updated = await usersApi.update(user.id, { profilePicture: imageUrl });
-        updateUser(updated);
+        updateUser(updated as any);
         showToast('Profile picture updated', 'success');
       } catch (error: any) {
         showToast(error.response?.data?.message || 'Failed to upload image', 'error');
@@ -66,7 +66,7 @@ export default function Profile() {
         name: profileData.name,
         email: profileData.email,
       });
-      updateUser(updated);
+      updateUser(updated as any);
       showToast('Profile updated successfully', 'success');
     } catch (error: any) {
       showToast(error.response?.data?.message || 'Failed to update profile', 'error');
@@ -248,9 +248,17 @@ export default function Profile() {
                   <div className="pt-10 border-t border-gray-100">
                     <h3 className="text-lg font-bold text-red-600">Danger Zone</h3>
                     <p className="text-sm text-gray-500 mt-1">Deleting your account is permanent. All your CRM data will be lost.</p>
-                    <button className="mt-4 rounded-xl border border-red-200 bg-red-50 px-6 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition-all">
-                      Delete My Account
-                    </button>
+                    <div className="mt-4 flex flex-col gap-2">
+                      <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg border border-gray-100 italic">
+                        Account deletion is managed by your organization administrator. Please contact your admin to delete your account.
+                      </div>
+                      <button
+                        disabled
+                        className="rounded-xl border border-gray-200 bg-gray-50 px-6 py-2.5 text-sm font-bold text-gray-400 cursor-not-allowed w-fit"
+                      >
+                        Delete My Account
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
